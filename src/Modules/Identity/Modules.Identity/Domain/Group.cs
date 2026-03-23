@@ -34,7 +34,7 @@ public class Group : ISoftDeletable
             Description = description,
             IsDefault = isDefault,
             IsSystemGroup = isSystemGroup,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = TimeProvider.System.GetUtcNow().UtcDateTime,
             CreatedBy = createdBy
         };
     }
@@ -43,14 +43,14 @@ public class Group : ISoftDeletable
     {
         Name = name;
         Description = description;
-        ModifiedAt = DateTime.UtcNow;
+        ModifiedAt = TimeProvider.System.GetUtcNow().UtcDateTime;
         ModifiedBy = modifiedBy;
     }
 
     public void SetAsDefault(bool isDefault, string? modifiedBy = null)
     {
         IsDefault = isDefault;
-        ModifiedAt = DateTime.UtcNow;
+        ModifiedAt = TimeProvider.System.GetUtcNow().UtcDateTime;
         ModifiedBy = modifiedBy;
     }
 }

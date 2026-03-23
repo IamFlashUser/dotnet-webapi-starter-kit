@@ -80,9 +80,13 @@ internal sealed class S3StorageService : IStorageService
             var key = NormalizeKey(path);
             await _s3.DeleteObjectAsync(_options.Bucket, key, cancellationToken).ConfigureAwait(false);
         }
+        catch (AmazonS3Exception ex)
+        {
+            _logger.LogWarning(ex, "S3 error deleting object {Path}: {StatusCode}", path, ex.StatusCode);
+        }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to delete S3 object {Path}", path);
+            _logger.LogWarning(ex, "Unexpected error deleting S3 object {Path}", path);
         }
     }
 
@@ -125,9 +129,15 @@ internal sealed class S3StorageService : IStorageService
             _logger.LogDebug(ex, "S3 object not found: {Path}", path);
             return null;
         }
+        catch (AmazonS3Exception ex)
+        {
+            _logger.LogWarning(ex, "S3 error downloading object {Path}: {StatusCode}", path, ex.StatusCode);
+            return null;
+        }
+        // Fallback for unexpected non-S3 errors (e.g., network, serialization).
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to download S3 object {Path}", path);
+            _logger.LogWarning(ex, "Unexpected error downloading S3 object {Path}", path);
             return null;
         }
     }
@@ -155,9 +165,15 @@ internal sealed class S3StorageService : IStorageService
         {
             return false;
         }
+        catch (AmazonS3Exception ex)
+        {
+            _logger.LogWarning(ex, "S3 error checking object existence {Path}: {StatusCode}", path, ex.StatusCode);
+            return false;
+        }
+        // Fallback for unexpected non-S3 errors (e.g., network, configuration).
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to check if S3 object exists: {Path}", path);
+            _logger.LogWarning(ex, "Unexpected error checking if S3 object exists: {Path}", path);
             return false;
         }
     }

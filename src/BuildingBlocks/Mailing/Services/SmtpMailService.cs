@@ -135,6 +135,8 @@ public class SmtpMailService(IOptions<MailOptions> settings, ILogger<SmtpMailSer
             await client.AuthenticateAsync(_settings.Smtp.UserName, _settings.Smtp.Password, ct);
             await client.SendAsync(email, ct);
         }
+        // Broad catch is intentional: any SMTP failure (auth, network, protocol) is logged
+        // and wrapped in a consistent exception for callers.
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while sending email: {Message}", ex.Message);
