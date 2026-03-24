@@ -19,6 +19,7 @@ public sealed class GetGroupByIdQueryHandler : IQueryHandler<GetGroupByIdQuery, 
     public async ValueTask<GroupDto> Handle(GetGroupByIdQuery query, CancellationToken cancellationToken)
     {
         var group = await _dbContext.Groups
+            .AsNoTracking()
             .Include(g => g.GroupRoles)
             .FirstOrDefaultAsync(g => g.Id == query.Id, cancellationToken)
             ?? throw new NotFoundException($"Group with ID '{query.Id}' not found.");
@@ -29,6 +30,7 @@ public sealed class GetGroupByIdQueryHandler : IQueryHandler<GetGroupByIdQuery, 
         var roleIds = group.GroupRoles.Select(gr => gr.RoleId).ToList();
         var roleNames = roleIds.Count > 0
             ? await _dbContext.Roles
+                .AsNoTracking()
                 .Where(r => roleIds.Contains(r.Id))
                 .Select(r => r.Name!)
                 .ToListAsync(cancellationToken)

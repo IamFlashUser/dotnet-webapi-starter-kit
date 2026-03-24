@@ -54,6 +54,7 @@ public static class Extensions
                     throw new CustomException($"Hangfire storage provider {dbOptions.Provider} is not supported");
             }
 
+            config.UseActivator(new FshJobActivator(provider.GetRequiredService<IServiceScopeFactory>()));
             config.UseFilter(new FshJobFilter(provider));
             config.UseFilter(new LogJobFilter());
             config.UseFilter(new HangfireTelemetryFilter());
