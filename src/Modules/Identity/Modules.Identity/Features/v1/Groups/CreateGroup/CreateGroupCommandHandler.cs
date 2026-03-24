@@ -43,7 +43,7 @@ public sealed class CreateGroupCommandHandler : ICommandHandler<CreateGroupComma
                 .ToListAsync(cancellationToken);
             resolvedRoles = rawRoles.Select(r => (r.Id, r.Name!)).ToList();
 
-            var invalidRoleIds = command.RoleIds.Except(resolvedRoles.Select(r => r.Item1)).ToList();
+            var invalidRoleIds = command.RoleIds.Except(resolvedRoles.Select(r => r.Id)).ToList();
             if (invalidRoleIds.Count > 0)
             {
                 throw new NotFoundException($"Roles not found: {string.Join(", ", invalidRoleIds)}");
@@ -74,9 +74,9 @@ public sealed class CreateGroupCommandHandler : ICommandHandler<CreateGroupComma
             IsDefault = group.IsDefault,
             IsSystemGroup = group.IsSystemGroup,
             MemberCount = 0,
-            RoleIds = resolvedRoles.Select(r => r.Item1).ToList().AsReadOnly(),
-            RoleNames = resolvedRoles.Select(r => r.Item2).ToList().AsReadOnly(),
-            CreatedOnUtc = group.CreatedOnUtc
+            RoleIds = resolvedRoles.Select(r => r.Id).ToList().AsReadOnly(),
+            RoleNames = resolvedRoles.Select(r => r.Name).ToList().AsReadOnly(),
+            CreatedAt = group.CreatedOnUtc
         };
     }
 }
