@@ -28,7 +28,7 @@ internal static class SimpleBffAuth
 
                 if (logger.IsEnabled(LogLevel.Information))
                 {
-                    logger.LogInformation("Login attempt for {Email}", email);
+                    logger.LogInformation("Login attempt for {EmailHash}", ComputeEmailHash(email));
                 }
 
                 // Call the identity API to get token
@@ -81,7 +81,7 @@ internal static class SimpleBffAuth
 
                 if (logger.IsEnabled(LogLevel.Information))
                 {
-                    logger.LogInformation("Login successful for {Email}", email);
+                    logger.LogInformation("Login successful for {EmailHash}", ComputeEmailHash(email));
                 }
 
                 // Redirect to home page - this ensures the cookie is properly read on the next request
@@ -115,5 +115,12 @@ internal static class SimpleBffAuth
             return Results.Redirect("/login?toast=logout_success");
         })
         .AllowAnonymous();
+    }
+
+    private static string ComputeEmailHash(string email)
+    {
+        if (string.IsNullOrEmpty(email)) return "empty";
+        var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(email));
+        return Convert.ToHexString(hash.AsSpan(0, 4));
     }
 }

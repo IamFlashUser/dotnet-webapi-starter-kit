@@ -51,7 +51,7 @@ public sealed class TokenService : ITokenService
         var userEmail = claims.Where(a => a.Type == ClaimTypes.Email).Select(a => a.Value).First();
         if (_logger.IsEnabled(LogLevel.Information))
         {
-            _logger.LogInformation("Issued JWT for {Email}", userEmail);
+            _logger.LogInformation("Issued JWT for user {EmailHash}", MaskEmail(userEmail));
         }
         _metrics.TokenGenerated(userEmail);
 
@@ -62,5 +62,13 @@ public sealed class TokenService : ITokenService
             AccessTokenExpiresAt: accessTokenExpiry);
 
         return Task.FromResult(response);
+    }
+
+    private static string MaskEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email)) return "unknown";
+        var atIndex = email.IndexOf('@', StringComparison.Ordinal);
+        if (atIndex <= 1) return "***" + email[atIndex..];
+        return string.Concat(email.AsSpan(0, 1), "***", email.AsSpan(atIndex));
     }
 }
