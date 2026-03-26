@@ -1,6 +1,6 @@
+using Mediator;
 using System.Reflection;
 using System.Text;
-using Mediator;
 
 namespace Generic.Tests.Architecture;
 

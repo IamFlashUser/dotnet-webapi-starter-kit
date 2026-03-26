@@ -38,11 +38,11 @@ internal sealed class UserStatusService(
         EnsureValidTenant();
 
         var context = await BuildToggleContextAsync(userId, activateUser, cancellationToken);
-        
+
         await ValidateTogglePermissionsAsync(context, cancellationToken);
-        
+
         ApplyStatusChange(context);
-        
+
         await SaveAndAuditAsync(context, cancellationToken);
     }
 
@@ -55,8 +55,8 @@ internal sealed class UserStatusService(
     }
 
     private async Task<ToggleStatusContext> BuildToggleContextAsync(
-        string userId, 
-        bool activateUser, 
+        string userId,
+        bool activateUser,
         CancellationToken cancellationToken)
     {
         var actorId = currentUser.GetUserId();
@@ -82,7 +82,7 @@ internal sealed class UserStatusService(
     }
 
     private async Task ValidateTogglePermissionsAsync(
-        ToggleStatusContext context, 
+        ToggleStatusContext context,
         CancellationToken cancellationToken)
     {
         if (!await userManager.IsInRoleAsync(context.Actor, RoleConstants.Admin))
@@ -110,7 +110,7 @@ internal sealed class UserStatusService(
     }
 
     private async Task EnsureMinimumActiveAdminsAsync(
-        ToggleStatusContext context, 
+        ToggleStatusContext context,
         CancellationToken cancellationToken)
     {
         var activeAdmins = await userManager.GetUsersInRoleAsync(RoleConstants.Admin);
@@ -134,7 +134,7 @@ internal sealed class UserStatusService(
     }
 
     private async Task SaveAndAuditAsync(
-        ToggleStatusContext context, 
+        ToggleStatusContext context,
         CancellationToken cancellationToken)
     {
         var result = await userManager.UpdateAsync(context.TargetUser);
@@ -159,8 +159,8 @@ internal sealed class UserStatusService(
     }
 
     private async Task AuditPolicyFailureAsync(
-        ToggleStatusContext context, 
-        string reason, 
+        ToggleStatusContext context,
+        string reason,
         CancellationToken cancellationToken)
     {
         var claims = new Dictionary<string, object?>

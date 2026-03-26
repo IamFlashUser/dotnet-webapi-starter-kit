@@ -16,4 +16,3 @@ public sealed record UserRegisteredIntegrationEvent(
     string FirstName,
     string LastName)
     : IIntegrationEvent;
-

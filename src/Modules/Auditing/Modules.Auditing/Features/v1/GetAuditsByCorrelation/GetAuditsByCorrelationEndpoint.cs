@@ -31,4 +31,3 @@ public static class GetAuditsByCorrelationEndpoint
             .Produces(StatusCodes.Status403Forbidden);
     }
 }
-

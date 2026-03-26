@@ -22,4 +22,3 @@ public sealed class AuditRecord
 
     public string PayloadJson { get; set; } = default!;
 }
-

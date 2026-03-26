@@ -83,4 +83,3 @@ public sealed class EfCoreOutboxStore<TDbContext> : IOutboxStore
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
     }
 }
-

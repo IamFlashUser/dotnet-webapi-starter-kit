@@ -1,8 +1,8 @@
-using System.Reflection;
 using FSH.CLI.Models;
 using FSH.CLI.UI;
 using FSH.CLI.Validation;
 using Spectre.Console;
+using System.Reflection;
 
 namespace FSH.CLI.Prompts;
 

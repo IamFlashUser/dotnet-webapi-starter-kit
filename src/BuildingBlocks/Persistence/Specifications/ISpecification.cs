@@ -45,4 +45,3 @@ public interface ISpecification<T>
     /// </summary>
     bool IgnoreQueryFilters { get; }
 }
-

@@ -1,6 +1,6 @@
-using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Framework.Shared.Identity;
 using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.v1.Users.GetUserRoles;
 using Mediator;
 using Microsoft.AspNetCore.Builder;

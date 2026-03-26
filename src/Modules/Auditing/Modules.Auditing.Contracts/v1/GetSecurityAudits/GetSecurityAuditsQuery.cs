@@ -16,4 +16,3 @@ public sealed class GetSecurityAuditsQuery : IQuery<IReadOnlyList<AuditSummaryDt
 
     public DateTime? ToUtc { get; init; }
 }
-

@@ -56,4 +56,3 @@ public sealed class DefaultAuditClient : IAuditClient
             .WriteAsync(ct);
     }
 }
-

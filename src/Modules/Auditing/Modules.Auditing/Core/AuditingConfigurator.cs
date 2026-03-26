@@ -27,4 +27,3 @@ public sealed class AuditingConfigurator : IHostedService
     }
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
-

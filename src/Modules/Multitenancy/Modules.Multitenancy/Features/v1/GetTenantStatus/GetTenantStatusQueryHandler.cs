@@ -14,4 +14,3 @@ public sealed class GetTenantStatusQueryHandler(ITenantService tenantService)
         return await tenantService.GetStatusAsync(query.TenantId, cancellationToken).ConfigureAwait(false);
     }
 }
-

@@ -20,4 +20,3 @@ public interface ISpecification<T, TResult> : ISpecification<T>
     /// </summary>
     Expression<Func<T, TResult>> Selector { get; }
 }
-

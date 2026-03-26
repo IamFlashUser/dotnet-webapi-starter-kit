@@ -28,4 +28,3 @@ public sealed class AuditSummaryDto
 
     public AuditTag Tags { get; set; }
 }
-

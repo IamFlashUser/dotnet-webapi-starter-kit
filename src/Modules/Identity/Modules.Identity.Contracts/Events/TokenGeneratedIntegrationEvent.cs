@@ -20,4 +20,3 @@ public sealed record TokenGeneratedIntegrationEvent(
     string TokenFingerprint,
     DateTime AccessTokenExpiresAtUtc)
     : IIntegrationEvent;
-

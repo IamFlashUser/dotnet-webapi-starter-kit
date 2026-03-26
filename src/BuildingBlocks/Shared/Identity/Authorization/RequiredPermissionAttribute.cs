@@ -37,4 +37,3 @@ public sealed class RequiredPermissionAttribute : Attribute, IRequiredPermission
         RequiredPermissions = permissions;
     }
 }
-

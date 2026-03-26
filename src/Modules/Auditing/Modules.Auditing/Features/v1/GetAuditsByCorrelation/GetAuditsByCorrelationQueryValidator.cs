@@ -15,4 +15,3 @@ public sealed class GetAuditsByCorrelationQueryValidator : AbstractValidator<Get
             .WithMessage("FromUtc must be less than or equal to ToUtc.");
     }
 }
-

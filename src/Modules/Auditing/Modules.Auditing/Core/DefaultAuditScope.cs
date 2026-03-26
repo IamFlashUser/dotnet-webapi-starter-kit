@@ -42,4 +42,3 @@ public sealed record DefaultAuditScope(
             Tags = tags ?? this.Tags
         };
 }
-

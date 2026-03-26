@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using FSH.Framework.Core.Context;
 using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Persistence;
@@ -9,6 +8,7 @@ using FSH.Modules.Identity.Domain;
 using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FSH.Modules.Identity.Features.v1.Users.SearchUsers;
 
@@ -130,7 +130,7 @@ public sealed class SearchUsersQueryHandler : IQueryHandler<SearchUsersQuery, Pa
         foreach (var part in sortParts)
         {
             var (field, descending) = ParseSortField(part);
-            
+
             if (!SortableFields.TryGetValue(field, out var selector))
             {
                 selector = u => u.FirstName; // Default fallback
@@ -157,13 +157,13 @@ public sealed class SearchUsersQueryHandler : IQueryHandler<SearchUsersQuery, Pa
     {
         if (orderedQuery is null)
         {
-            return descending 
-                ? query.OrderByDescending(selector) 
+            return descending
+                ? query.OrderByDescending(selector)
                 : query.OrderBy(selector);
         }
 
-        return descending 
-            ? orderedQuery.ThenByDescending(selector) 
+        return descending
+            ? orderedQuery.ThenByDescending(selector)
             : orderedQuery.ThenBy(selector);
     }
 

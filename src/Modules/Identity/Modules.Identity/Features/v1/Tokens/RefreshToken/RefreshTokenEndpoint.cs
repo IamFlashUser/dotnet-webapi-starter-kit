@@ -34,4 +34,3 @@ public static class RefreshTokenEndpoint
             .Produces(StatusCodes.Status500InternalServerError);
     }
 }
-

@@ -1,8 +1,8 @@
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using FSH.CLI.Models;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FSH.CLI.Commands;
 

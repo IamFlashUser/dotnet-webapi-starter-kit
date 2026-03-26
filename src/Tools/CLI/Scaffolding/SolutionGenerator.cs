@@ -1,7 +1,7 @@
-using System.Diagnostics;
 using FSH.CLI.Models;
 using FSH.CLI.UI;
 using Spectre.Console;
+using System.Diagnostics;
 
 namespace FSH.CLI.Scaffolding;
 

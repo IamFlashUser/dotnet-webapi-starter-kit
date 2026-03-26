@@ -12,4 +12,3 @@ public sealed class GetSecurityAuditsQueryValidator : AbstractValidator<GetSecur
             .WithMessage("FromUtc must be less than or equal to ToUtc.");
     }
 }
-

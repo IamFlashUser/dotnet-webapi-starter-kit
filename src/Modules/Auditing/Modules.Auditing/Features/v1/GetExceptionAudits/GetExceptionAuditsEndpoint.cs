@@ -27,4 +27,3 @@ public static class GetExceptionAuditsEndpoint
             .Produces(StatusCodes.Status403Forbidden);
     }
 }
-

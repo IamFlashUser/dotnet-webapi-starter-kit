@@ -29,4 +29,3 @@ public static class SpecificationExtensions
         return SpecificationEvaluator.GetQuery(query, specification);
     }
 }
-

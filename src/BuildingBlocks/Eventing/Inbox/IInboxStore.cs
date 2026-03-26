@@ -9,4 +9,3 @@ public interface IInboxStore
 
     Task MarkProcessedAsync(Guid eventId, string handlerName, string? tenantId, string eventType, CancellationToken ct = default);
 }
-

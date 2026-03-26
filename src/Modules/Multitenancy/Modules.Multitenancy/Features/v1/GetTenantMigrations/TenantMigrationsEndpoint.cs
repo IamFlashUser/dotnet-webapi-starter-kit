@@ -31,4 +31,3 @@ public static class TenantMigrationsEndpoint
             .Produces(StatusCodes.Status403Forbidden);
     }
 }
-

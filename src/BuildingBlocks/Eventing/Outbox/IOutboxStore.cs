@@ -15,4 +15,3 @@ public interface IOutboxStore
 
     Task MarkAsFailedAsync(OutboxMessage message, string error, bool isDead, CancellationToken ct = default);
 }
-

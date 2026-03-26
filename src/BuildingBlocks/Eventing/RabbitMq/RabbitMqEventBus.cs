@@ -1,8 +1,8 @@
-using System.Text;
 using FSH.Framework.Eventing.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
+using System.Text;
 
 namespace FSH.Framework.Eventing.RabbitMq;
 

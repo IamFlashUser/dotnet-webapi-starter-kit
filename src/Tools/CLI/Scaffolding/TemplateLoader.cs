@@ -8,7 +8,7 @@ namespace FSH.CLI.Scaffolding;
 internal sealed class TemplateLoader : ITemplateLoader
 {
     private static readonly Lazy<string> _frameworkVersion = new(GetFrameworkVersionInternal);
-    
+
     private static readonly Dictionary<string, string> _staticTemplates = new()
     {
         ["AppSettingsDevelopment"] = """
@@ -22,7 +22,7 @@ internal sealed class TemplateLoader : ITemplateLoader
           }
         }
         """,
-        
+
         ["BlazorCsproj"] = """
         <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
@@ -41,7 +41,7 @@ internal sealed class TemplateLoader : ITemplateLoader
 
         </Project>
         """,
-        
+
         ["BlazorApp"] = """
         <MudThemeProvider />
         <MudPopoverProvider />
@@ -61,7 +61,7 @@ internal sealed class TemplateLoader : ITemplateLoader
             </NotFound>
         </Router>
         """,
-        
+
         ["DockerComposeOverride"] = """
         version: '3.8'
 
@@ -70,7 +70,7 @@ internal sealed class TemplateLoader : ITemplateLoader
           redis:
             command: redis-server --appendonly yes
         """,
-        
+
         ["CatalogContractsCsproj"] = """
         <Project Sdk="Microsoft.NET.Sdk">
 
@@ -82,7 +82,7 @@ internal sealed class TemplateLoader : ITemplateLoader
 
         </Project>
         """,
-        
+
         ["GlobalJson"] = """
         {
           "sdk": {
@@ -91,7 +91,7 @@ internal sealed class TemplateLoader : ITemplateLoader
           }
         }
         """,
-        
+
         ["Gitignore"] = """
         ## .NET
         bin/
@@ -135,7 +135,7 @@ internal sealed class TemplateLoader : ITemplateLoader
         *.log
         logs/
         """,
-        
+
         ["EditorConfig"] = """
         # EditorConfig is awesome: https://EditorConfig.org
 
@@ -211,7 +211,7 @@ internal sealed class TemplateLoader : ITemplateLoader
         {
             throw new InvalidOperationException($"Static template '{templateName}' not found.");
         }
-        
+
         return template;
     }
 

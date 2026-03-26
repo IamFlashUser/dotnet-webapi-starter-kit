@@ -10,4 +10,3 @@ public sealed record OrderExpression<T>(
     Expression<Func<T, object>> KeySelector,
     bool Descending)
     where T : class;
-

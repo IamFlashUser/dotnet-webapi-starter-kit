@@ -37,4 +37,3 @@ public sealed class EventingOptions
     /// </summary>
     public bool UseHostedServiceDispatcher { get; set; } = true;
 }
-

@@ -41,9 +41,9 @@ public class LocalStorageService : IStorageService
             throw new InvalidOperationException($"File exceeds max size of {rules.MaxSizeInMB} MB.");
         }
 
-        #pragma warning disable CA1308 // folder names are intentionally lower-case for URLs/paths
+#pragma warning disable CA1308 // folder names are intentionally lower-case for URLs/paths
         var folder = Regex.Replace(typeof(T).Name.ToLowerInvariant(), @"[^a-z0-9]", "_");
-        #pragma warning restore CA1308
+#pragma warning restore CA1308
         var safeFileName = $"{Guid.NewGuid():N}_{SanitizeFileName(request.FileName)}";
         var relativePath = Path.Combine(UploadBasePath, folder, safeFileName);
         var fullPath = Path.Combine(_rootPath, relativePath);

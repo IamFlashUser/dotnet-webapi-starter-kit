@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using FSH.Framework.Storage;
 using FSH.Framework.Shared.Storage;
+using FSH.Framework.Storage;
 
 namespace FSH.Modules.Identity.Features.v1.Users;
 

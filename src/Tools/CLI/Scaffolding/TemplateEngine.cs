@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using FSH.CLI.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FSH.CLI.Scaffolding;
 
@@ -235,7 +235,7 @@ internal static class TemplateEngine
     private static void ValidateOptions(ProjectOptions options)
     {
         var validationResult = _validator.ValidateProjectOptions(options);
-        
+
         if (!validationResult.IsValid)
         {
             throw new ArgumentException($"Invalid project options: {string.Join(", ", validationResult.Errors)}", nameof(options));

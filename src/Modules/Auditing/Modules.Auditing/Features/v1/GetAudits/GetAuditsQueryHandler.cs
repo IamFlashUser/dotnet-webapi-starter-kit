@@ -105,4 +105,3 @@ public sealed class GetAuditsQueryHandler : IQueryHandler<GetAuditsQuery, PagedR
         return await projected.ToPagedResponseAsync(query, cancellationToken).ConfigureAwait(false);
     }
 }
-

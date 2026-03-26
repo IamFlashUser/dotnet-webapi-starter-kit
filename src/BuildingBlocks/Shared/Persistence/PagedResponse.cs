@@ -16,4 +16,3 @@ public sealed class PagedResponse<T>
 
     public bool HasPrevious => PageNumber > 1;
 }
-

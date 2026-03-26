@@ -10,4 +10,3 @@ public sealed class TenantStatusDto
     public string AdminEmail { get; init; } = default!;
     public string? Issuer { get; init; }
 }
-

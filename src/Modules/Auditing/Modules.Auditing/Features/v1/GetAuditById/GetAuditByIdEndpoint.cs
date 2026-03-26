@@ -27,4 +27,3 @@ public static class GetAuditByIdEndpoint
             .Produces(StatusCodes.Status404NotFound);
     }
 }
-

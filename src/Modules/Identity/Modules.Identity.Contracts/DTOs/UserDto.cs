@@ -1,4 +1,5 @@
 ﻿namespace FSH.Modules.Identity.Contracts.DTOs;
+
 public class UserDto
 {
     public string? Id { get; set; }

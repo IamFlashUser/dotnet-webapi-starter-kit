@@ -16,4 +16,3 @@ public sealed class AuditSensitiveAttribute : Attribute
     public AuditSensitiveAttribute(bool hash = false, bool redact = false)
         => (Hash, Redact) = (hash, redact);
 }
-

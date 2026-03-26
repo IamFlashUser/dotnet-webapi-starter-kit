@@ -15,4 +15,3 @@ public sealed class GetAuditsByTraceQueryValidator : AbstractValidator<GetAudits
             .WithMessage("FromUtc must be less than or equal to ToUtc.");
     }
 }
-

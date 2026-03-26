@@ -30,4 +30,3 @@ public sealed class SecurityAudit : ISecurityAudit
             subjectId: userId, clientId: clientId, authMethod: "", reasonCode: reason, claims: null,
             severity: AuditSeverity.Information, source: "Identity", ct);
 }
-

@@ -31,4 +31,3 @@ public static class GetAuditsByTraceEndpoint
             .Produces(StatusCodes.Status403Forbidden);
     }
 }
-

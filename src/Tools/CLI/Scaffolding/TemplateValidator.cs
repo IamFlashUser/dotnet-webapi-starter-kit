@@ -38,7 +38,7 @@ internal sealed class TemplateValidator : ITemplateValidator
         }
 
         // Validate project name characters
-        if (!string.IsNullOrEmpty(options.Name) && 
+        if (!string.IsNullOrEmpty(options.Name) &&
             options.Name.Any(c => !char.IsLetterOrDigit(c) && c != '.' && c != '-' && c != '_'))
         {
             errors.Add("Project name can only contain letters, digits, dots, hyphens, and underscores");

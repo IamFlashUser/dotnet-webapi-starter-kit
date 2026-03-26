@@ -74,4 +74,3 @@ public sealed class GetSecurityAuditsQueryHandler : IQueryHandler<GetSecurityAud
         return list;
     }
 }
-

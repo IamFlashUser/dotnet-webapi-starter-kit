@@ -24,4 +24,3 @@ public abstract class Specification<T, TResult> : Specification<T>, ISpecificati
         Selector = selector;
     }
 }
-

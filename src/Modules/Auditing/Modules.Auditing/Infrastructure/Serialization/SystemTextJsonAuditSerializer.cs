@@ -16,4 +16,3 @@ public sealed class SystemTextJsonAuditSerializer : IAuditSerializer
 
     public string SerializePayload(object payload) => JsonSerializer.Serialize(payload, Opts);
 }
-

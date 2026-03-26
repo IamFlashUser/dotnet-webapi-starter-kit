@@ -59,4 +59,3 @@ public sealed class JsonMaskingService : IAuditMaskingService
     private static bool ShouldMask(string key)
         => MaskKeywords.Any(k => key.Contains(k, StringComparison.OrdinalIgnoreCase));
 }
-

@@ -11,4 +11,3 @@ public sealed class GetAuditSummaryQuery : IQuery<AuditSummaryAggregateDto>
 
     public string? TenantId { get; init; }
 }
-

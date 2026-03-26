@@ -40,4 +40,3 @@ public sealed class EfCoreInboxStore<TDbContext> : IInboxStore
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
     }
 }
-

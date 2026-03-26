@@ -57,4 +57,3 @@ public sealed class GetAuditsByTraceQueryHandler : IQueryHandler<GetAuditsByTrac
         return list;
     }
 }
-

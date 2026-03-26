@@ -1,4 +1,5 @@
 ﻿namespace FSH.Framework.Shared.Constants;
+
 public static class ResourceConstants
 {
     public const string Tenants = nameof(Tenants);

@@ -1,4 +1,5 @@
 using AutoFixture;
+using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Core.Context;
 using FSH.Framework.Eventing.Outbox;
 using FSH.Framework.Shared.Multitenancy;
@@ -7,7 +8,6 @@ using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
 using FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
-using Finbuckle.MultiTenant.Abstractions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -140,7 +140,7 @@ public sealed class GenerateTokenCommandHandlerTests
     {
         // Arrange
         var command = new GenerateTokenCommand("user@example.com", "wrongpassword");
-        
+
         _requestContext.IpAddress.Returns("192.168.1.1");
         _requestContext.ClientId.Returns("test-client");
 
@@ -159,7 +159,7 @@ public sealed class GenerateTokenCommandHandlerTests
     {
         // Arrange
         var command = new GenerateTokenCommand("user@example.com", "wrongpassword");
-        
+
         _requestContext.IpAddress.Returns("192.168.1.1");
         _requestContext.ClientId.Returns("test-client");
 

@@ -6,4 +6,3 @@ public sealed class FixedWindowPolicyOptions
     public int WindowSeconds { get; set; } = 60;
     public int QueueLimit { get; set; } = 0;
 }
-

@@ -1,6 +1,6 @@
+using FSH.Modules.Auditing;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using FSH.Modules.Auditing;
 
 namespace Auditing.Tests.Serialization;
 

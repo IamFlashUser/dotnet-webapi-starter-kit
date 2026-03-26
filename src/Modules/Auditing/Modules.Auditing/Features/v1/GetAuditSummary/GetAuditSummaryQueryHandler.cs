@@ -89,4 +89,3 @@ public sealed class GetAuditSummaryQueryHandler : IQueryHandler<GetAuditSummaryQ
         }
     }
 }
-

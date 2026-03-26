@@ -1,7 +1,7 @@
-using System.Threading.Channels;
 using FSH.Modules.Auditing.Contracts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Threading.Channels;
 
 namespace FSH.Modules.Auditing;
 
@@ -133,4 +133,3 @@ public sealed class AuditBackgroundWorker : BackgroundService
         }
     }
 }
-

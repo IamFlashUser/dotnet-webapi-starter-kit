@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using Finbuckle.MultiTenant.Abstractions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FSH.Framework.Shared.Multitenancy;
 

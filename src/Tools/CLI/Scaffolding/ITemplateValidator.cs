@@ -34,8 +34,8 @@ internal interface ITemplateValidator
 internal record ValidationResult(bool IsValid, IEnumerable<string> Errors, IEnumerable<string> Warnings)
 {
     public static ValidationResult Success() => new(true, Enumerable.Empty<string>(), Enumerable.Empty<string>());
-    
+
     public static ValidationResult Failure(params string[] errors) => new(false, errors, Enumerable.Empty<string>());
-    
+
     public static ValidationResult Warning(params string[] warnings) => new(true, Enumerable.Empty<string>(), warnings);
 }

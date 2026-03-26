@@ -54,7 +54,7 @@ public sealed class RefreshTokenCommandHandlerTests
         // Arrange
         var oldAccessToken = CreateValidJwtToken("user123", "test@example.com");
         var command = new RefreshTokenCommand(oldAccessToken, "valid-refresh-token");
-        
+
         var userId = "user123";
         var claims = new List<Claim>
         {

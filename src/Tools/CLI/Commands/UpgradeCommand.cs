@@ -1,9 +1,9 @@
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using FSH.CLI.Models;
 using FSH.CLI.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FSH.CLI.Commands;
 
@@ -233,7 +233,7 @@ internal sealed class UpgradeCommand : AsyncCommand<UpgradeCommand.Settings>
         {
             AnsiConsole.WriteLine();
             AnsiConsole.MarkupLine("[blue]Release Notes:[/]");
-            
+
             var panel = new Panel(TruncateReleaseNotes(latestRelease.Body, 500))
             {
                 Border = BoxBorder.Rounded,
@@ -315,7 +315,7 @@ internal sealed class UpgradeCommand : AsyncCommand<UpgradeCommand.Settings>
         if (!diff.HasChanges)
         {
             AnsiConsole.MarkupLine("[dim]No package changes detected.[/]");
-            
+
             // Still update manifest version
             if (!settings.DryRun)
             {
@@ -341,7 +341,7 @@ internal sealed class UpgradeCommand : AsyncCommand<UpgradeCommand.Settings>
             foreach (var update in diff.Updated.OrderBy(u => u.Package))
             {
                 var willSkip = settings.SkipBreaking && update.IsBreaking;
-                
+
                 string status;
                 if (!update.IsBreaking)
                     status = "[green]Safe[/]";
@@ -351,7 +351,7 @@ internal sealed class UpgradeCommand : AsyncCommand<UpgradeCommand.Settings>
                     status = "[red]Breaking[/]";
 
                 var packageName = willSkip ? $"[strikethrough dim]{update.Package}[/]" : update.Package;
-                    
+
                 updateTable.AddRow(
                     packageName,
                     update.FromVersion,
@@ -533,7 +533,7 @@ internal sealed class UpgradeCommand : AsyncCommand<UpgradeCommand.Settings>
     private static async Task<string?> GetLocalPackagesPropsAsync(string projectPath)
     {
         var packagesPropsPath = Path.Combine(projectPath, "src", "Directory.Packages.props");
-        
+
         if (!File.Exists(packagesPropsPath))
         {
             // Try root
@@ -555,7 +555,7 @@ internal sealed class UpgradeCommand : AsyncCommand<UpgradeCommand.Settings>
 
         // Remove markdown links for cleaner display
         notes = System.Text.RegularExpressions.Regex.Replace(notes, @"\[([^\]]+)\]\([^\)]+\)", "$1");
-        
+
         if (notes.Length <= maxLength)
             return notes;
 

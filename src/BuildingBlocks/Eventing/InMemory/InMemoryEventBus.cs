@@ -1,8 +1,8 @@
-using System.Reflection;
 using FSH.Framework.Eventing.Abstractions;
 using FSH.Framework.Eventing.Inbox;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 namespace FSH.Framework.Eventing.InMemory;
 

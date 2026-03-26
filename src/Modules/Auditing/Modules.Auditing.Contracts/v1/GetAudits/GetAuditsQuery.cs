@@ -35,4 +35,3 @@ public sealed class GetAuditsQuery : IPagedQuery, IQuery<PagedResponse<AuditSumm
 
     public string? Search { get; set; }
 }
-

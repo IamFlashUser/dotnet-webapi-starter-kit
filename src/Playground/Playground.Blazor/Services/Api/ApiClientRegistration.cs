@@ -1,6 +1,6 @@
-using System.Net.Http;
 using FSH.Playground.Blazor.ApiClient;
 using FSH.Playground.Blazor.Services.Api;
+using System.Net.Http;
 
 namespace FSH.Playground.Blazor;
 

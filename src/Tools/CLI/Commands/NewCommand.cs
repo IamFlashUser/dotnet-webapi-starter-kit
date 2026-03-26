@@ -1,11 +1,11 @@
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using FSH.CLI.Models;
 using FSH.CLI.Prompts;
 using FSH.CLI.Scaffolding;
 using FSH.CLI.UI;
 using FSH.CLI.Validation;
 using Spectre.Console.Cli;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FSH.CLI.Commands;
 

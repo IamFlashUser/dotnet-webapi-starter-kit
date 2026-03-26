@@ -38,4 +38,3 @@ public sealed class AuditDetailDto
     /// </summary>
     public JsonElement Payload { get; set; }
 }
-

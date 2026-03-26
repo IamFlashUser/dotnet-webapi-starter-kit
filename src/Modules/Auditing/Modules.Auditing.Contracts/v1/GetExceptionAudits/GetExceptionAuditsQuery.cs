@@ -18,4 +18,3 @@ public sealed class GetExceptionAuditsQuery : IQuery<IReadOnlyList<AuditSummaryD
 
     public DateTime? ToUtc { get; init; }
 }
-

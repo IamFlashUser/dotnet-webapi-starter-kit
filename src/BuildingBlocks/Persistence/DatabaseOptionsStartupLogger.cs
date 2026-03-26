@@ -50,4 +50,3 @@ public sealed class DatabaseOptionsStartupLogger : IHostedService
     /// <returns>A completed task.</returns>
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
-

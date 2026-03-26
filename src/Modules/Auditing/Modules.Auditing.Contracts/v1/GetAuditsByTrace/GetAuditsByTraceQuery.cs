@@ -11,4 +11,3 @@ public sealed class GetAuditsByTraceQuery : IQuery<IReadOnlyList<AuditSummaryDto
 
     public DateTime? ToUtc { get; init; }
 }
-

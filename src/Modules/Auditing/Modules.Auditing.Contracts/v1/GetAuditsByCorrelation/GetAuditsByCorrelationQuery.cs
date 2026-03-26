@@ -11,4 +11,3 @@ public sealed class GetAuditsByCorrelationQuery : IQuery<IReadOnlyList<AuditSumm
 
     public DateTime? ToUtc { get; init; }
 }
-

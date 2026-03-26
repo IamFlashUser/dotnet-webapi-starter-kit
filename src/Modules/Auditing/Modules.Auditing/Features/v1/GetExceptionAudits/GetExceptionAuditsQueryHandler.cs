@@ -107,4 +107,3 @@ public sealed class GetExceptionAuditsQueryHandler : IQueryHandler<GetExceptionA
             .ConfigureAwait(false);
     }
 }
-

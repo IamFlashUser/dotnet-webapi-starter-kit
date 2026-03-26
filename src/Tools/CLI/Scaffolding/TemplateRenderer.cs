@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using FSH.CLI.Models;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FSH.CLI.Scaffolding;
 

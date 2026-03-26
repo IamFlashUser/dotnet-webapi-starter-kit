@@ -122,9 +122,9 @@ internal sealed class GitHubReleaseService : IDisposable
             // Use raw.githubusercontent.com for file content
             using var rawClient = new HttpClient();
             var url = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{refName}/src/Directory.Packages.props";
-            
+
             var response = await rawClient.GetAsync(url, cancellationToken);
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 return null;

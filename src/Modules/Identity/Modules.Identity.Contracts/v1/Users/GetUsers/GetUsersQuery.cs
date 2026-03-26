@@ -4,4 +4,3 @@ using Mediator;
 namespace FSH.Modules.Identity.Contracts.v1.Users.GetUsers;
 
 public sealed record GetUsersQuery : IQuery<List<UserDto>>;
-

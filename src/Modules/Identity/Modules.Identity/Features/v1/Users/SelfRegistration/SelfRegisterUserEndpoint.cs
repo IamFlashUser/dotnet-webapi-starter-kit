@@ -1,7 +1,7 @@
-using FSH.Modules.Identity.Contracts.v1.Users.RegisterUser;
 using FSH.Framework.Shared.Identity;
 using FSH.Framework.Shared.Identity.Authorization;
 using FSH.Framework.Shared.Multitenancy;
+using FSH.Modules.Identity.Contracts.v1.Users.RegisterUser;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
