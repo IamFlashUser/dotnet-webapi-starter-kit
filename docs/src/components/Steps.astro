@@ -40,4 +40,17 @@
 		border-radius: 50%;
 		line-height: 1;
 	}
+
+	@media (max-width: 768px) {
+		.steps {
+			padding-left: 1.4rem;
+		}
+		.steps :global(> h3::before),
+		.steps :global(> h4::before) {
+			left: -2.15rem;
+			width: 1.4rem;
+			height: 1.4rem;
+			font-size: 0.65rem;
+		}
+	}
 </style>
