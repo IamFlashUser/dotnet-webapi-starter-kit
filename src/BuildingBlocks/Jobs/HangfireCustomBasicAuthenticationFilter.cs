@@ -7,9 +7,9 @@ using System.Net.Http.Headers;
 
 namespace FSH.Framework.Jobs;
 
-public class HangfireCustomBasicAuthenticationFilter : IDashboardAuthorizationFilter
+public sealed class HangfireCustomBasicAuthenticationFilter : IDashboardAuthorizationFilter
 {
-    private const string _AuthenticationScheme = "Basic";
+    private const string AuthenticationScheme = "Basic";
     private readonly ILogger<HangfireCustomBasicAuthenticationFilter> _logger;
     public string User { get; set; } = default!;
     public string Pass { get; set; } = default!;
@@ -57,10 +57,7 @@ public class HangfireCustomBasicAuthenticationFilter : IDashboardAuthorizationFi
             return true;
         }
 
-        if (_logger.IsEnabled(LogLevel.Information))
-        {
-            _logger.LogInformation("auth tokens [{UserName}] [{Password}] do not match configuration", tokens.Username, tokens.Password);
-        }
+        _logger.LogInformation("Hangfire dashboard authentication failed — credentials do not match configuration");
 
         SetChallengeResponse(httpContext);
         return false;
@@ -80,7 +77,7 @@ public class HangfireCustomBasicAuthenticationFilter : IDashboardAuthorizationFi
 
     private static bool NotBasicAuthentication(AuthenticationHeaderValue authValues)
     {
-        return !_AuthenticationScheme.Equals(authValues.Scheme, StringComparison.OrdinalIgnoreCase);
+        return !AuthenticationScheme.Equals(authValues.Scheme, StringComparison.OrdinalIgnoreCase);
     }
 
     private static void SetChallengeResponse(HttpContext httpContext)
@@ -90,12 +87,12 @@ public class HangfireCustomBasicAuthenticationFilter : IDashboardAuthorizationFi
     }
 }
 
-public class BasicAuthenticationTokens
+public sealed class BasicAuthenticationTokens
 {
     private readonly string[] _tokens;
 
-    public string Username => _tokens[0];
-    public string Password => _tokens[1];
+    public string? Username => _tokens.Length > 0 ? _tokens[0] : null;
+    public string? Password => _tokens.Length > 1 ? _tokens[1] : null;
 
     public BasicAuthenticationTokens(string[] tokens)
     {
@@ -104,21 +101,14 @@ public class BasicAuthenticationTokens
 
     public bool AreInvalid()
     {
-        return ContainsTwoTokens() && ValidTokenValue(Username) && ValidTokenValue(Password);
+        return _tokens.Length != 2
+            || string.IsNullOrWhiteSpace(_tokens[0])
+            || string.IsNullOrWhiteSpace(_tokens[1]);
     }
 
     public bool CredentialsMatch(string user, string pass)
     {
-        return Username.Equals(user, StringComparison.Ordinal) && Password.Equals(pass, StringComparison.Ordinal);
-    }
-
-    private static bool ValidTokenValue(string token)
-    {
-        return string.IsNullOrWhiteSpace(token);
-    }
-
-    private bool ContainsTwoTokens()
-    {
-        return _tokens.Length == 2;
+        return string.Equals(Username, user, StringComparison.Ordinal)
+            && string.Equals(Password, pass, StringComparison.Ordinal);
     }
 }
