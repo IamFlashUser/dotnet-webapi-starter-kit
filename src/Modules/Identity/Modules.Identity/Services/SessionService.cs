@@ -17,18 +17,21 @@ public sealed class SessionService : ISessionService
     private readonly ICurrentUser _currentUser;
     private readonly IMultiTenantContextAccessor<AppTenantInfo> _multiTenantContextAccessor;
     private readonly ILogger<SessionService> _logger;
+    private readonly TimeProvider _timeProvider;
     private readonly Parser _uaParser;
 
     public SessionService(
         IdentityDbContext db,
         ICurrentUser currentUser,
         IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
-        ILogger<SessionService> logger)
+        ILogger<SessionService> logger,
+        TimeProvider timeProvider)
     {
         _db = db;
         _currentUser = currentUser;
         _multiTenantContextAccessor = multiTenantContextAccessor;
         _logger = logger;
+        _timeProvider = timeProvider;
         _uaParser = Parser.GetDefault();
     }
 
@@ -87,9 +90,10 @@ public sealed class SessionService : ISessionService
             throw new UnauthorizedAccessException("Cannot view sessions for another user");
         }
 
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
         var sessions = await _db.UserSessions
             .AsNoTracking()
-            .Where(s => s.UserId == userId && !s.IsRevoked && s.ExpiresAt > DateTime.UtcNow)
+            .Where(s => s.UserId == userId && !s.IsRevoked && s.ExpiresAt > now)
             .OrderByDescending(s => s.LastActivityAt)
             .ToListAsync(cancellationToken);
 
@@ -102,10 +106,11 @@ public sealed class SessionService : ISessionService
     {
         EnsureValidTenant();
 
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
         var sessions = await _db.UserSessions
             .AsNoTracking()
             .Include(s => s.User)
-            .Where(s => s.UserId == userId && !s.IsRevoked && s.ExpiresAt > DateTime.UtcNow)
+            .Where(s => s.UserId == userId && !s.IsRevoked && s.ExpiresAt > now)
             .OrderByDescending(s => s.LastActivityAt)
             .ToListAsync(cancellationToken);
 
@@ -314,7 +319,7 @@ public sealed class SessionService : ISessionService
             return true; // No session tracking for this token (backwards compatibility)
         }
 
-        return !session.IsRevoked && session.ExpiresAt > DateTime.UtcNow;
+        return !session.IsRevoked && session.ExpiresAt > _timeProvider.GetUtcNow().UtcDateTime;
     }
 
     public async Task<Guid?> GetSessionIdByRefreshTokenAsync(
@@ -333,9 +338,10 @@ public sealed class SessionService : ISessionService
     public async Task CleanupExpiredSessionsAsync(
         CancellationToken cancellationToken = default)
     {
-        var cutoffDate = DateTime.UtcNow.AddDays(-30); // Keep revoked sessions for 30 days for audit
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
+        var cutoffDate = now.AddDays(-30); // Keep revoked sessions for 30 days for audit
         var expiredSessions = await _db.UserSessions
-            .Where(s => s.ExpiresAt < DateTime.UtcNow && s.ExpiresAt < cutoffDate)
+            .Where(s => s.ExpiresAt < now && s.ExpiresAt < cutoffDate)
             .ToListAsync(cancellationToken);
 
         if (expiredSessions.Count > 0)
@@ -349,7 +355,7 @@ public sealed class SessionService : ISessionService
         }
     }
 
-    private static UserSessionDto MapToDto(UserSession session, bool isCurrentSession)
+    private UserSessionDto MapToDto(UserSession session, bool isCurrentSession)
     {
         return new UserSessionDto
         {
@@ -366,7 +372,7 @@ public sealed class SessionService : ISessionService
             CreatedAt = session.CreatedAt,
             LastActivityAt = session.LastActivityAt,
             ExpiresAt = session.ExpiresAt,
-            IsActive = !session.IsRevoked && session.ExpiresAt > DateTime.UtcNow,
+            IsActive = !session.IsRevoked && session.ExpiresAt > _timeProvider.GetUtcNow().UtcDateTime,
             IsCurrentSession = isCurrentSession
         };
     }

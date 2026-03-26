@@ -11,13 +11,16 @@ internal sealed class PasswordExpiryService : IPasswordExpiryService
 {
     private readonly UserManager<FshUser> _userManager;
     private readonly PasswordPolicyOptions _passwordPolicyOptions;
+    private readonly TimeProvider _timeProvider;
 
     public PasswordExpiryService(
         UserManager<FshUser> userManager,
-        IOptions<PasswordPolicyOptions> passwordPolicyOptions)
+        IOptions<PasswordPolicyOptions> passwordPolicyOptions,
+        TimeProvider timeProvider)
     {
         _userManager = userManager;
         _passwordPolicyOptions = passwordPolicyOptions.Value;
+        _timeProvider = timeProvider;
     }
 
     public async Task<bool> IsPasswordExpiredAsync(string userId, CancellationToken cancellationToken = default)
@@ -75,7 +78,7 @@ internal sealed class PasswordExpiryService : IPasswordExpiryService
         var user = await _userManager.FindByIdAsync(userId);
         if (user is not null)
         {
-            user.LastPasswordChangeDate = DateTime.UtcNow;
+            user.LastPasswordChangeDate = _timeProvider.GetUtcNow().UtcDateTime;
             await _userManager.UpdateAsync(user);
         }
     }
@@ -89,7 +92,7 @@ internal sealed class PasswordExpiryService : IPasswordExpiryService
         }
 
         var expiryDate = user.LastPasswordChangeDate.AddDays(_passwordPolicyOptions.PasswordExpiryDays);
-        return DateTime.UtcNow > expiryDate;
+        return _timeProvider.GetUtcNow().UtcDateTime > expiryDate;
     }
 
     private int GetDaysUntilExpiry(FshUser user)
@@ -100,7 +103,7 @@ internal sealed class PasswordExpiryService : IPasswordExpiryService
         }
 
         var expiryDate = user.LastPasswordChangeDate.AddDays(_passwordPolicyOptions.PasswordExpiryDays);
-        var daysUntilExpiry = (int)(expiryDate - DateTime.UtcNow).TotalDays;
+        var daysUntilExpiry = (int)(expiryDate - _timeProvider.GetUtcNow().UtcDateTime).TotalDays;
         return daysUntilExpiry;
     }
 

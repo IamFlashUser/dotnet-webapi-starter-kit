@@ -16,7 +16,7 @@ public sealed class TenantProvisioning
 
     public string? JobId { get; private set; }
 
-    public DateTime CreatedUtc { get; private set; } = DateTime.UtcNow;
+    public DateTime CreatedUtc { get; private set; } = TimeProvider.System.GetUtcNow().UtcDateTime;
 
     public DateTime? StartedUtc { get; private set; }
 
@@ -32,7 +32,7 @@ public sealed class TenantProvisioning
     {
         TenantId = tenantId;
         CorrelationId = correlationId;
-        CreatedUtc = DateTime.UtcNow;
+        CreatedUtc = TimeProvider.System.GetUtcNow().UtcDateTime;
     }
 
     public void SetJobId(string jobId) => JobId = jobId;
@@ -40,14 +40,14 @@ public sealed class TenantProvisioning
     public void MarkRunning(string step)
     {
         Status = TenantProvisioningStatus.Running;
-        StartedUtc ??= DateTime.UtcNow;
+        StartedUtc ??= TimeProvider.System.GetUtcNow().UtcDateTime;
         CurrentStep = step;
     }
 
     public void MarkCompleted()
     {
         Status = TenantProvisioningStatus.Completed;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedUtc = TimeProvider.System.GetUtcNow().UtcDateTime;
         CurrentStep = null;
         Error = null;
     }
@@ -57,6 +57,6 @@ public sealed class TenantProvisioning
         Status = TenantProvisioningStatus.Failed;
         CurrentStep = step;
         Error = error;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedUtc = TimeProvider.System.GetUtcNow().UtcDateTime;
     }
 }

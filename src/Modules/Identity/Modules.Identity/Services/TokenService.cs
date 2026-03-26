@@ -15,13 +15,15 @@ public sealed class TokenService : ITokenService
     private readonly JwtOptions _options;
     private readonly ILogger<TokenService> _logger;
     private readonly IdentityMetrics _metrics;
+    private readonly TimeProvider _timeProvider;
 
-    public TokenService(IOptions<JwtOptions> options, ILogger<TokenService> logger, IdentityMetrics metrics)
+    public TokenService(IOptions<JwtOptions> options, ILogger<TokenService> logger, IdentityMetrics metrics, TimeProvider timeProvider)
     {
         ArgumentNullException.ThrowIfNull(options);
         _options = options.Value;
         _logger = logger;
         _metrics = metrics;
+        _timeProvider = timeProvider;
     }
 
     public Task<TokenResponse> IssueAsync(
@@ -34,7 +36,8 @@ public sealed class TokenService : ITokenService
         var creds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
         // Access token
-        var accessTokenExpiry = DateTime.UtcNow.AddMinutes(_options.AccessTokenMinutes);
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
+        var accessTokenExpiry = now.AddMinutes(_options.AccessTokenMinutes);
         var jwtToken = new JwtSecurityToken(
             _options.Issuer,
             _options.Audience,
@@ -46,7 +49,7 @@ public sealed class TokenService : ITokenService
 
         // Refresh token
         var refreshToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-        var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenDays);
+        var refreshTokenExpiry = now.AddDays(_options.RefreshTokenDays);
 
         var userEmail = claims.Where(a => a.Type == ClaimTypes.Email).Select(a => a.Value).First();
         if (_logger.IsEnabled(LogLevel.Information))

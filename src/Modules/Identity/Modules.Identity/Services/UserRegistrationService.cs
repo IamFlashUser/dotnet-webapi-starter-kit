@@ -221,6 +221,7 @@ internal sealed class UserRegistrationService(
         await userManager.AddToRoleAsync(user, RoleConstants.Basic);
 
         var defaultGroups = await db.Groups
+            .AsNoTracking()
             .Where(g => g.IsDefault && !g.IsDeleted)
             .ToListAsync(cancellationToken);
 
@@ -265,7 +266,7 @@ internal sealed class UserRegistrationService(
 
         var integrationEvent = new UserRegisteredIntegrationEvent(
             Id: Guid.NewGuid(),
-            OccurredOnUtc: DateTime.UtcNow,
+            OccurredOnUtc: TimeProvider.System.GetUtcNow().UtcDateTime,
             TenantId: tenantId,
             CorrelationId: Guid.NewGuid().ToString(),
             Source: source,

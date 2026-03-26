@@ -14,15 +14,18 @@ public sealed class SessionCleanupHostedService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<SessionCleanupHostedService> _logger;
+    private readonly TimeProvider _timeProvider;
     private readonly TimeSpan _cleanupInterval = TimeSpan.FromHours(1);
     private readonly int _retentionDays = 30;
 
     public SessionCleanupHostedService(
         IServiceScopeFactory scopeFactory,
-        ILogger<SessionCleanupHostedService> logger)
+        ILogger<SessionCleanupHostedService> logger,
+        TimeProvider timeProvider)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
+        _timeProvider = timeProvider;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -55,9 +58,10 @@ public sealed class SessionCleanupHostedService : BackgroundService
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
 
-        var cutoffDate = DateTime.UtcNow.AddDays(-_retentionDays);
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
+        var cutoffDate = now.AddDays(-_retentionDays);
         var expiredSessions = await db.UserSessions
-            .Where(s => s.ExpiresAt < DateTime.UtcNow && s.ExpiresAt < cutoffDate)
+            .Where(s => s.ExpiresAt < now && s.ExpiresAt < cutoffDate)
             .ToListAsync(cancellationToken);
 
         if (expiredSessions.Count > 0)

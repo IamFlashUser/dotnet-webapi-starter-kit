@@ -194,12 +194,6 @@ public static class Audit
             await Publisher.PublishAsync(env, ct);
         }
 
-        /// <summary>
-        /// Synchronous convenience overload. Uses sync-over-async because the Builder
-        /// is consumed from synchronous call-sites (e.g., Dispose, IDisposable teardown).
-        /// Prefer <see cref="WriteAsync"/> whenever an async context is available.
-        /// </summary>
-        public void Write(CancellationToken ct = default) => WriteAsync(ct).AsTask().GetAwaiter().GetResult();
     }
 
     // --- tiny safe defaults so dev builds run ---------------------------------

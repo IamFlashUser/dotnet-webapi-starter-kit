@@ -34,19 +34,19 @@ public sealed class TenantProvisioningStep
     public void MarkRunning()
     {
         Status = TenantProvisioningStatus.Running;
-        StartedUtc ??= DateTime.UtcNow;
+        StartedUtc ??= TimeProvider.System.GetUtcNow().UtcDateTime;
     }
 
     public void MarkCompleted()
     {
         Status = TenantProvisioningStatus.Completed;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedUtc = TimeProvider.System.GetUtcNow().UtcDateTime;
     }
 
     public void MarkFailed(string error)
     {
         Status = TenantProvisioningStatus.Failed;
         Error = error;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedUtc = TimeProvider.System.GetUtcNow().UtcDateTime;
     }
 }

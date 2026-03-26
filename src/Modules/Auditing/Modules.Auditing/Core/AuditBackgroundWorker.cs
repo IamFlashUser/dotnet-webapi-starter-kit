@@ -50,7 +50,10 @@ public sealed class AuditBackgroundWorker : BackgroundService
                 }
             }
         }
-        catch (OperationCanceledException) { /* Expected during graceful shutdown */ }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
+            // Expected during graceful shutdown
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Audit background worker crashed.");

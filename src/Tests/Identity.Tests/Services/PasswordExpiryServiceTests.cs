@@ -24,7 +24,7 @@ public sealed class PasswordExpiryServiceTests
 
     private PasswordExpiryService CreateService(PasswordPolicyOptions options)
     {
-        return new PasswordExpiryService(_userManager, Options.Create(options));
+        return new PasswordExpiryService(_userManager, Options.Create(options), TimeProvider.System);
     }
 
     private static FshUser CreateUser(DateTime lastPasswordChangeDate)

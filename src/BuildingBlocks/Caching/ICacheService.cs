@@ -39,32 +39,4 @@ public interface ICacheService
     /// <param name="ct">Cancellation token for the operation.</param>
     Task RefreshItemAsync(string key, CancellationToken ct = default);
 
-    /// <summary>
-    /// Retrieves an item from the cache synchronously.
-    /// </summary>
-    /// <typeparam name="T">The type of the cached item.</typeparam>
-    /// <param name="key">The unique cache key.</param>
-    /// <returns>The cached item if found; otherwise, null.</returns>
-    T? GetItem<T>(string key);
-
-    /// <summary>
-    /// Stores an item in the cache synchronously.
-    /// </summary>
-    /// <typeparam name="T">The type of the item to cache.</typeparam>
-    /// <param name="key">The unique cache key.</param>
-    /// <param name="value">The value to cache.</param>
-    /// <param name="sliding">Optional sliding expiration. Uses default if not specified.</param>
-    void SetItem<T>(string key, T value, TimeSpan? sliding = default);
-
-    /// <summary>
-    /// Removes an item from the cache synchronously.
-    /// </summary>
-    /// <param name="key">The unique cache key to remove.</param>
-    void RemoveItem(string key);
-
-    /// <summary>
-    /// Refreshes the sliding expiration of a cached item synchronously.
-    /// </summary>
-    /// <param name="key">The unique cache key to refresh.</param>
-    void RefreshItem(string key);
 }

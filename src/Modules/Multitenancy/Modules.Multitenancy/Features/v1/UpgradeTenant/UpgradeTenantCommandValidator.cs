@@ -8,6 +8,6 @@ public sealed class UpgradeTenantCommandValidator : AbstractValidator<UpgradeTen
     public UpgradeTenantCommandValidator()
     {
         RuleFor(t => t.Tenant).NotEmpty();
-        RuleFor(t => t.ExtendedExpiryDate).GreaterThan(DateTime.UtcNow);
+        RuleFor(t => t.ExtendedExpiryDate).GreaterThan(TimeProvider.System.GetUtcNow().UtcDateTime);
     }
 }

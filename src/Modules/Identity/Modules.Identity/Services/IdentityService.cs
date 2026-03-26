@@ -18,17 +18,20 @@ public sealed class IdentityService : IIdentityService
     private readonly ILogger<IdentityService> _logger;
     private readonly IMultiTenantContextAccessor<AppTenantInfo>? _multiTenantContextAccessor;
     private readonly IGroupRoleService _groupRoleService;
+    private readonly TimeProvider _timeProvider;
 
     public IdentityService(
         UserManager<FshUser> userManager,
         IMultiTenantContextAccessor<AppTenantInfo>? multiTenantContextAccessor,
         ILogger<IdentityService> logger,
-        IGroupRoleService groupRoleService)
+        IGroupRoleService groupRoleService,
+        TimeProvider timeProvider)
     {
         _userManager = userManager;
         _multiTenantContextAccessor = multiTenantContextAccessor;
         _logger = logger;
         _groupRoleService = groupRoleService;
+        _timeProvider = timeProvider;
     }
 
     public async Task<(string Subject, IEnumerable<Claim> Claims)?>
@@ -136,11 +139,12 @@ public sealed class IdentityService : IIdentityService
 
     private void ValidateRefreshTokenExpiry(FshUser user)
     {
-        if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
+        if (user.RefreshTokenExpiryTime <= now)
         {
             _logger.LogWarning(
                 "Refresh token expired for user {UserId}. Expired at: {ExpiryTime}, Current time: {CurrentTime}",
-                user.Id, user.RefreshTokenExpiryTime, DateTime.UtcNow);
+                user.Id, user.RefreshTokenExpiryTime, now);
             throw new UnauthorizedException("refresh token is invalid or expired");
         }
     }
@@ -158,7 +162,7 @@ public sealed class IdentityService : IIdentityService
         }
     }
 
-    private static void ValidateTenantStatus(AppTenantInfo tenant)
+    private void ValidateTenantStatus(AppTenantInfo tenant)
     {
         if (tenant.Id == MultitenancyConstants.Root.Id)
         {
@@ -170,7 +174,7 @@ public sealed class IdentityService : IIdentityService
             throw new UnauthorizedException($"tenant {tenant.Id} is deactivated");
         }
 
-        if (DateTime.UtcNow > tenant.ValidUpto)
+        if (_timeProvider.GetUtcNow().UtcDateTime > tenant.ValidUpto)
         {
             throw new UnauthorizedException($"tenant {tenant.Id} validity has expired");
         }
