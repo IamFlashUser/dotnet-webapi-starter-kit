@@ -84,6 +84,7 @@
 	padding: 1.5rem 2rem 3rem;
 	min-width: 0;
 	max-width: 100%;
+	overflow-x: hidden;
 }
 
 /* ── Right TOC ───────────────────────────────────────────── */
@@ -185,6 +186,12 @@
 
 /* ── Prose (markdown content) ────────────────────────────── */
 
+.prose {
+	max-width: 100%;
+	overflow-wrap: break-word;
+	word-break: break-word;
+}
+
 .prose h1 {
 	font-size: 1.65rem;
 	font-weight: 500;
@@ -254,13 +261,18 @@
 	margin: 2rem 0;
 }
 
-/* Tables */
+/* Tables — scrollable wrapper for mobile */
+.prose .table-wrapper {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	margin: 1rem 0;
+}
 .prose table {
 	width: fit-content;
 	min-width: min(100%, 24rem);
 	max-width: 100%;
 	border-collapse: collapse;
-	margin: 1rem 0;
+	margin: 0;
 	font-size: 0.84rem;
 	border: 1px solid var(--border);
 	border-radius: 8px;
@@ -303,6 +315,7 @@
 	background: #eff1f3;
 	color: #24292f;
 	border: 1px solid rgba(0,0,0,0.06);
+	word-break: break-all;
 }
 :root[data-theme="dark"] .prose :not(pre) > code {
 	background: rgba(255,255,255,0.06);

@@ -105,6 +105,17 @@ const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 				<slot />
 			</article>
 
+			<script is:inline>
+				// Wrap tables in scrollable containers for mobile
+				document.querySelectorAll('.prose table').forEach(function(table) {
+					if (table.parentElement.classList.contains('table-wrapper')) return;
+					var wrapper = document.createElement('div');
+					wrapper.className = 'table-wrapper';
+					table.parentNode.insertBefore(wrapper, table);
+					wrapper.appendChild(table);
+				});
+			</script>
+
 			<div class="docs-edit">
 				<a href={editUrl} target="_blank" rel="noopener">
 					Edit this page on GitHub &rarr;
