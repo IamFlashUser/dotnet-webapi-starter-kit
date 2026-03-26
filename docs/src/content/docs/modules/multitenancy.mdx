@@ -1,0 +1,26 @@
+---
+title: Multitenancy Module
+description: Multi-tenant support in fullstackhero using Finbuckle.MultiTenant.
+---
+
+fullstackhero provides first-class multitenancy support using [Finbuckle.MultiTenant](https://www.finbuckle.com/multitenant/).
+
+## Tenant Resolution Strategies
+
+Tenants are resolved via multiple strategies:
+
+- **Claim** — from the authenticated user's JWT claims
+- **Header** — from a custom `tenant` HTTP header
+- **Query string** — from a `tenant` query parameter
+
+## Data Isolation
+
+Each entity inherits `IHasTenant` which provides automatic tenant filtering at the EF Core level. Queries are automatically scoped to the current tenant.
+
+## Tenant Management
+
+The module provides endpoints for:
+
+- Creating tenants
+- Activating/deactivating tenants
+- Updating tenant configuration

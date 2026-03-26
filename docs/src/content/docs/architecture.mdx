@@ -1,0 +1,42 @@
+---
+title: Architecture Overview
+description: Understanding the modular monolith architecture of fullstackhero.
+---
+
+fullstackhero follows a **Modular Monolith** pattern combined with **Vertical Slice Architecture (VSA)**. This gives you the simplicity of a monolith deployment with the clean boundaries of a microservices architecture.
+
+## Why Modular Monolith?
+
+- **Simple deployment** — single deployable unit, no distributed system complexity
+- **Clean boundaries** — modules are isolated bounded contexts
+- **Easy extraction** — modules can be extracted into microservices when needed
+- **Shared infrastructure** — database connections, caching, and auth are shared
+
+## Module Communication
+
+Modules communicate exclusively through **Contracts** projects. A module must never reference another module's runtime project directly.
+
+```
+Module A ──references──> Module B Contracts (queries, commands, events, DTOs)
+Module A ──NEVER──>      Module B (runtime implementation)
+```
+
+This is enforced by architecture tests using NetArchTest.
+
+## Vertical Slice Architecture
+
+Each feature is a complete vertical slice containing:
+
+1. **Endpoint** — HTTP entry point (minimal API)
+2. **Command/Query** — CQRS message (defined in Contracts)
+3. **Handler** — Business logic
+4. **Validator** — Input validation (FluentValidation)
+
+Features are organized by version and area:
+
+```
+Features/v1/{Area}/{FeatureName}/
+├── {FeatureName}Endpoint.cs
+├── {FeatureName}CommandHandler.cs
+└── {FeatureName}CommandValidator.cs
+```

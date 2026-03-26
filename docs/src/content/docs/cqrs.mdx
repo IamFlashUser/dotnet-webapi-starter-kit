@@ -1,0 +1,46 @@
+---
+title: CQRS Pattern
+description: How commands, queries, and handlers work in fullstackhero.
+---
+
+fullstackhero uses the **CQRS (Command Query Responsibility Segregation)** pattern powered by [Mediator](https://github.com/martinothamar/Mediator) — a source-generated, high-performance mediator library.
+
+## Commands & Queries
+
+Defined in `Modules.{Name}.Contracts` so other modules can send them:
+
+```csharp
+// Command — changes state, returns a response
+public record RegisterUserCommand(
+    string Email,
+    string Password,
+    string FirstName,
+    string LastName) : ICommand<RegisterUserResponse>;
+
+// Query — reads state, returns data
+public record GetUserByIdQuery(Guid UserId) : IQuery<UserDto>;
+```
+
+## Handlers
+
+Defined in `Modules.{Name}/Features/` (private to the module):
+
+```csharp
+public sealed class RegisterUserCommandHandler(
+    UserManager<ApplicationUser> userManager)
+    : ICommandHandler<RegisterUserCommand, RegisterUserResponse>
+{
+    public async ValueTask<RegisterUserResponse> Handle(
+        RegisterUserCommand command,
+        CancellationToken cancellationToken)
+    {
+        // Business logic here
+    }
+}
+```
+
+### Conventions
+
+- Handlers return `ValueTask<T>` (not `Task<T>`)
+- Use `.ConfigureAwait(false)` on all `await` calls
+- One handler per file, named `{Feature}CommandHandler` or `{Feature}QueryHandler`

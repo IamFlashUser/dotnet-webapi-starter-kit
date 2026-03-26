@@ -1,0 +1,32 @@
+---
+title: Identity Module
+description: User management, authentication, and authorization in fullstackhero.
+---
+
+The Identity module handles user management, authentication, roles, and permissions.
+
+## Features
+
+- User registration and management
+- JWT Bearer token authentication
+- Role-based access control
+- Permission-based authorization
+- Token refresh
+- Password reset
+
+## Authentication
+
+fullstackhero uses **JWT Bearer tokens** with ASP.NET Identity as the user store.
+
+## Permissions
+
+Permissions are defined as constants in `IdentityPermissionConstants` and applied to endpoints:
+
+```csharp
+endpoints.MapPost("/register", handler)
+    .RequirePermission(IdentityPermissionConstants.Users.Create);
+```
+
+## Key Contracts
+
+Commands, queries, and DTOs are defined in `Modules.Identity.Contracts` for use by other modules.

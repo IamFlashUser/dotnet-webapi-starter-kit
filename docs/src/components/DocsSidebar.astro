@@ -1,0 +1,29 @@
+---
+import { sidebar } from '../config/docs.config';
+
+interface Props {
+	currentSlug: string;
+}
+
+const { currentSlug } = Astro.props;
+---
+
+<aside class="docs-sidebar" id="docs-sidebar">
+	{sidebar.map((group) => (
+		<div class="sidebar-group">
+			<div class="sidebar-label">{group.label}</div>
+			<ul class="sidebar-links">
+				{group.items.map((item) => (
+					<li>
+						<a
+							href={`/docs/${item.slug}/`}
+							class:list={[{ active: currentSlug === item.slug }]}
+						>
+							{item.title}
+						</a>
+					</li>
+				))}
+			</ul>
+		</div>
+	))}
+</aside>

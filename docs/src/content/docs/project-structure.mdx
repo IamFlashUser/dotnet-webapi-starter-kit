@@ -1,0 +1,64 @@
+---
+title: Project Structure
+description: Understanding the fullstackhero .NET Starter Kit folder layout.
+---
+
+## High-Level Layout
+
+```
+dotnet-starter-kit/
+├── src/
+│   ├── BuildingBlocks/       # Shared framework libraries
+│   ├── Modules/              # Bounded context modules
+│   ├── Playground/           # Host applications
+│   └── Tests/                # Test projects
+├── docs/                     # This documentation site
+└── FSH.Framework.slnx        # Solution file
+```
+
+## BuildingBlocks
+
+Shared framework libraries consumed by all modules. **Do not modify without careful consideration** — changes here have wide blast radius.
+
+| Project | Purpose |
+|---------|---------|
+| `Core` | Base entities, domain events, CQRS interfaces, specifications |
+| `Persistence` | EF Core base DbContext, repository, migrations |
+| `Web` | Minimal API extensions, middleware, exception handling |
+| `Caching` | Redis cache service abstraction |
+| `Eventing` | Integration event infrastructure |
+| `Authorization` | Permission-based authorization |
+
+## Modules
+
+Each module is a bounded context with two projects:
+
+```
+Modules.{Name}/              # Runtime (internal implementation)
+Modules.{Name}.Contracts/    # Public API (commands, queries, events, DTOs)
+```
+
+### Current Modules
+
+- **Identity** — User management, authentication, roles, permissions
+- **Multitenancy** — Tenant management, tenant resolution
+- **Auditing** — Audit trail for entity changes
+
+## Playground
+
+| Project | Purpose |
+|---------|---------|
+| `Playground.Api` | ASP.NET Core host application |
+| `Playground.Blazor` | MudBlazor-based admin UI |
+| `FSH.Playground.AppHost` | .NET Aspire orchestrator |
+
+## Feature Folder Layout
+
+Each feature follows Vertical Slice Architecture:
+
+```
+Features/v1/{Area}/{FeatureName}/
+├── {FeatureName}Endpoint.cs
+├── {FeatureName}CommandHandler.cs
+└── {FeatureName}CommandValidator.cs
+```

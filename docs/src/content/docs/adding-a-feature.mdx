@@ -1,0 +1,83 @@
+---
+title: Adding a Feature
+description: Step-by-step guide to adding a new feature in fullstackhero.
+---
+
+This guide walks through adding a new feature following the Vertical Slice Architecture pattern.
+
+## 1. Define the Contract
+
+In `Modules.{Name}.Contracts/v1/{Area}/{Feature}/`:
+
+```csharp
+public record CreateProductCommand(
+    string Name,
+    string Description,
+    decimal Price) : ICommand<CreateProductResponse>;
+
+public record CreateProductResponse(Guid Id);
+```
+
+## 2. Create the Handler
+
+In `Modules.{Name}/Features/v1/{Area}/{Feature}/`:
+
+```csharp
+public sealed class CreateProductCommandHandler(
+    IRepository<Product> repository)
+    : ICommandHandler<CreateProductCommand, CreateProductResponse>
+{
+    public async ValueTask<CreateProductResponse> Handle(
+        CreateProductCommand command,
+        CancellationToken cancellationToken)
+    {
+        var product = Product.Create(command.Name, command.Description, command.Price);
+        await repository.AddAsync(product, cancellationToken).ConfigureAwait(false);
+        return new CreateProductResponse(product.Id);
+    }
+}
+```
+
+## 3. Add Validation
+
+```csharp
+public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+{
+    public CreateProductCommandValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.Price).GreaterThan(0);
+    }
+}
+```
+
+## 4. Create the Endpoint
+
+```csharp
+public static class CreateProductEndpoint
+{
+    internal static RouteHandlerBuilder MapCreateProductEndpoint(
+        this IEndpointRouteBuilder endpoints)
+    {
+        return endpoints.MapPost("/", (CreateProductCommand command,
+            IMediator mediator, CancellationToken cancellationToken) =>
+            mediator.Send(command, cancellationToken))
+            .WithName("CreateProduct")
+            .WithSummary("Create a new product");
+    }
+}
+```
+
+## 5. Wire the Endpoint
+
+In your module's `MapEndpoints()` method:
+
+```csharp
+var productGroup = endpoints.MapGroup("products").WithTags("Products");
+productGroup.MapCreateProductEndpoint();
+```
+
+## 6. Add Tests
+
+Create corresponding tests in `Tests/{Name}.Tests/` following the naming convention:
+`CreateProduct_Should_ReturnId_When_ValidCommand`

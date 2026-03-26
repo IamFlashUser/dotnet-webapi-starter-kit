@@ -1,0 +1,27 @@
+---
+title: Deployment
+description: Deploying the fullstackhero .NET Starter Kit.
+---
+
+fullstackhero can be deployed to any platform that supports .NET 10.
+
+## Deployment Options
+
+- **Docker / Kubernetes** — containerized deployment
+- **Azure App Service** — PaaS deployment
+- **AWS ECS / Fargate** — container orchestration
+- **Self-hosted** — traditional IIS or Kestrel deployment
+
+## Configuration
+
+Key configuration areas for production:
+
+- **Database** — PostgreSQL connection string
+- **Redis** — cache connection string
+- **JWT** — token signing keys and audience
+- **Multitenancy** — default tenant configuration
+- **Logging** — Serilog sinks and OpenTelemetry endpoint
+
+## Environment Variables
+
+Use environment variables or a secrets manager for sensitive configuration. Never commit secrets to source control.

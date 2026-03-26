@@ -1,0 +1,43 @@
+---
+title: Domain Events
+description: How domain events and integration events work in fullstackhero.
+---
+
+## Domain Events
+
+Domain events represent something meaningful that happened within a module.
+
+```csharp
+public record UserRegisteredEvent(Guid UserId, string Email) : DomainEvent;
+```
+
+The base `DomainEvent` is an abstract record providing:
+- `EventId` — unique event identifier
+- `OccurredOnUtc` — when the event happened
+- `CorrelationId` — for tracing
+- `TenantId` — tenant context
+
+### Raising Events
+
+Entities implement `IHasDomainEvents` and queue events via `_domainEvents`:
+
+```csharp
+public void Register(string email)
+{
+    // ... registration logic
+    QueueDomainEvent(new UserRegisteredEvent(Id, email));
+}
+```
+
+## Integration Events
+
+For cross-module communication, use integration events:
+
+```csharp
+public record UserRegisteredIntegrationEvent(
+    Guid UserId,
+    string Email,
+    string TenantId) : IIntegrationEvent;
+```
+
+Handlers implement `IIntegrationEventHandler<T>` and are auto-discovered.

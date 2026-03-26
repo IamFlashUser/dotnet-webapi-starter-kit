@@ -1,0 +1,100 @@
+---
+title: Quick Start
+description: Get the fullstackhero .NET Starter Kit running in minutes.
+---
+
+import Aside from '../../components/Aside.astro';
+import Badge from '../../components/Badge.astro';
+import Steps from '../../components/Steps.astro';
+import Tabs from '../../components/Tabs.astro';
+import TabPanel from '../../components/TabPanel.astro';
+import FileTree from '../../components/FileTree.astro';
+
+<Aside type="tip" title="Prerequisites">
+Make sure you have [.NET 10 SDK](https://dot.net/download), PostgreSQL, and Redis installed before you begin. See [Prerequisites](/docs/prerequisites/) for details.
+</Aside>
+
+## Get Started <Badge>3 steps</Badge>
+
+<Steps>
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/fullstackhero/dotnet-starter-kit.git
+cd dotnet-starter-kit
+```
+
+### Build the Solution
+
+```bash
+dotnet build src/FSH.Framework.slnx
+```
+
+### Run the API
+
+<Tabs labels={["Standard", "With Aspire"]}>
+<TabPanel>
+
+```bash
+dotnet run --project src/Playground/Playground.Api
+```
+
+The API will be available at `https://localhost:5001`.
+
+</TabPanel>
+<TabPanel>
+
+```bash
+dotnet run --project src/Playground/FSH.Playground.AppHost
+```
+
+This starts the API along with PostgreSQL, Redis, and the Aspire dashboard.
+
+</TabPanel>
+</Tabs>
+
+</Steps>
+
+<Aside type="note">
+Visit `https://localhost:5001/scalar/v1` for the interactive API documentation powered by Scalar.
+</Aside>
+
+## Project Structure
+
+<FileTree items={[
+  { name: 'src', type: 'folder', children: [
+    { name: 'BuildingBlocks', type: 'folder', desc: 'shared framework libraries', children: [
+      { name: 'Core' }, { name: 'Persistence' }, { name: 'Web' }, { name: 'Caching' },
+    ]},
+    { name: 'Modules', type: 'folder', desc: 'bounded context modules', children: [
+      { name: 'Modules.Identity', type: 'folder' },
+      { name: 'Modules.Multitenancy', type: 'folder' },
+      { name: 'Modules.Auditing', type: 'folder' },
+    ]},
+    { name: 'Playground', type: 'folder', desc: 'host applications', children: [
+      { name: 'Playground.Api' },
+      { name: 'Playground.Blazor' },
+      { name: 'FSH.Playground.AppHost' },
+    ]},
+    { name: 'Tests', type: 'folder', desc: 'test projects' },
+  ]},
+  { name: 'docs', type: 'folder', desc: 'this documentation site' },
+  { name: 'FSH.Framework.slnx', desc: 'solution file' },
+]} />
+
+## Run Tests
+
+```bash
+dotnet test src/FSH.Framework.slnx
+```
+
+<Aside type="warning" title="BuildingBlocks">
+Do not modify BuildingBlocks without careful consideration — changes there affect all modules.
+</Aside>
+
+## Next Steps
+
+- Learn about the [Project Structure](/docs/project-structure/)
+- Understand the [Architecture](/docs/architecture/)
+- Add your first [Feature](/docs/adding-a-feature/)

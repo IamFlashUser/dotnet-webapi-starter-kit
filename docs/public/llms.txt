@@ -1,0 +1,39 @@
+# fullstackhero
+
+> Open-source .NET 10 modular monolith starter kit with multitenancy, identity, CQRS, vertical slice architecture, and production-ready infrastructure. MIT licensed. 6,300+ GitHub stars.
+
+## Docs
+- [Introduction](https://fullstackhero.net/docs/introduction/): What fullstackhero is, who it's for, and complete tech stack
+- [Quick Start](https://fullstackhero.net/docs/quick-start/): Clone, build, and run in 60 seconds
+- [Prerequisites](https://fullstackhero.net/docs/prerequisites/): .NET 10 SDK, PostgreSQL, Redis
+- [Project Structure](https://fullstackhero.net/docs/project-structure/): BuildingBlocks, Modules, Playground, Tests layout
+- [Architecture Overview](https://fullstackhero.net/docs/architecture/): Modular monolith + vertical slice architecture explained
+- [CQRS Pattern](https://fullstackhero.net/docs/cqrs/): Commands, queries, and source-generated mediator
+- [Domain Events](https://fullstackhero.net/docs/domain-events/): Domain and integration event patterns
+- [Identity Module](https://fullstackhero.net/docs/modules/identity/): User management, JWT auth, roles, permissions
+- [Multitenancy Module](https://fullstackhero.net/docs/modules/multitenancy/): Finbuckle tenant resolution, data isolation
+- [Auditing Module](https://fullstackhero.net/docs/modules/auditing/): Automatic audit trails for entity changes
+- [Building Blocks](https://fullstackhero.net/docs/building-blocks/): Shared framework libraries (Core, Persistence, Web, Caching, Eventing, Auth)
+- [Adding a Feature](https://fullstackhero.net/docs/adding-a-feature/): Step-by-step vertical slice guide
+- [Adding a Module](https://fullstackhero.net/docs/adding-a-module/): Creating new bounded context modules
+- [Deployment](https://fullstackhero.net/docs/deployment/): Docker, Azure, AWS, self-hosted options
+- [Contributing](https://fullstackhero.net/docs/contributing/): How to contribute, coding standards, testing conventions
+
+## Key Facts
+- Framework: .NET 10 / C# latest
+- Architecture: Modular Monolith + Vertical Slice Architecture (VSA)
+- Multitenancy: Finbuckle.MultiTenant (claim, header, query string strategies)
+- CQRS: Mediator 3.x (source-generated, zero-reflection dispatch)
+- Validation: FluentValidation 12.x (auto-registered)
+- Database: PostgreSQL with EF Core 10 (Npgsql)
+- Auth: JWT Bearer + ASP.NET Identity
+- Caching: Redis (StackExchange)
+- Jobs: Hangfire
+- Logging: Serilog + OpenTelemetry (OTLP)
+- API Docs: OpenAPI + Scalar
+- Hosting: .NET Aspire (AppHost)
+- UI: MudBlazor (Blazor)
+- Testing: xUnit, Shouldly, NSubstitute, AutoFixture, NetArchTest
+- License: MIT
+- GitHub: https://github.com/fullstackhero/dotnet-starter-kit
+- Created by: Mukesh Murugan (https://codewithmukesh.com)

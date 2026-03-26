@@ -1,0 +1,44 @@
+---
+title: Introduction
+description: What is fullstackhero .NET Starter Kit and why should you use it?
+---
+
+**fullstackhero .NET Starter Kit** is a production-ready modular .NET framework for building enterprise applications. It provides a well-structured foundation with built-in support for multitenancy, identity management, auditing, caching, background jobs, and observability.
+
+## Key Features
+
+- **Modular Monolith Architecture** — Clean module boundaries with Vertical Slice Architecture (VSA)
+- **Multitenancy** — First-class multi-tenant support via Finbuckle.MultiTenant
+- **Identity & Auth** — JWT Bearer authentication with ASP.NET Identity
+- **CQRS** — Command/Query separation using Mediator (source-generated)
+- **Entity Framework Core** — Code-first with PostgreSQL
+- **Caching** — Redis-backed distributed caching
+- **Background Jobs** — Hangfire for scheduled and recurring tasks
+- **Observability** — Serilog structured logging + OpenTelemetry (OTLP)
+- **API Documentation** — OpenAPI + Scalar UI
+- **Aspire Integration** — .NET Aspire for local development orchestration
+
+## Tech Stack
+
+| Concern | Technology |
+|---------|-----------|
+| Framework | .NET 10 / C# latest |
+| CQRS / Mediator | Mediator 3.x (source generator) |
+| Validation | FluentValidation |
+| ORM | Entity Framework Core 10.x |
+| Database | PostgreSQL (Npgsql) |
+| Auth | JWT Bearer + ASP.NET Identity |
+| Multitenancy | Finbuckle.MultiTenant |
+| Caching | Redis (StackExchange) |
+| Jobs | Hangfire |
+| Logging | Serilog + OpenTelemetry |
+| API docs | OpenAPI + Scalar |
+| Hosting | .NET Aspire |
+| Blazor UI | MudBlazor |
+
+## Who is this for?
+
+- Teams building **line-of-business applications** who want a solid starting point
+- Developers looking for **best practices** in .NET architecture
+- Organizations that need **multitenancy** out of the box
+- Anyone who wants to **skip boilerplate** and focus on business logic

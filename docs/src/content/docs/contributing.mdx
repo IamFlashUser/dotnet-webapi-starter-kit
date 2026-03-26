@@ -1,0 +1,37 @@
+---
+title: Contributing
+description: How to contribute to the fullstackhero .NET Starter Kit.
+---
+
+We welcome contributions! Here's how to get started.
+
+## Getting Started
+
+1. Fork the repository
+2. Create a feature branch from `develop`
+3. Make your changes
+4. Run tests: `dotnet test src/FSH.Framework.slnx`
+5. Submit a pull request to `develop`
+
+## Coding Standards
+
+- File-scoped namespaces
+- 4-space indentation
+- Prefer explicit types over `var`
+- `is null` / `is not null` for null checks
+- `ValueTask<T>` for handlers with `.ConfigureAwait(false)`
+- Guard clauses: `ArgumentNullException.ThrowIfNull(param)`
+
+## Testing
+
+- Naming: `MethodName_Should_ExpectedBehavior_When_Condition`
+- Pattern: Arrange-Act-Assert
+- Assertions: Shouldly
+- Mocking: NSubstitute
+- Test data: AutoFixture
+
+## Important Notes
+
+- **Do not modify BuildingBlocks** without explicit approval
+- Modules must communicate through **Contracts** projects only
+- Follow the existing [feature folder layout](/architecture/overview/)
