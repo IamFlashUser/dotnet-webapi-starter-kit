@@ -1,0 +1,106 @@
+using System.Text.Json;
+using FSH.Framework.Caching;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace FSH.Framework.Web.Idempotency;
+
+/// <summary>
+/// Endpoint filter that provides idempotency for POST/PUT/PATCH requests.
+/// When an Idempotency-Key header is present, the response is cached and replayed
+/// for subsequent requests with the same key.
+/// </summary>
+public sealed class IdempotencyEndpointFilter : IEndpointFilter
+{
+    private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+    public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(next);
+
+        var httpContext = context.HttpContext;
+        var options = httpContext.RequestServices.GetRequiredService<IOptions<IdempotencyOptions>>().Value;
+        var idempotencyKey = httpContext.Request.Headers[options.HeaderName].ToString();
+
+        // No header = pass through (idempotency is opt-in per request)
+        if (string.IsNullOrWhiteSpace(idempotencyKey))
+        {
+            return await next(context).ConfigureAwait(false);
+        }
+
+        if (idempotencyKey.Length > options.MaxKeyLength)
+        {
+            return TypedResults.BadRequest($"Idempotency key exceeds maximum length of {options.MaxKeyLength}.");
+        }
+
+        var cache = httpContext.RequestServices.GetRequiredService<ICacheService>();
+        var logger = httpContext.RequestServices.GetRequiredService<ILogger<IdempotencyEndpointFilter>>();
+
+        // Include tenant context in cache key for isolation
+        var tenantId = httpContext.User.FindFirst("tenant")?.Value ?? "global";
+        var cacheKey = $"idempotency:{tenantId}:{idempotencyKey}";
+
+        // Check for cached response
+        var cached = await cache.GetItemAsync<CachedIdempotentResponse>(cacheKey, httpContext.RequestAborted).ConfigureAwait(false);
+        if (cached is not null)
+        {
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug("Idempotent replay for key {IdempotencyKey}", idempotencyKey);
+            }
+            httpContext.Response.Headers["Idempotency-Replayed"] = "true";
+            httpContext.Response.StatusCode = cached.StatusCode;
+            if (cached.ContentType is not null)
+            {
+                httpContext.Response.ContentType = cached.ContentType;
+            }
+
+            if (cached.Body.Length > 0)
+            {
+                await httpContext.Response.Body.WriteAsync(cached.Body, httpContext.RequestAborted).ConfigureAwait(false);
+            }
+
+            return null; // Response already written
+        }
+
+        // Execute the handler
+        var result = await next(context).ConfigureAwait(false);
+
+        // Cache the response
+        try
+        {
+            var body = result is not null ? JsonSerializer.SerializeToUtf8Bytes(result, JsonOpts) : [];
+            var responseToCache = new CachedIdempotentResponse
+            {
+                StatusCode = httpContext.Response.StatusCode is > 0 and < 600 ? httpContext.Response.StatusCode : 200,
+                ContentType = "application/json",
+                Body = body
+            };
+
+            await cache.SetItemAsync(cacheKey, responseToCache, options.DefaultTtl, httpContext.RequestAborted).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogWarning(ex, "Failed to cache idempotent response for key {IdempotencyKey}", idempotencyKey);
+        }
+
+        return result;
+    }
+}
+
+public static class IdempotencyEndpointExtensions
+{
+    /// <summary>
+    /// Enables idempotency for this endpoint. Requires Idempotency-Key header on requests.
+    /// Duplicate requests with the same key return the cached response.
+    /// </summary>
+    public static RouteHandlerBuilder WithIdempotency(this RouteHandlerBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        return builder.AddEndpointFilter<IdempotencyEndpointFilter>();
+    }
+}
