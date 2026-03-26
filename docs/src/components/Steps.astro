@@ -9,19 +9,24 @@
 		counter-reset: step;
 		position: relative;
 		margin: 1.25rem 0;
-		padding-left: 2.75rem;
+		padding-left: 3rem;
 	}
 
-	/* Continuous vertical line through all steps */
+	/* Continuous vertical line */
 	.steps::before {
 		content: '';
 		position: absolute;
-		left: 0.8rem;
-		top: 0.85rem;
-		bottom: 0.85rem;
-		width: 2px;
-		background: var(--border);
-		border-radius: 1px;
+		left: 0.9rem;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: linear-gradient(
+			to bottom,
+			transparent 0,
+			var(--border) 1.5rem,
+			var(--border) calc(100% - 1.5rem),
+			transparent 100%
+		);
 	}
 
 	/* All direct children */
@@ -34,11 +39,11 @@
 		padding-bottom: 0;
 	}
 
-	/* Headings: increment counter, add top spacing */
+	/* Headings */
 	.steps :global(> h3),
 	.steps :global(> h4) {
 		counter-increment: step;
-		padding-top: 1.25rem;
+		padding-top: 1.5rem;
 		padding-bottom: 0.35rem;
 	}
 
@@ -47,24 +52,26 @@
 		padding-top: 0;
 	}
 
-	/* Step number circle */
+	/* Step number */
 	.steps :global(> h3::before),
 	.steps :global(> h4::before) {
 		content: counter(step);
 		position: absolute;
-		left: -2.75rem;
-		top: 1.25rem;
-		width: 1.6rem;
-		height: 1.6rem;
+		left: -3rem;
+		top: 1.5rem;
+		width: 1.8rem;
+		height: 1.8rem;
 		display: grid;
 		place-items: center;
-		font-size: 0.68rem;
-		font-weight: 700;
-		color: var(--bg);
-		background: var(--brand);
-		border-radius: 50%;
+		font-family: var(--mono);
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--brand);
+		background: var(--bg-card, var(--bg));
+		border: 1.5px solid var(--brand);
+		border-radius: 8px;
 		line-height: 1;
-		box-shadow: 0 0 0 4px var(--bg);
+		box-shadow: 0 0 0 3px var(--bg), 0 1px 3px rgba(0,0,0,0.04);
 		z-index: 1;
 	}
 
@@ -75,17 +82,18 @@
 
 	@media (max-width: 768px) {
 		.steps {
-			padding-left: 2.25rem;
+			padding-left: 2.5rem;
 		}
 		.steps::before {
-			left: 0.65rem;
+			left: 0.75rem;
 		}
 		.steps :global(> h3::before),
 		.steps :global(> h4::before) {
-			left: -2.25rem;
-			width: 1.3rem;
-			height: 1.3rem;
-			font-size: 0.6rem;
+			left: -2.5rem;
+			width: 1.5rem;
+			height: 1.5rem;
+			font-size: 0.62rem;
+			border-radius: 6px;
 			box-shadow: 0 0 0 3px var(--bg);
 		}
 	}
