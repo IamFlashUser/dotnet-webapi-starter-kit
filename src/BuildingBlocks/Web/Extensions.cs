@@ -7,6 +7,7 @@ using FSH.Framework.Web.Cors;
 using FSH.Framework.Web.Exceptions;
 using FSH.Framework.Web.FeatureFlags;
 using FSH.Framework.Web.Idempotency;
+using FSH.Framework.Web.Sse;
 using FSH.Framework.Web.Health;
 using FSH.Framework.Web.Mediator.Behaviors;
 using FSH.Framework.Web.Modules;
@@ -89,6 +90,11 @@ public static class Extensions
             builder.Services.AddHeroIdempotency(builder.Configuration);
         }
 
+        if (options.EnableSse)
+        {
+            builder.Services.AddHeroSse();
+        }
+
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddProblemDetails();
@@ -155,6 +161,11 @@ public static class Extensions
 
         // Always expose health endpoints
         app.MapHeroHealthEndpoints();
+
+        if (options.MapSseEndpoints)
+        {
+            app.MapHeroSseEndpoints();
+        }
         app.UseMiddleware<CurrentUserMiddleware>();
         return app;
     }
@@ -182,6 +193,7 @@ public sealed class FshPlatformOptions
     public bool EnableOpenTelemetry { get; set; } = true;
     public bool EnableFeatureFlags { get; set; } = false;
     public bool EnableIdempotency { get; set; } = false;
+    public bool EnableSse { get; set; } = false;
 }
 
 public sealed class FshPipelineOptions
@@ -190,4 +202,5 @@ public sealed class FshPipelineOptions
     public bool UseOpenApi { get; set; } = true;
     public bool ServeStaticFiles { get; set; } = true;
     public bool MapModules { get; set; } = true;
+    public bool MapSseEndpoints { get; set; } = false;
 }
