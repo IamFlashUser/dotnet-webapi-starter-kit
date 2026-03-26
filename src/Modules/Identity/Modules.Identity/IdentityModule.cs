@@ -26,6 +26,7 @@ using FSH.Modules.Identity.Features.v1.Users.AssignUserRoles;
 using FSH.Modules.Identity.Features.v1.Users.ChangePassword;
 using FSH.Modules.Identity.Features.v1.Users.ConfirmEmail;
 using FSH.Modules.Identity.Features.v1.Users.DeleteUser;
+using FSH.Modules.Identity.Features.v1.Users.ForgotPassword;
 using FSH.Modules.Identity.Features.v1.Users.GetUserById;
 using FSH.Modules.Identity.Features.v1.Users.GetUserPermissions;
 using FSH.Modules.Identity.Features.v1.Users.GetUserProfile;
@@ -187,6 +188,7 @@ public class IdentityModule : IModule
         group.MapGetUsersListEndpoint();
         group.MapSearchUsersEndpoint();
         group.MapRegisterUserEndpoint();
+        group.MapForgotPasswordEndpoint().RequireRateLimiting("auth");
         group.MapResetPasswordEndpoint();
         group.MapSelfRegisterUserEndpoint();
         group.MapToggleUserStatusEndpoint();
