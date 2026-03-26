@@ -5,6 +5,7 @@ using FSH.Framework.Persistence;
 using FSH.Framework.Web.Auth;
 using FSH.Framework.Web.Cors;
 using FSH.Framework.Web.Exceptions;
+using FSH.Framework.Web.FeatureFlags;
 using FSH.Framework.Web.Health;
 using FSH.Framework.Web.Mediator.Behaviors;
 using FSH.Framework.Web.Modules;
@@ -75,6 +76,11 @@ public static class Extensions
         if (options.EnableCaching)
         {
             builder.Services.AddHeroCaching(builder.Configuration);
+        }
+
+        if (options.EnableFeatureFlags)
+        {
+            builder.Services.AddHeroFeatureFlags(builder.Configuration);
         }
 
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -168,6 +174,7 @@ public sealed class FshPlatformOptions
     public bool EnableJobs { get; set; } = false;
     public bool EnableMailing { get; set; } = false;
     public bool EnableOpenTelemetry { get; set; } = true;
+    public bool EnableFeatureFlags { get; set; } = false;
 }
 
 public sealed class FshPipelineOptions
