@@ -8,7 +8,7 @@ public sealed class ResetPasswordCommandValidator : AbstractValidator<ResetPassw
     public ResetPasswordCommandValidator()
     {
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
-        RuleFor(x => x.Password).NotEmpty();
+        RuleFor(x => x.Password).NotEmpty().MinimumLength(6);
         RuleFor(x => x.Token).NotEmpty();
     }
 }

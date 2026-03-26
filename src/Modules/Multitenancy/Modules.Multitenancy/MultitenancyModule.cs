@@ -89,7 +89,7 @@ public sealed class MultitenancyModule : IModule
                 failureStatus: HealthStatus.Unhealthy)
             .AddCheck<TenantMigrationsHealthCheck>(
                 name: "db:tenants-migrations",
-                failureStatus: HealthStatus.Healthy);
+                failureStatus: HealthStatus.Unhealthy);
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints)

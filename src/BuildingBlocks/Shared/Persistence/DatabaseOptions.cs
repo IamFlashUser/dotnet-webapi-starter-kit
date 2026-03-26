@@ -5,7 +5,7 @@ namespace FSH.Framework.Shared.Persistence;
 /// <summary>
 /// Configuration options for database provider selection and connection information.
 /// </summary>
-public class DatabaseOptions : IValidatableObject
+public sealed class DatabaseOptions : IValidatableObject
 {
     /// <summary>
     /// The database provider to use. Valid values are <see cref="DbProviders.PostgreSQL"/> or <see cref="DbProviders.MSSQL"/>.

@@ -9,10 +9,14 @@ namespace FSH.Modules.Auditing;
 /// </summary>
 public sealed class JsonMaskingService : IAuditMaskingService
 {
-    private static readonly HashSet<string> _maskKeywords = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> MaskKeywords = new(StringComparer.OrdinalIgnoreCase)
     {
-        "password", "secret", "token", "otp", "pin", "accessToken", "refreshToken"
+        "password", "secret", "token", "otp", "pin",
+        "accessToken", "refreshToken", "apiKey", "clientSecret",
+        "authCode", "authorization", "bearer", "connectionString"
     };
+
+    private const string MaskValue = "****";
 
     public object ApplyMasking(object payload)
     {
@@ -37,7 +41,7 @@ public sealed class JsonMaskingService : IAuditMaskingService
             {
                 if (ShouldMask(kvp.Key))
                 {
-                    obj[kvp.Key] = "****";
+                    obj[kvp.Key] = MaskValue;
                 }
                 else if (kvp.Value is not null)
                 {
@@ -53,6 +57,6 @@ public sealed class JsonMaskingService : IAuditMaskingService
     }
 
     private static bool ShouldMask(string key)
-        => _maskKeywords.Any(k => key.Contains(k, StringComparison.OrdinalIgnoreCase));
+        => MaskKeywords.Any(k => key.Contains(k, StringComparison.OrdinalIgnoreCase));
 }
 

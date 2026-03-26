@@ -1,6 +1,6 @@
 ﻿namespace FSH.Framework.Mailing;
 
-public class MailOptions
+public sealed class MailOptions
 {
     public bool UseSendGrid { get; set; }
     public string? From { get; set; }
@@ -9,7 +9,7 @@ public class MailOptions
     public SendGridOptions? SendGrid { get; set; }
 }
 
-public class SmtpOptions
+public sealed class SmtpOptions
 {
     public string? Host { get; set; }
     public int Port { get; set; }
@@ -17,7 +17,7 @@ public class SmtpOptions
     public string? Password { get; set; }
 }
 
-public class SendGridOptions
+public sealed class SendGridOptions
 {
     public string? ApiKey { get; set; }
     public string? From { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace FSH.Framework.Web.Origin;
 
-public class OriginOptions
+public sealed class OriginOptions
 {
     public Uri? OriginUrl { get; set; }
 }
