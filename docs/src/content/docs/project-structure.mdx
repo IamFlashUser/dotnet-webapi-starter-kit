@@ -153,21 +153,27 @@ This pattern keeps every file related to a feature co-located. When you need to 
 
 The projects follow a strict dependency hierarchy that flows in one direction — from foundational libraries up through modules to host applications.
 
-```
-Core (no dependencies)
-  └── Shared
-        ├── Persistence
-        ├── Eventing.Abstractions
-        │     └── Eventing
-        ├── Caching
-        ├── Jobs
-        ├── Mailing
-        └── Storage
-              └── Web (host infrastructure)
-                    └── Module Contracts
-                          └── Module Runtimes
-                                └── Playground (host apps)
-```
+<FileTree items={[
+  { name: 'Core', type: 'folder', desc: 'No dependencies — DDD primitives, exceptions, CQRS interfaces', children: [
+    { name: 'Shared', type: 'folder', desc: 'Constants, DTOs, permission contracts', children: [
+      { name: 'Persistence', type: 'folder', desc: 'EF Core abstractions, specifications, outbox/inbox' },
+      { name: 'Eventing.Abstractions', type: 'folder', desc: 'Event contracts and interfaces', children: [
+        { name: 'Eventing', type: 'folder', desc: 'Domain event dispatching, integration events' }
+      ]},
+      { name: 'Caching', type: 'folder', desc: 'Distributed and hybrid cache (Redis)' },
+      { name: 'Jobs', type: 'folder', desc: 'Hangfire background job infrastructure' },
+      { name: 'Mailing', type: 'folder', desc: 'Email abstraction layer' },
+      { name: 'Storage', type: 'folder', desc: 'File storage abstraction' },
+      { name: 'Web', type: 'folder', desc: 'Host infrastructure, middleware, module system', children: [
+        { name: 'Module Contracts', type: 'folder', desc: 'Public API surface for each module', children: [
+          { name: 'Module Runtimes', type: 'folder', desc: 'Internal implementation per module', children: [
+            { name: 'Playground (host apps)', type: 'folder', desc: 'API, Blazor, Aspire — compose modules into runnable hosts' }
+          ]}
+        ]}
+      ]}
+    ]}
+  ]}
+]} />
 
 - **Core** sits at the bottom with zero external project dependencies. It defines the DDD primitives, exception types, and CQRS interfaces that everything else builds on.
 - **Shared** adds cross-cutting constants, DTOs, and permission contracts.
