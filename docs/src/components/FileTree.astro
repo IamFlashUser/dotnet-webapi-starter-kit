@@ -22,16 +22,17 @@ const { items } = Astro.props;
 <style>
 	.ftree {
 		margin: 1rem 0;
-		padding: 0.5rem 0;
+		padding: 0.45rem 0;
 		border: 1px solid var(--border);
 		border-radius: 8px;
 		background: var(--bg-surface, #f8f8fa);
-		font-family: var(--mono);
-		font-size: 0.78rem;
+		font-family: var(--sans);
+		font-size: 0.8rem;
 		width: fit-content;
 		min-width: min(100%, 22rem);
 		max-width: 100%;
 		overflow: hidden;
+		line-height: 1.4;
 	}
 	:global(:root[data-theme="dark"]) .ftree {
 		background: var(--bg-surface, #111116);
