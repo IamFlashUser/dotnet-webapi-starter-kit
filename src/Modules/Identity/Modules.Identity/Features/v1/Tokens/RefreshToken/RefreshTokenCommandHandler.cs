@@ -78,7 +78,9 @@ public sealed class RefreshTokenCommandHandler
 
         if (parsedAccessToken is not null)
         {
-            var accessTokenSubject = parsedAccessToken.Subject;
+            var accessTokenSubject = parsedAccessToken.Claims
+                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value
+                ?? parsedAccessToken.Subject;
 
             if (!string.IsNullOrEmpty(accessTokenSubject) &&
                 !string.Equals(accessTokenSubject, subject, StringComparison.Ordinal))
