@@ -7,10 +7,14 @@ on:
       - develop
     tags:
       - 'v*'
+    paths:
+      - 'src/**'
   pull_request:
     branches:
       - main
       - develop
+    paths:
+      - 'src/**'
   workflow_dispatch:
     inputs:
       version:

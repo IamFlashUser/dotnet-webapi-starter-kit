@@ -2,6 +2,8 @@ name: CodeQL Analysis
 on:
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'src/**'
   schedule:
     - cron: '0 6 * * 1'
 
