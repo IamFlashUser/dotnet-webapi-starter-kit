@@ -1,39 +1,51 @@
 # fullstackhero
 
-> Open-source .NET 10 modular monolith starter kit with multitenancy, identity, CQRS, vertical slice architecture, and production-ready infrastructure. MIT licensed. 6,300+ GitHub stars.
+> Production-ready, open-source .NET 10 starter kit for building multi-tenant SaaS and enterprise applications. Modular monolith architecture with vertical slice design, CQRS, identity management, and operational infrastructure. MIT licensed. 6,400+ GitHub stars.
 
-## Docs
-- [Introduction](https://fullstackhero.net/docs/introduction/): What fullstackhero is, who it's for, and complete tech stack
-- [Quick Start](https://fullstackhero.net/docs/quick-start/): Clone, build, and run in 60 seconds
-- [Prerequisites](https://fullstackhero.net/docs/prerequisites/): .NET 10 SDK, PostgreSQL, Redis
-- [Project Structure](https://fullstackhero.net/docs/project-structure/): BuildingBlocks, Modules, Playground, Tests layout
-- [Architecture Overview](https://fullstackhero.net/docs/architecture/): Modular monolith + vertical slice architecture explained
-- [CQRS Pattern](https://fullstackhero.net/docs/cqrs/): Commands, queries, and source-generated mediator
+## Getting Started
+- [Introduction](https://fullstackhero.net/docs/introduction/): What fullstackhero is, key features, and tech stack
+- [Prerequisites](https://fullstackhero.net/docs/prerequisites/): .NET 10 SDK, PostgreSQL, Redis setup
+- [Quick Start](https://fullstackhero.net/docs/quick-start/): Clone, build, and run in under 5 minutes
+- [Project Structure](https://fullstackhero.net/docs/project-structure/): Solution layout with 27 projects
+
+## Architecture
+- [Architecture Overview](https://fullstackhero.net/docs/architecture/): Modular monolith + vertical slice architecture
+- [CQRS Pattern](https://fullstackhero.net/docs/cqrs/): Commands, queries, source-generated Mediator pipeline
 - [Domain Events](https://fullstackhero.net/docs/domain-events/): Domain and integration event patterns
-- [Identity Module](https://fullstackhero.net/docs/modules/identity/): User management, JWT auth, roles, permissions
-- [Multitenancy Module](https://fullstackhero.net/docs/modules/multitenancy/): Finbuckle tenant resolution, data isolation
-- [Auditing Module](https://fullstackhero.net/docs/modules/auditing/): Automatic audit trails for entity changes
-- [Building Blocks](https://fullstackhero.net/docs/building-blocks/): Shared framework libraries (Core, Persistence, Web, Caching, Eventing, Auth)
-- [Adding a Feature](https://fullstackhero.net/docs/adding-a-feature/): Step-by-step vertical slice guide
-- [Adding a Module](https://fullstackhero.net/docs/adding-a-module/): Creating new bounded context modules
-- [Deployment](https://fullstackhero.net/docs/deployment/): Docker, Azure, AWS, self-hosted options
-- [Contributing](https://fullstackhero.net/docs/contributing/): How to contribute, coding standards, testing conventions
+- [Specifications](https://fullstackhero.net/docs/patterns/specifications/): Composable query specifications for EF Core
+- [Outbox & Inbox](https://fullstackhero.net/docs/patterns/outbox-inbox/): Reliable messaging with transactional outbox
+- [Module System](https://fullstackhero.net/docs/patterns/module-system/): Plug-and-play bounded context modules
+
+## Modules
+- [Identity](https://fullstackhero.net/docs/modules/identity/overview/): Users, roles, JWT auth, sessions, groups, permissions
+- [Multitenancy](https://fullstackhero.net/docs/modules/multitenancy/overview/): Tenant resolution, data isolation, provisioning
+- [Auditing](https://fullstackhero.net/docs/modules/auditing/overview/): Security, activity, entity change, and exception auditing
+
+## Building Blocks
+- [Overview](https://fullstackhero.net/docs/building-blocks/overview/): 10 shared framework libraries
+- [Core](https://fullstackhero.net/docs/building-blocks/core/): DDD primitives, exceptions, interfaces
+- [Persistence](https://fullstackhero.net/docs/building-blocks/persistence/): EF Core, specifications, pagination
+- [Web](https://fullstackhero.net/docs/building-blocks/web/): Module system, middleware, API versioning
+- [Caching](https://fullstackhero.net/docs/building-blocks/caching/): Redis distributed + hybrid cache
+- [Eventing](https://fullstackhero.net/docs/building-blocks/eventing/): Event bus, outbox/inbox, RabbitMQ
+
+## Deployment
+- [Docker](https://fullstackhero.net/docs/deployment/docker/): Multi-stage Dockerfile, docker-compose
+- [.NET Aspire](https://fullstackhero.net/docs/deployment/aspire/): Local dev orchestration
+- [AWS Terraform](https://fullstackhero.net/docs/deployment/aws-terraform/): ECS Fargate, RDS, ElastiCache
+- [CI/CD](https://fullstackhero.net/docs/deployment/ci-cd/): GitHub Actions pipelines
 
 ## Key Facts
 - Framework: .NET 10 / C# latest
-- Architecture: Modular Monolith + Vertical Slice Architecture (VSA)
+- Architecture: Modular Monolith + Vertical Slice Architecture
+- Database: PostgreSQL (EF Core 10), also supports SQL Server
+- Auth: JWT Bearer + ASP.NET Identity with permission-based authorization
 - Multitenancy: Finbuckle.MultiTenant (claim, header, query string strategies)
-- CQRS: Mediator 3.x (source-generated, zero-reflection dispatch)
-- Validation: FluentValidation 12.x (auto-registered)
-- Database: PostgreSQL with EF Core 10 (Npgsql)
-- Auth: JWT Bearer + ASP.NET Identity
-- Caching: Redis (StackExchange)
-- Jobs: Hangfire
-- Logging: Serilog + OpenTelemetry (OTLP)
-- API Docs: OpenAPI + Scalar
-- Hosting: .NET Aspire (AppHost)
-- UI: MudBlazor (Blazor)
+- CQRS: Mediator 3.x (source-generated, zero-reflection)
+- Caching: Redis (StackExchange) with hybrid L1/L2
+- Jobs: Hangfire with tenant-aware job processing
+- Observability: Serilog + OpenTelemetry (OTLP)
 - Testing: xUnit, Shouldly, NSubstitute, AutoFixture, NetArchTest
 - License: MIT
-- GitHub: https://github.com/fullstackhero/dotnet-starter-kit
 - Created by: Mukesh Murugan (https://codewithmukesh.com)
+- GitHub: https://github.com/fullstackhero/dotnet-starter-kit

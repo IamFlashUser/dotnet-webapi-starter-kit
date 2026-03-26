@@ -757,6 +757,134 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<Footer />
+
+<!-- Structured Data: WebSite + SearchAction -->
+<script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "fullstackhero",
+    "url": "https://fullstackhero.net",
+    "description": "A production-ready modular .NET framework for building enterprise applications.",
+    "publisher": {
+        "@type": "Organization",
+        "name": "fullstackhero",
+        "url": "https://fullstackhero.net"
+    },
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://fullstackhero.net/docs/introduction/"
+        },
+        "query-input": "required name=search_term_string"
+    }
+})} />
+
+<!-- Structured Data: SoftwareApplication -->
+<script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "fullstackhero .NET Starter Kit",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform",
+    "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+    },
+    "description": "Production-ready .NET 10 modular monolith starter kit with multitenancy (Finbuckle), JWT authentication, CQRS (source-generated Mediator), EF Core with PostgreSQL, and vertical slice architecture.",
+    "url": "https://fullstackhero.net",
+    "downloadUrl": "https://github.com/fullstackhero/dotnet-starter-kit",
+    "softwareVersion": "10.0",
+    "author": {
+        "@type": "Person",
+        "name": "Mukesh Murugan",
+        "url": "https://codewithmukesh.com"
+    },
+    "license": "https://opensource.org/licenses/MIT",
+    "programmingLanguage": "C#",
+    "runtimePlatform": ".NET 10"
+})} />
+
+<!-- Structured Data: FAQPage -->
+<script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is fullstackhero?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "fullstackhero is a production-ready, open-source .NET 10 starter kit for building multi-tenant SaaS and enterprise applications. It provides a modular monolith architecture with vertical slice design, CQRS via source-generated Mediator, JWT authentication, role-based permissions, Entity Framework Core with PostgreSQL, Redis caching, Hangfire background jobs, and comprehensive observability with Serilog and OpenTelemetry."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Is fullstackhero opinionated? Can I swap out libraries?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, it's opinionated — that's the point. But it's your code after you clone it. Swap PostgreSQL for SQL Server, replace Mediator with MediatR, use a different auth provider. The architecture is the value, not any single library."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Is fullstackhero production-ready or just a demo?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Production-ready. It's been used in real applications for 5 years, battle-tested by thousands of developers. The patterns (CQRS, modular monolith, VSA) are proven at scale."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How does fullstackhero compare to Clean Architecture templates?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "fullstackhero uses Vertical Slice Architecture inside a Modular Monolith — not traditional Clean Architecture layers. You get feature cohesion (everything for a feature in one folder) instead of layer separation. Both are valid; VSA tends to scale better with team size."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What databases are supported?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PostgreSQL out of the box via Npgsql. Since it's built on EF Core, switching to SQL Server, MySQL, or SQLite requires changing the provider registration and connection string. The rest of the data layer stays the same."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Can I remove modules I don't need?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Absolutely. Modules are independent bounded contexts. Don't need Auditing? Remove the project reference and the module registration line. The architecture is designed for this."
+            }
+        }
+    ]
+})} />
+
+<!-- Structured Data: Person (Author) -->
+<script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Mukesh Murugan",
+    "url": "https://codewithmukesh.com",
+    "jobTitle": "Software Engineer",
+    "description": "Creator of fullstackhero, .NET content creator, and enterprise software architect.",
+    "sameAs": [
+        "https://twitter.com/iammukeshm",
+        "https://www.linkedin.com/in/iammukeshm/",
+        "https://github.com/iammukeshm",
+        "https://youtube.com/@codewithmukesh",
+        "https://codewithmukesh.com"
+    ],
+    "worksFor": {
+        "@type": "Organization",
+        "name": "fullstackhero",
+        "url": "https://fullstackhero.net"
+    },
+    "knowsAbout": [".NET", "C#", "ASP.NET Core", "Modular Monolith Architecture", "Vertical Slice Architecture", "CQRS", "Multitenancy", "Domain-Driven Design", "Blazor", "Entity Framework Core"]
+})} />
+
 </Landing>
 
 <style is:global>

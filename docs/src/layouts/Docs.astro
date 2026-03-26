@@ -26,6 +26,90 @@ interface Props {
 const { title, description, slug, headings } = Astro.props;
 const editUrl = `https://github.com/fullstackhero/dotnet-starter-kit/edit/develop/docs/src/content/docs/${slug}.md`;
 const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+
+// Build breadcrumb trail from sidebar config
+const siteUrl = 'https://fullstackhero.net';
+const pageUrl = `${siteUrl}/docs/${slug}/`;
+
+// Find the section this page belongs to
+const currentGroup = sidebar.find(g => g.items.some(i => i.slug === slug));
+const sectionName = currentGroup?.label || 'Docs';
+
+// TechArticle structured data for this documentation page
+const techArticleSchema = {
+	"@context": "https://schema.org",
+	"@type": "TechArticle",
+	"headline": title,
+	"description": description || `${title} — fullstackhero documentation`,
+	"url": pageUrl,
+	"dateModified": new Date().toISOString().split('T')[0],
+	"author": {
+		"@type": "Person",
+		"name": "Mukesh Murugan",
+		"url": "https://codewithmukesh.com",
+		"jobTitle": "Software Engineer",
+		"sameAs": [
+			"https://twitter.com/iammukeshm",
+			"https://www.linkedin.com/in/iammukeshm/",
+			"https://github.com/iammukeshm"
+		]
+	},
+	"publisher": {
+		"@type": "Organization",
+		"name": "fullstackhero",
+		"url": siteUrl,
+		"logo": {
+			"@type": "ImageObject",
+			"url": `${siteUrl}/favicon.svg`
+		}
+	},
+	"mainEntityOfPage": {
+		"@type": "WebPage",
+		"@id": pageUrl
+	},
+	"inLanguage": "en",
+	"isPartOf": {
+		"@type": "WebSite",
+		"name": "fullstackhero",
+		"url": siteUrl
+	},
+	"speakable": {
+		"@type": "SpeakableSpecification",
+		"cssSelector": [".prose > h1", ".prose > p:first-of-type"]
+	}
+};
+
+// BreadcrumbList structured data
+const breadcrumbSchema = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	"itemListElement": [
+		{
+			"@type": "ListItem",
+			"position": 1,
+			"name": "Home",
+			"item": siteUrl
+		},
+		{
+			"@type": "ListItem",
+			"position": 2,
+			"name": "Docs",
+			"item": `${siteUrl}/docs/introduction/`
+		},
+		{
+			"@type": "ListItem",
+			"position": 3,
+			"name": sectionName,
+			"item": pageUrl
+		},
+		{
+			"@type": "ListItem",
+			"position": 4,
+			"name": title,
+			"item": pageUrl
+		}
+	]
+};
 ---
 
 <Landing title={`${title} — fullstackhero`} description={description || 'fullstackhero documentation'}>
@@ -100,6 +184,8 @@ const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 
 		<main class="docs-content">
 			<Breadcrumbs currentSlug={slug} title={title} />
+			<script type="application/ld+json" set:html={JSON.stringify(techArticleSchema)} />
+			<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 			<article class="prose">
 				<h1>{title}</h1>
 				<slot />
