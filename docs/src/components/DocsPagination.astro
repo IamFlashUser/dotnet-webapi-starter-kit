@@ -22,13 +22,13 @@ const next = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : n
 {(prev || next) && (
 	<nav class="docs-pagination">
 		{prev ? (
-			<a href={`/docs/${prev.slug}/`}>
+			<a href={`/dotnet-starter-kit/${prev.slug}/`}>
 				<span class="pg-label">&larr; Previous</span>
 				<span class="pg-title">{prev.title}</span>
 			</a>
 		) : <div />}
 		{next ? (
-			<a href={`/docs/${next.slug}/`} class="pg-next">
+			<a href={`/dotnet-starter-kit/${next.slug}/`} class="pg-next">
 				<span class="pg-label">Next &rarr;</span>
 				<span class="pg-title">{next.title}</span>
 			</a>

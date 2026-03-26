@@ -285,7 +285,7 @@ Commands represent write operations that change state. Queries represent read op
 Handlers implement `ICommandHandler<TCommand, TResponse>` or `IQueryHandler<TQuery, TResponse>` and return `ValueTask<T>`. They are the only place business logic lives -- endpoints stay thin, validators stay focused on input shape, and the handler does the real work.
 
 <Aside type="tip">
-For a deep dive into the CQRS pattern, command/query conventions, and the validation pipeline, see the [CQRS](/docs/cqrs/) page.
+For a deep dive into the CQRS pattern, command/query conventions, and the validation pipeline, see the [CQRS](/dotnet-starter-kit/cqrs/) page.
 </Aside>
 
 ## Module Registration
@@ -397,9 +397,9 @@ fullstackhero handles cross-cutting concerns at the BuildingBlocks level so that
 
 | Concern | Handled By | Details |
 |---------|-----------|---------|
-| **Authentication & Authorization** | Identity module + JWT Bearer | User registration, login, role-based and permission-based access control. See [Identity](/docs/modules/identity/). |
-| **Multitenancy** | Multitenancy module + Finbuckle | Tenant resolution via claims, headers, or query strings. Per-tenant database isolation. See [Multitenancy](/docs/modules/multitenancy/). |
-| **Auditing** | Auditing module | Automatic audit trail capture for all entity changes. See [Auditing](/docs/modules/auditing/). |
+| **Authentication & Authorization** | Identity module + JWT Bearer | User registration, login, role-based and permission-based access control. See [Identity](/dotnet-starter-kit/modules/identity/). |
+| **Multitenancy** | Multitenancy module + Finbuckle | Tenant resolution via claims, headers, or query strings. Per-tenant database isolation. See [Multitenancy](/dotnet-starter-kit/modules/multitenancy/). |
+| **Auditing** | Auditing module | Automatic audit trail capture for all entity changes. See [Auditing](/dotnet-starter-kit/modules/auditing/). |
 | **Exception Handling** | Web BuildingBlock | Global exception handler converts exceptions to RFC 9457 ProblemDetails responses. Framework exception types include `CustomException`, `NotFoundException`, `ForbiddenException`, and `UnauthorizedException`. |
 | **Validation** | Mediator pipeline + FluentValidation | `ValidationBehavior` runs validators automatically before handlers execute. Validation failures return 400 Bad Request with structured error details. |
 | **Caching** | Caching BuildingBlock + Redis | Distributed caching with a clean abstraction layer backed by StackExchange.Redis. |
@@ -409,5 +409,5 @@ fullstackhero handles cross-cutting concerns at the BuildingBlocks level so that
 | **API Versioning** | Asp.Versioning | URL-based versioning (`v{version:apiVersion}`) with version sets per module. |
 
 <Aside type="note" title="Explore further">
-Each topic above has dedicated documentation. Start with [Project Structure](/docs/project-structure/) for a detailed layout, [CQRS](/docs/cqrs/) for the command/query pipeline, or jump into the module pages for [Identity](/docs/modules/identity/), [Multitenancy](/docs/modules/multitenancy/), and [Auditing](/docs/modules/auditing/).
+Each topic above has dedicated documentation. Start with [Project Structure](/dotnet-starter-kit/project-structure/) for a detailed layout, [CQRS](/dotnet-starter-kit/cqrs/) for the command/query pipeline, or jump into the module pages for [Identity](/dotnet-starter-kit/modules/identity/), [Multitenancy](/dotnet-starter-kit/modules/multitenancy/), and [Auditing](/dotnet-starter-kit/modules/auditing/).
 </Aside>

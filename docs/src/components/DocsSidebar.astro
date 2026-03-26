@@ -22,7 +22,7 @@ const { currentSlug } = Astro.props;
 								{(item as SidebarSubGroup).items.map((sub: SidebarLink) => (
 									<li>
 										<a
-											href={`/docs/${sub.slug}/`}
+											href={`/dotnet-starter-kit/${sub.slug}/`}
 											class:list={[{ active: currentSlug === sub.slug }]}
 										>
 											{sub.title}
@@ -34,7 +34,7 @@ const { currentSlug } = Astro.props;
 					) : (
 						<li>
 							<a
-								href={`/docs/${(item as SidebarLink).slug}/`}
+								href={`/dotnet-starter-kit/${(item as SidebarLink).slug}/`}
 								class:list={[{ active: currentSlug === (item as SidebarLink).slug }]}
 							>
 								{(item as SidebarLink).title}
