@@ -191,7 +191,7 @@ The `OutboxMessage` entity tracks each event's lifecycle:
 The `OutboxDispatcher` processes pending messages in configurable batches. Messages that fail repeatedly are marked as dead-lettered after exceeding the maximum retry count.
 
 <Aside type="note" title="Deep Dive">
-For a complete walkthrough of the outbox pattern including the dispatcher lifecycle, retry logic, and dead-letter handling, see the [Outbox & Inbox Pattern](/dotnet-starter-kit/patterns/outbox-inbox/) page.
+For a complete walkthrough of the outbox pattern including the dispatcher lifecycle, retry logic, and dead-letter handling, see the [Outbox & Inbox Pattern](/dotnet-starter-kit/outbox-inbox-pattern/) page.
 </Aside>
 
 ## Inbox Pattern
@@ -211,7 +211,7 @@ Event arrives  →  Check InboxMessages (EventId + HandlerName)
 The `InboxMessage` entity uses a composite key of `Id` (event ID) and `HandlerName`, so the same event can be processed by multiple different handlers while still preventing duplicate processing by any single handler.
 
 <Aside type="note" title="Deep Dive">
-For details on how the inbox store integrates with the InMemory event bus and EF Core persistence, see the [Outbox & Inbox Pattern](/dotnet-starter-kit/patterns/outbox-inbox/) page.
+For details on how the inbox store integrates with the InMemory event bus and EF Core persistence, see the [Outbox & Inbox Pattern](/dotnet-starter-kit/outbox-inbox-pattern/) page.
 </Aside>
 
 ## Serialization

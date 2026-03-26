@@ -48,6 +48,11 @@ Additional module folders: `Domain/`, `Data/`, `Services/`, `Events/`, `Authoriz
 | Multitenancy | Finbuckle.MultiTenant 10.x (claim/header/query strategies) |
 | Caching | Redis (StackExchange) |
 | Jobs | Hangfire |
+| Resilience | Microsoft.Extensions.Http.Resilience (Polly v8) |
+| Feature Flags | Microsoft.FeatureManagement with tenant overrides |
+| Idempotency | Idempotency-Key header with cache-based replay |
+| Webhooks | Tenant-scoped subscriptions with HMAC signing |
+| Real-time | Server-Sent Events (SSE) |
 | Logging | Serilog + OpenTelemetry (OTLP) |
 | Object mapping | Mapster |
 | API docs | OpenAPI + Scalar |

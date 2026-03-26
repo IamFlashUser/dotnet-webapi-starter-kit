@@ -3,9 +3,9 @@ title: "Caching"
 description: "Distributed and hybrid caching with Redis in the fullstackhero .NET Starter Kit."
 ---
 
-import Aside from '../../../components/Aside.astro';
-import Tabs from '../../../components/Tabs.astro';
-import TabPanel from '../../../components/TabPanel.astro';
+import Aside from '../../components/Aside.astro';
+import Tabs from '../../components/Tabs.astro';
+import TabPanel from '../../components/TabPanel.astro';
 
 fullstackhero provides a **caching abstraction** with two implementations behind a single `ICacheService` interface — a distributed cache backed by Redis, and a hybrid cache that layers in-memory caching on top of Redis. Modules interact only with the interface, so you can switch implementations without changing application code.
 
