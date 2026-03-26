@@ -1,5 +1,6 @@
 ---
-import { sidebar } from '../config/docs.config';
+import { sidebar, isSubGroup } from '../config/docs.config';
+import type { SidebarLink, SidebarSubGroup } from '../config/docs.config';
 
 interface Props {
 	currentSlug: string;
@@ -8,9 +9,28 @@ interface Props {
 
 const { currentSlug, title } = Astro.props;
 
-// Find which group this page belongs to
-const group = sidebar.find((g) => g.items.some((item) => item.slug === currentSlug));
-const groupLabel = group?.label || '';
+// Find which group (and optionally sub-group) this page belongs to
+let groupLabel = '';
+let subGroupLabel = '';
+
+for (const group of sidebar) {
+	for (const item of group.items) {
+		if (isSubGroup(item)) {
+			const sub = item as SidebarSubGroup;
+			if (sub.items.some((s: SidebarLink) => s.slug === currentSlug)) {
+				groupLabel = group.label;
+				subGroupLabel = sub.label;
+				break;
+			}
+		} else {
+			if ((item as SidebarLink).slug === currentSlug) {
+				groupLabel = group.label;
+				break;
+			}
+		}
+	}
+	if (groupLabel) break;
+}
 ---
 
 <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -21,6 +41,12 @@ const groupLabel = group?.label || '';
 		<>
 			<span class="bc-sep">/</span>
 			<span class="bc-group">{groupLabel}</span>
+		</>
+	)}
+	{subGroupLabel && (
+		<>
+			<span class="bc-sep">/</span>
+			<span class="bc-group">{subGroupLabel}</span>
 		</>
 	)}
 	<span class="bc-sep">/</span>

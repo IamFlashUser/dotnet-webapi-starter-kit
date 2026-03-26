@@ -78,6 +78,43 @@
 	font-weight: 500;
 }
 
+/* Sidebar sub-groups (nested menus, e.g. Modules > Identity) */
+.sidebar-subgroup {
+	margin-top: 0.15rem;
+}
+.sidebar-sublabel {
+	font-size: 0.72rem;
+	font-weight: 500;
+	color: var(--text-dim);
+	padding: 0.3rem 0.5rem 0.15rem;
+	letter-spacing: 0.01em;
+}
+.sidebar-sublinks {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.sidebar-sublinks a {
+	display: block;
+	font-size: 0.75rem;
+	font-weight: 400;
+	color: var(--text-faint);
+	padding: 0.22rem 0.5rem 0.22rem 1.1rem;
+	border-left: 2px solid transparent;
+	margin-left: -1px;
+	border-radius: 0 4px 4px 0;
+	transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+.sidebar-sublinks a:hover {
+	color: var(--text);
+	background: rgba(128,128,128,0.04);
+}
+.sidebar-sublinks a.active {
+	color: var(--brand);
+	border-left-color: var(--brand);
+	font-weight: 500;
+}
+
 /* ── Main Content ────────────────────────────────────────── */
 
 .docs-content {
@@ -627,6 +664,24 @@ body.sidebar-open {
 }
 :root[data-theme="dark"] .dmp-nav a.active {
 	background: rgba(74,222,128,0.06);
+}
+.dmp-sublabel {
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--text-faint);
+	padding: 0.6rem 0.4rem 0.15rem 0.6rem;
+	list-style: none;
+	margin-top: 0.15rem;
+}
+.dmp-sublabel:first-child {
+	padding-top: 0.2rem;
+}
+.dmp-nav a.dmp-sub {
+	padding-left: 1.4rem;
+	font-size: 0.82rem;
+	color: var(--text-dim);
 }
 .dmp-indent {
 	padding-left: 1.15rem !important;

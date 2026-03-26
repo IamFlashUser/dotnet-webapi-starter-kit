@@ -3,9 +3,20 @@ export interface SidebarLink {
   slug: string;
 }
 
-export interface SidebarGroup {
+export interface SidebarSubGroup {
   label: string;
   items: SidebarLink[];
+}
+
+export type SidebarItem = SidebarLink | SidebarSubGroup;
+
+export interface SidebarGroup {
+  label: string;
+  items: SidebarItem[];
+}
+
+export function isSubGroup(item: SidebarItem): item is SidebarSubGroup {
+  return 'items' in item && !('slug' in item);
 }
 
 export const sidebar: SidebarGroup[] = [
@@ -32,15 +43,30 @@ export const sidebar: SidebarGroup[] = [
   {
     label: 'Modules',
     items: [
-      { title: 'Identity Overview', slug: 'modules/identity/overview' },
-      { title: 'Users', slug: 'modules/identity/users' },
-      { title: 'Roles & Permissions', slug: 'modules/identity/roles-permissions' },
-      { title: 'Authentication', slug: 'modules/identity/authentication' },
-      { title: 'Sessions & Groups', slug: 'modules/identity/sessions-groups' },
-      { title: 'Multitenancy Overview', slug: 'modules/multitenancy/overview' },
-      { title: 'Tenant Provisioning', slug: 'modules/multitenancy/provisioning' },
-      { title: 'Auditing Overview', slug: 'modules/auditing/overview' },
-      { title: 'Querying Audits', slug: 'modules/auditing/querying' },
+      {
+        label: 'Identity',
+        items: [
+          { title: 'Overview', slug: 'modules/identity/overview' },
+          { title: 'Users', slug: 'modules/identity/users' },
+          { title: 'Roles & Permissions', slug: 'modules/identity/roles-permissions' },
+          { title: 'Authentication', slug: 'modules/identity/authentication' },
+          { title: 'Sessions & Groups', slug: 'modules/identity/sessions-groups' },
+        ],
+      },
+      {
+        label: 'Multitenancy',
+        items: [
+          { title: 'Overview', slug: 'modules/multitenancy/overview' },
+          { title: 'Provisioning', slug: 'modules/multitenancy/provisioning' },
+        ],
+      },
+      {
+        label: 'Auditing',
+        items: [
+          { title: 'Overview', slug: 'modules/auditing/overview' },
+          { title: 'Querying Audits', slug: 'modules/auditing/querying' },
+        ],
+      },
     ],
   },
   {
@@ -61,7 +87,7 @@ export const sidebar: SidebarGroup[] = [
   {
     label: 'Cross-Cutting Concerns',
     items: [
-      { title: 'Authentication & Authorization', slug: 'cross-cutting/authentication-authorization' },
+      { title: 'Auth & Authorization', slug: 'cross-cutting/authentication-authorization' },
       { title: 'Multitenancy Deep Dive', slug: 'cross-cutting/multitenancy-deep-dive' },
       { title: 'Exception Handling', slug: 'cross-cutting/exception-handling' },
       { title: 'Observability', slug: 'cross-cutting/observability' },

@@ -1,5 +1,6 @@
 ---
-import { sidebar } from '../config/docs.config';
+import { sidebar, isSubGroup } from '../config/docs.config';
+import type { SidebarLink } from '../config/docs.config';
 
 interface Props {
 	currentSlug: string;
@@ -7,8 +8,12 @@ interface Props {
 
 const { currentSlug } = Astro.props;
 
-// Flatten all items
-const allItems = sidebar.flatMap((group) => group.items);
+// Flatten all items (handles nested sub-groups)
+const allItems: SidebarLink[] = sidebar.flatMap((group) =>
+	group.items.flatMap((item) =>
+		isSubGroup(item) ? item.items : [item as SidebarLink]
+	)
+);
 const currentIndex = allItems.findIndex((item) => item.slug === currentSlug);
 const prev = currentIndex > 0 ? allItems[currentIndex - 1] : null;
 const next = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
