@@ -51,12 +51,11 @@ public sealed class TokenService : ITokenService
         var refreshToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         var refreshTokenExpiry = now.AddDays(_options.RefreshTokenDays);
 
-        var userEmail = claims.Where(a => a.Type == ClaimTypes.Email).Select(a => a.Value).First();
         if (_logger.IsEnabled(LogLevel.Information))
         {
-            _logger.LogInformation("Issued JWT for user {EmailHash}", MaskEmail(userEmail));
+            _logger.LogInformation("Issued JWT for subject {Subject}", subject);
         }
-        _metrics.TokenGenerated(userEmail);
+        _metrics.TokenGenerated(subject);
 
         var response = new TokenResponse(
             AccessToken: accessToken,
@@ -65,13 +64,5 @@ public sealed class TokenService : ITokenService
             AccessTokenExpiresAt: accessTokenExpiry);
 
         return Task.FromResult(response);
-    }
-
-    private static string MaskEmail(string email)
-    {
-        if (string.IsNullOrEmpty(email)) return "unknown";
-        var atIndex = email.IndexOf('@', StringComparison.Ordinal);
-        if (atIndex <= 1) return "***" + email[atIndex..];
-        return string.Concat(email.AsSpan(0, 1), "***", email.AsSpan(atIndex));
     }
 }

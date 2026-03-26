@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using FSH.Framework.Caching;
 using Microsoft.AspNetCore.Builder;
@@ -50,7 +52,7 @@ public sealed class IdempotencyEndpointFilter : IEndpointFilter
         {
             if (logger.IsEnabled(LogLevel.Debug))
             {
-                logger.LogDebug("Idempotent replay for key {IdempotencyKey}", idempotencyKey);
+                logger.LogDebug("Idempotent replay for key {KeyHash}", HashKey(idempotencyKey));
             }
             httpContext.Response.Headers["Idempotency-Replayed"] = "true";
             httpContext.Response.StatusCode = cached.StatusCode;
@@ -85,10 +87,16 @@ public sealed class IdempotencyEndpointFilter : IEndpointFilter
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            logger.LogWarning(ex, "Failed to cache idempotent response for key {IdempotencyKey}", idempotencyKey);
+            logger.LogWarning(ex, "Failed to cache idempotent response for key {KeyHash}", HashKey(idempotencyKey));
         }
 
         return result;
+    }
+
+    private static string HashKey(string key)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(key));
+        return Convert.ToHexString(hash.AsSpan(0, 8));
     }
 }
 

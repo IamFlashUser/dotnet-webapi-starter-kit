@@ -82,7 +82,7 @@ public sealed partial class HybridCacheService : ICacheService
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _logger.LogWarning(ex, "Cache get failed for {Key}", key);
+            _logger.LogWarning(ex, "Cache get failed for key (length={KeyLength})", key.Length);
             return default;
         }
     }
@@ -107,7 +107,7 @@ public sealed partial class HybridCacheService : ICacheService
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _logger.LogWarning(ex, "Cache set failed for {Key}", key);
+            _logger.LogWarning(ex, "Cache set failed for key (length={KeyLength})", key.Length);
         }
     }
 
