@@ -6,6 +6,9 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   site: 'https://fullstackhero.net',
   integrations: [mdx(), sitemap()],
+  image: {
+    service: { entrypoint: 'astro/assets/services/sharp' },
+  },
   markdown: {
     shikiConfig: {
       themes: {
