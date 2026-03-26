@@ -1,4 +1,4 @@
-﻿using FSH.Framework.Persistence.Inteceptors;
+using FSH.Framework.Persistence.Inteceptors;
 using FSH.Framework.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -31,6 +31,8 @@ public static class PersistenceExtensions
             .Validate(o => !string.IsNullOrWhiteSpace(o.Provider), "DatabaseOptions.Provider is required.")
             .ValidateOnStart();
         services.AddHostedService<DatabaseOptionsStartupLogger>();
+        services.TryAddSingleton(TimeProvider.System);
+        services.AddScoped<ISaveChangesInterceptor, AuditableEntitySaveChangesInterceptor>();
         services.AddScoped<ISaveChangesInterceptor, DomainEventsInterceptor>();
         return services;
     }
