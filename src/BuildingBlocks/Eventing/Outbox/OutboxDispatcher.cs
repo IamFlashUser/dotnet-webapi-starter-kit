@@ -8,7 +8,7 @@ namespace FSH.Framework.Eventing.Outbox;
 /// Dispatches outbox messages via the configured event bus.
 /// This type is intended to be invoked by a scheduler (e.g., Hangfire recurring job or hosted service).
 /// </summary>
-public sealed class OutboxDispatcher
+public sealed partial class OutboxDispatcher
 {
     private readonly IOutboxStore _outbox;
     private readonly IEventBus _bus;
@@ -44,7 +44,7 @@ public sealed class OutboxDispatcher
             return;
         }
 
-        _logger.LogInformation("Dispatching {Count} outbox messages (BatchSize={BatchSize})", messages.Count, batchSize);
+        LogDispatching(messages.Count, batchSize);
 
         var processedCount = 0;
         var failedCount = 0;
@@ -65,7 +65,7 @@ public sealed class OutboxDispatcher
                 await _outbox.MarkAsProcessedAsync(message, ct).ConfigureAwait(false);
                 processedCount++;
 
-                _logger.LogDebug("Outbox message {MessageId} dispatched and marked as processed.", message.Id);
+                LogMessageDispatched(message.Id);
             }
             // Broad catch is intentional: each message must be processed independently,
             // and any failure type should trigger the retry/dead-letter mechanism.
@@ -93,11 +93,15 @@ public sealed class OutboxDispatcher
             }
         }
 
-        _logger.LogInformation(
-            "Outbox dispatch summary: Total={Total}, Processed={Processed}, Failed={Failed}, DeadLettered={DeadLettered}",
-            messages.Count,
-            processedCount,
-            failedCount,
-            deadLetterCount);
+        LogDispatchSummary(messages.Count, processedCount, failedCount, deadLetterCount);
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Dispatching {Count} outbox messages (BatchSize={BatchSize})")]
+    private partial void LogDispatching(int count, int batchSize);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Outbox message {MessageId} dispatched and marked as processed.")]
+    private partial void LogMessageDispatched(Guid messageId);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox dispatch summary: Total={Total}, Processed={Processed}, Failed={Failed}, DeadLettered={DeadLettered}")]
+    private partial void LogDispatchSummary(int total, int processed, int failed, int deadLettered);
 }

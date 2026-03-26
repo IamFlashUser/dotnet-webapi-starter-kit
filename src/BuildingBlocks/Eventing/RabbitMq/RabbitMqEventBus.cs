@@ -10,7 +10,7 @@ namespace FSH.Framework.Eventing.RabbitMq;
 /// RabbitMQ-based event bus implementation for distributed deployments.
 /// Publishes integration events to a fanout exchange.
 /// </summary>
-public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
+public sealed partial class RabbitMqEventBus : IEventBus, IAsyncDisposable
 {
     private readonly IEventSerializer _serializer;
     private readonly ILogger<RabbitMqEventBus> _logger;
@@ -99,9 +99,7 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
                     body: body,
                     cancellationToken: ct).ConfigureAwait(false);
 
-                _logger.LogDebug(
-                    "Published integration event {EventType} ({EventId}) to exchange {Exchange}",
-                    routingKey, @event.Id, _options.ExchangeName);
+                LogPublished(routingKey, @event.Id, _options.ExchangeName);
 
                 return;
             }
@@ -161,9 +159,7 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
 
     private async Task CreateConnectionAsync(CancellationToken ct)
     {
-        _logger.LogInformation(
-            "Connecting to RabbitMQ at {Host}:{Port}/{VirtualHost}",
-            _options.Host, _options.Port, _options.VirtualHost);
+        LogConnecting(_options.Host, _options.Port, _options.VirtualHost);
 
         var factory = new ConnectionFactory
         {
@@ -190,7 +186,7 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
             autoDelete: false,
             cancellationToken: ct).ConfigureAwait(false);
 
-        _logger.LogInformation("RabbitMQ connection established. Exchange: {Exchange}", _options.ExchangeName);
+        LogConnected(_options.ExchangeName);
     }
 
     private async Task DisposeConnectionAsync()
@@ -237,4 +233,13 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
         await DisposeConnectionAsync().ConfigureAwait(false);
         _connectionLock.Dispose();
     }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Published integration event {EventType} ({EventId}) to exchange {Exchange}")]
+    private partial void LogPublished(string eventType, Guid eventId, string exchange);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Connecting to RabbitMQ at {Host}:{Port}/{VirtualHost}")]
+    private partial void LogConnecting(string host, int port, string virtualHost);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "RabbitMQ connection established. Exchange: {Exchange}")]
+    private partial void LogConnected(string exchange);
 }

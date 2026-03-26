@@ -10,7 +10,7 @@ namespace FSH.Framework.Caching;
 /// Implementation of <see cref="ICacheService"/> using distributed cache (Redis or in-memory).
 /// Provides JSON serialization for cached objects with configurable expiration policies.
 /// </summary>
-public sealed class DistributedCacheService : ICacheService
+public sealed partial class DistributedCacheService : ICacheService
 {
     private static readonly Encoding Utf8 = Encoding.UTF8;
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -62,7 +62,7 @@ public sealed class DistributedCacheService : ICacheService
         {
             var bytes = Utf8.GetBytes(JsonSerializer.Serialize(value, JsonOpts));
             await _cache.SetAsync(key, bytes, BuildEntryOptions(sliding), ct).ConfigureAwait(false);
-            _logger.LogDebug("Cached {Key}", key);
+            LogCached(key);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -86,7 +86,7 @@ public sealed class DistributedCacheService : ICacheService
         try
         {
             await _cache.RefreshAsync(key, ct).ConfigureAwait(false);
-            _logger.LogDebug("Refreshed {Key}", key);
+            LogRefreshed(key);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         { _logger.LogWarning(ex, "Cache refresh failed for {Key}", key); }
@@ -149,4 +149,10 @@ public sealed class DistributedCacheService : ICacheService
             ? key
             : prefix + key;
     }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Cached {Key}")]
+    private partial void LogCached(string key);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Refreshed {Key}")]
+    private partial void LogRefreshed(string key);
 }

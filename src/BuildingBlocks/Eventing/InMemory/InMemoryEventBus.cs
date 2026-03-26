@@ -10,7 +10,7 @@ namespace FSH.Framework.Eventing.InMemory;
 /// In-memory event bus implementation used for single-process deployments.
 /// It resolves handlers from DI and optionally uses an inbox store for idempotency.
 /// </summary>
-public sealed class InMemoryEventBus : IEventBus
+public sealed partial class InMemoryEventBus : IEventBus
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<InMemoryEventBus> _logger;
@@ -37,7 +37,7 @@ public sealed class InMemoryEventBus : IEventBus
     private async Task PublishSingleAsync(IIntegrationEvent @event, CancellationToken ct)
     {
         var eventType = @event.GetType();
-        _logger.LogDebug("Publishing integration event {EventType} ({EventId})", eventType.FullName, @event.Id);
+        LogPublishingEvent(eventType.FullName, @event.Id);
 
         using var scope = _serviceProvider.CreateScope();
         var provider = scope.ServiceProvider;
@@ -45,7 +45,7 @@ public sealed class InMemoryEventBus : IEventBus
         var handlers = ResolveHandlers(provider, eventType);
         if (handlers.Length == 0)
         {
-            _logger.LogDebug("No handlers registered for integration event type {EventType}", eventType.FullName);
+            LogNoHandlers(eventType.FullName);
             return;
         }
 
@@ -76,7 +76,7 @@ public sealed class InMemoryEventBus : IEventBus
 
         if (await ShouldSkipProcessedEventAsync(inbox, @event.Id, handlerName, ct))
         {
-            _logger.LogDebug("Skipping already processed integration event {EventId} for handler {Handler}", @event.Id, handlerName);
+            LogSkippingProcessed(@event.Id, handlerName);
             return;
         }
 
@@ -123,4 +123,13 @@ public sealed class InMemoryEventBus : IEventBus
             throw;
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Publishing integration event {EventType} ({EventId})")]
+    private partial void LogPublishingEvent(string? eventType, Guid eventId);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "No handlers registered for integration event type {EventType}")]
+    private partial void LogNoHandlers(string? eventType);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Skipping already processed integration event {EventId} for handler {Handler}")]
+    private partial void LogSkippingProcessed(Guid eventId, string handler);
 }

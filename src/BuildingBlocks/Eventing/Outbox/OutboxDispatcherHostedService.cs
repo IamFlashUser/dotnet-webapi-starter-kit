@@ -9,7 +9,7 @@ namespace FSH.Framework.Eventing.Outbox;
 /// Background service that periodically dispatches outbox messages.
 /// Alternative to Hangfire-based scheduling for simpler deployments.
 /// </summary>
-public sealed class OutboxDispatcherHostedService : BackgroundService
+public sealed partial class OutboxDispatcherHostedService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<OutboxDispatcherHostedService> _logger;
@@ -30,9 +30,7 @@ public sealed class OutboxDispatcherHostedService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation(
-            "Outbox dispatcher hosted service started. Dispatch interval: {Interval}s",
-            _interval.TotalSeconds);
+        LogServiceStarted(_interval.TotalSeconds);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -71,4 +69,7 @@ public sealed class OutboxDispatcherHostedService : BackgroundService
         var dispatcher = scope.ServiceProvider.GetRequiredService<OutboxDispatcher>();
         await dispatcher.DispatchAsync(ct).ConfigureAwait(false);
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox dispatcher hosted service started. Dispatch interval: {Interval}s")]
+    private partial void LogServiceStarted(double interval);
 }
