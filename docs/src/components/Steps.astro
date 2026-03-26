@@ -7,50 +7,115 @@
 <style>
 	.steps {
 		counter-reset: step;
-		padding-left: 1.75rem;
-		border-left: 2px solid var(--border);
-		margin: 1rem 0;
+		margin: 1.25rem 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
 	}
+
+	/* Each direct child is a step segment */
 	.steps :global(> *) {
 		position: relative;
-		padding-bottom: 1.25rem;
+		padding-left: 2.75rem;
+		padding-bottom: 0.5rem;
 	}
-	.steps :global(> *:last-child) {
-		padding-bottom: 0;
-	}
+
+	/* Headings get the counter + visual treatment */
 	.steps :global(> h3),
 	.steps :global(> h4) {
 		counter-increment: step;
+		padding-top: 1.25rem;
+		padding-bottom: 0.35rem;
 	}
+
+	/* First heading — no top padding */
+	.steps :global(> h3:first-child),
+	.steps :global(> h4:first-child) {
+		padding-top: 0;
+	}
+
+	/* Vertical connector line */
+	.steps :global(> h3::after),
+	.steps :global(> h4::after) {
+		content: '';
+		position: absolute;
+		left: 0.85rem;
+		top: calc(1.25rem + 1.6rem);
+		bottom: 0;
+		width: 1px;
+		background: linear-gradient(to bottom, var(--brand), var(--border));
+		opacity: 0.4;
+	}
+
+	.steps :global(> h3:first-child::after),
+	.steps :global(> h4:first-child::after) {
+		top: 1.6rem;
+	}
+
+	/* Hide connector on the last heading */
+	.steps :global(> h3:last-of-type::after),
+	.steps :global(> h4:last-of-type::after) {
+		display: none;
+	}
+
+	/* Content between headings gets the connector line */
+	.steps :global(> *:not(h3):not(h4)) {
+		border-left: 1px solid var(--border);
+		margin-left: 0.85rem;
+		padding-left: 1.9rem;
+	}
+
+	/* Last child — no bottom padding */
+	.steps :global(> *:last-child) {
+		padding-bottom: 0;
+	}
+
+	/* Step number circle */
 	.steps :global(> h3::before),
 	.steps :global(> h4::before) {
 		content: counter(step);
 		position: absolute;
-		left: -2.55rem;
-		top: 0;
-		width: 1.6rem;
-		height: 1.6rem;
+		left: 0;
+		top: 1.25rem;
+		width: 1.7rem;
+		height: 1.7rem;
 		display: grid;
 		place-items: center;
-		font-size: 0.72rem;
-		font-weight: 600;
-		color: var(--brand);
-		background: var(--bg);
-		border: 2px solid var(--brand);
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		color: var(--bg);
+		background: var(--brand);
 		border-radius: 50%;
 		line-height: 1;
+		box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--border);
+		z-index: 1;
+	}
+
+	.steps :global(> h3:first-child::before),
+	.steps :global(> h4:first-child::before) {
+		top: 0;
 	}
 
 	@media (max-width: 768px) {
-		.steps {
+		.steps :global(> *) {
+			padding-left: 2.25rem;
+		}
+		.steps :global(> *:not(h3):not(h4)) {
 			padding-left: 1.4rem;
 		}
 		.steps :global(> h3::before),
 		.steps :global(> h4::before) {
-			left: -2.15rem;
-			width: 1.4rem;
-			height: 1.4rem;
+			width: 1.5rem;
+			height: 1.5rem;
 			font-size: 0.65rem;
+		}
+		.steps :global(> h3::after),
+		.steps :global(> h4::after) {
+			left: 0.72rem;
+		}
+		.steps :global(> *:not(h3):not(h4)) {
+			margin-left: 0.72rem;
 		}
 	}
 </style>
