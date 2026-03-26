@@ -1,0 +1,162 @@
+---
+title: "AWS with Terraform"
+description: "Production deployment to AWS using Terraform with ECS Fargate, RDS, and ElastiCache."
+---
+
+import Aside from '../../../components/Aside.astro';
+import Steps from '../../../components/Steps.astro';
+import FileTree from '../../../components/FileTree.astro';
+
+## Overview
+
+The starter kit includes a complete Infrastructure as Code setup for AWS using Terraform. The infrastructure spans VPC networking, ECS Fargate for container orchestration, Application Load Balancer, RDS PostgreSQL, ElastiCache Redis, and S3 storage. Separate configurations for dev and prod environments allow you to optimize costs during development while maintaining high availability in production.
+
+## Infrastructure Architecture
+
+```
+                    ┌─────────────────┐
+                    │   Route 53 /    │
+                    │   CloudFront    │
+                    └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │       ALB       │
+                    │ (Public Subnet) │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              │              │              │
+     ┌────────▼───┐  ┌──────▼─────┐  ┌─────▼──────┐
+     │  ECS Task  │  │  ECS Task  │  │  ECS Task  │
+     │    (API)   │  │  (Blazor)  │  │   (Worker) │
+     │  Fargate   │  │  Fargate   │  │  Fargate   │
+     └──────┬─────┘  └──────┬─────┘  └─────┬──────┘
+            │               │               │
+     ┌──────▼───────────────▼───────────────▼──────┐
+     │              Private Subnets                 │
+     │  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+     │  │   RDS    │  │  Redis   │  │    S3    │  │
+     │  │ Postgres │  │ElastiCache│  │  Bucket  │  │
+     │  └──────────┘  └──────────┘  └──────────┘  │
+     └──────────────────────────────────────────────┘
+```
+
+## Terraform Module Structure
+
+<FileTree items={[
+  { name: 'terraform/', type: 'folder', children: [
+    { name: 'bootstrap/', type: 'folder', desc: 'S3 state backend' },
+    { name: 'modules/', type: 'folder', children: [
+      { name: 'network/', type: 'folder', desc: 'VPC, subnets, NAT, endpoints' },
+      { name: 'ecs_cluster/', type: 'folder', desc: 'ECS cluster + Container Insights' },
+      { name: 'ecs_service/', type: 'folder', desc: 'Fargate task + service + target group' },
+      { name: 'alb/', type: 'folder', desc: 'Application Load Balancer' },
+      { name: 'rds_postgres/', type: 'folder', desc: 'RDS PostgreSQL' },
+      { name: 'elasticache_redis/', type: 'folder', desc: 'ElastiCache Redis' },
+      { name: 's3_bucket/', type: 'folder', desc: 'S3 + optional CloudFront' }
+    ]},
+    { name: 'apps/', type: 'folder', children: [
+      { name: 'playground/', type: 'folder', children: [
+        { name: 'app_stack/', type: 'folder', desc: 'Composes all modules' },
+        { name: 'envs/', type: 'folder', children: [
+          { name: 'dev/', type: 'folder', desc: 'Dev environment' },
+          { name: 'prod/', type: 'folder', desc: 'Production environment' }
+        ]}
+      ]}
+    ]}
+  ]}
+]} />
+
+Each module is self-contained with its own variables, outputs, and resource definitions. The `app_stack` module composes them together, and the `envs` directories provide environment-specific variable values.
+
+## Bootstrap
+
+Before deploying any infrastructure, create the S3 backend for Terraform state:
+
+<Steps>
+
+### Navigate to the bootstrap directory
+
+```bash
+cd terraform/bootstrap
+```
+
+### Initialize Terraform
+
+```bash
+terraform init
+```
+
+### Apply the bootstrap configuration
+
+```bash
+terraform apply
+```
+
+</Steps>
+
+This creates an S3 bucket with encryption and DynamoDB table for state locking. All subsequent Terraform operations store their state remotely in this bucket.
+
+## Deploy
+
+<Steps>
+
+### Navigate to the target environment
+
+```bash
+cd terraform/apps/playground/envs/dev/us-east-1
+```
+
+### Initialize Terraform with the remote backend
+
+```bash
+terraform init
+```
+
+### Review the execution plan
+
+```bash
+terraform plan
+```
+
+### Apply the infrastructure changes
+
+```bash
+terraform apply
+```
+
+</Steps>
+
+## Dev vs Prod Differences
+
+| Aspect | Dev | Prod |
+|--------|-----|------|
+| VPC CIDR | `10.10.0.0/16` | `10.30.0.0/16` |
+| Subnets | 2 per type | 3 per type |
+| NAT Gateway | Single (cost saving) | Per-AZ (HA) |
+| RDS | Single-AZ | Multi-AZ, 30-day backups |
+| Redis | t3.micro, 1 node | t3.medium, 2 nodes + failover |
+| ECS | 1 instance, Fargate Spot | 3 instances, standard Fargate |
+| Flow Logs | Disabled | Enabled (90-day retention) |
+
+## VPC Endpoints
+
+The Terraform configuration provisions VPC endpoints for the following AWS services:
+
+- **ECR** (Docker and API) — Pulls container images without traversing the public internet
+- **CloudWatch Logs** — Sends logs from ECS tasks directly through the private network
+- **Secrets Manager** — Retrieves secrets at runtime without public internet access
+
+These endpoints reduce data transfer costs and improve security by keeping traffic within the AWS network.
+
+<Aside type="warning">
+
+Always review `terraform plan` output before applying. Production changes should go through a PR-based review process with at least one approval.
+
+</Aside>
+
+<Aside type="tip">
+
+The dev environment uses Fargate Spot and a single NAT Gateway to minimize costs. Expect occasional task interruptions with Spot capacity, which ECS handles automatically by rescheduling tasks.
+
+</Aside>

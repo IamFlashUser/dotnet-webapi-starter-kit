@@ -13,8 +13,6 @@
     "@astrojs/cloudflare": "^13.1.4",
     "@astrojs/mdx": "^5.0.3",
     "@astrojs/sitemap": "^3.3.0",
-    "@fontsource/jetbrains-mono": "^5.2.8",
-    "@fontsource/jost": "^5.2.8",
     "astro": "^6.0.8",
     "lucide-static": "^1.7.0",
     "pagefind": "^1.4.0",

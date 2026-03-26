@@ -1,0 +1,121 @@
+---
+title: "Rate Limiting"
+description: "Protecting API endpoints with fixed window rate limiting."
+---
+
+import Aside from '../../../components/Aside.astro';
+
+## Overview
+
+The fullstackhero .NET Starter Kit includes built-in rate limiting using the ASP.NET Core rate limiting middleware. Two policies are configured out of the box: a **global** policy for general API traffic and an **auth** policy for authentication-related endpoints.
+
+## Policies
+
+### Global Policy
+
+The `global` policy applies a fixed window rate limit across all API endpoints:
+
+- **Permit Limit:** 100 requests
+- **Window:** 60 seconds
+- **Partition Key:** Client IP address
+
+This protects the API from excessive traffic while allowing normal usage patterns.
+
+### Auth Policy
+
+The `auth` policy applies a stricter limit to authentication endpoints (token, register, refresh):
+
+- **Permit Limit:** 10 requests
+- **Window:** 60 seconds
+- **Partition Key:** Client IP address
+
+<Aside type="tip">
+The `auth` policy is intentionally restrictive to prevent credential stuffing attacks. Ten requests per minute per IP is sufficient for legitimate login flows.
+</Aside>
+
+## Configuration
+
+Rate limiting is configured through `RateLimitingOptions` and `FixedWindowPolicyOptions`:
+
+```csharp
+public class RateLimitingOptions
+{
+    public FixedWindowPolicyOptions Global { get; set; } = new()
+    {
+        PermitLimit = 100,
+        WindowInSeconds = 60
+    };
+
+    public FixedWindowPolicyOptions Auth { get; set; } = new()
+    {
+        PermitLimit = 10,
+        WindowInSeconds = 60
+    };
+}
+```
+
+Override these values in your `appsettings.json`:
+
+```json
+{
+  "RateLimiting": {
+    "Global": {
+      "PermitLimit": 200,
+      "WindowInSeconds": 60
+    },
+    "Auth": {
+      "PermitLimit": 5,
+      "WindowInSeconds": 60
+    }
+  }
+}
+```
+
+## Applying to Endpoints
+
+The `auth` rate limiting policy is applied to authentication endpoints using `.RequireRateLimiting()`:
+
+```csharp
+endpoints.MapPost("/token", handler)
+    .RequireRateLimiting("auth");
+
+endpoints.MapPost("/register", handler)
+    .RequireRateLimiting("auth");
+
+endpoints.MapPost("/refresh", handler)
+    .RequireRateLimiting("auth");
+```
+
+All other endpoints fall under the `global` policy automatically.
+
+## Health Endpoint Exclusion
+
+Health check endpoints (`/health`, `/alive`) are excluded from rate limiting. This ensures that load balancers and orchestrators can always reach health probes, even under heavy traffic.
+
+## Tenant-Aware Rate Limiting
+
+Partition keys can include the tenant ID for per-tenant limits. This prevents a single noisy tenant from consuming the rate limit quota of other tenants sharing the same infrastructure.
+
+## Response
+
+When a client exceeds the rate limit, the API returns:
+
+- **Status Code:** `429 Too Many Requests`
+- **Header:** `Retry-After` indicating how many seconds the client should wait before retrying.
+
+```
+HTTP/1.1 429 Too Many Requests
+Retry-After: 45
+Content-Type: application/problem+json
+
+{
+  "type": "https://httpstatuses.com/429",
+  "title": "Too Many Requests",
+  "status": 429,
+  "detail": "Rate limit exceeded. Try again in 45 seconds."
+}
+```
+
+<Aside type="note">
+Rate limiting is applied per IP address by default. Behind a reverse proxy, ensure `X-Forwarded-For` headers are configured correctly so the real client IP is used for partitioning.
+</Aside>

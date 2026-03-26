@@ -1,64 +1,196 @@
 ---
-title: Project Structure
-description: Understanding the fullstackhero .NET Starter Kit folder layout.
+title: "Project Structure"
+description: "A complete guide to the fullstackhero .NET Starter Kit directory layout and project organization."
 ---
 
-## High-Level Layout
+import Aside from '../../components/Aside.astro';
+import FileTree from '../../components/FileTree.astro';
 
-```
-dotnet-starter-kit/
-├── src/
-│   ├── BuildingBlocks/       # Shared framework libraries
-│   ├── Modules/              # Bounded context modules
-│   ├── Playground/           # Host applications
-│   └── Tests/                # Test projects
-├── docs/                     # This documentation site
-└── FSH.Framework.slnx        # Solution file
-```
+The fullstackhero .NET Starter Kit is organized as a **modular monolith**. The codebase is split into shared framework libraries (BuildingBlocks), isolated bounded-context modules, sample host applications, and a comprehensive test suite. Every module enforces strict boundaries through a dual-project pattern, and every feature follows a consistent vertical slice layout.
 
-## BuildingBlocks
+## Solution Overview
 
-Shared framework libraries consumed by all modules. **Do not modify without careful consideration** — changes here have wide blast radius.
+The solution file `FSH.Framework.slnx` uses the modern XML-based `.slnx` format introduced in .NET 9. It contains **27 projects** organized into five logical groups:
 
-| Project | Purpose |
-|---------|---------|
-| `Core` | Base entities, domain events, CQRS interfaces, specifications |
-| `Persistence` | EF Core base DbContext, repository, migrations |
-| `Web` | Minimal API extensions, middleware, exception handling |
-| `Caching` | Redis cache service abstraction |
-| `Eventing` | Integration event infrastructure |
-| `Authorization` | Permission-based authorization |
+| Group | Projects | Purpose |
+|-------|----------|---------|
+| **BuildingBlocks** | 11 | Shared framework libraries consumed by all modules |
+| **Modules** | 6 | Bounded context modules (runtime + contracts pairs) |
+| **Playground** | 3 | Sample host applications (API, Blazor, Aspire) |
+| **Tests** | 5 | Unit tests, integration tests, and architecture tests |
+| **Tools** | 2 | CLI tooling and EF Core migrations |
 
-## Modules
+<Aside type="tip" title="Why .slnx?">
+The `.slnx` format is a cleaner, XML-based replacement for the legacy `.sln` format. It is easier to read, merge, and diff in version control.
+</Aside>
 
-Each module is a bounded context with two projects:
+## Top-Level Directory Layout
 
-```
-Modules.{Name}/              # Runtime (internal implementation)
-Modules.{Name}.Contracts/    # Public API (commands, queries, events, DTOs)
-```
+<FileTree items={[
+  { name: 'src/', type: 'folder', desc: 'All application source code', children: [
+    { name: 'BuildingBlocks/', type: 'folder', desc: 'Shared framework libraries', children: [
+      { name: 'Core/', type: 'folder', desc: 'DDD primitives, exceptions, CQRS interfaces' },
+      { name: 'Persistence/', type: 'folder', desc: 'EF Core abstractions, specifications, pagination' },
+      { name: 'Web/', type: 'folder', desc: 'Host infrastructure, middleware, module system' },
+      { name: 'Caching/', type: 'folder', desc: 'Distributed and hybrid cache (Redis)' },
+      { name: 'Eventing/', type: 'folder', desc: 'Domain events, outbox/inbox, event bus' },
+      { name: 'Eventing.Abstractions/', type: 'folder', desc: 'Event contracts and interfaces' },
+      { name: 'Jobs/', type: 'folder', desc: 'Hangfire background job infrastructure' },
+      { name: 'Mailing/', type: 'folder', desc: 'Email abstraction layer' },
+      { name: 'Storage/', type: 'folder', desc: 'File storage abstraction' },
+      { name: 'Shared/', type: 'folder', desc: 'Constants, DTOs, cross-cutting contracts' },
+      { name: 'Blazor.UI/', type: 'folder', desc: 'MudBlazor component library' }
+    ]},
+    { name: 'Modules/', type: 'folder', desc: 'Bounded context modules', children: [
+      { name: 'Identity/', type: 'folder', desc: 'Authentication, users, roles, sessions', children: [
+        { name: 'Modules.Identity/', type: 'folder', desc: 'Runtime — internal implementation' },
+        { name: 'Modules.Identity.Contracts/', type: 'folder', desc: 'Public API — commands, queries, DTOs' }
+      ]},
+      { name: 'Multitenancy/', type: 'folder', desc: 'Tenant management and provisioning', children: [
+        { name: 'Modules.Multitenancy/', type: 'folder', desc: 'Runtime — internal implementation' },
+        { name: 'Modules.Multitenancy.Contracts/', type: 'folder', desc: 'Public API — commands, queries, DTOs' }
+      ]},
+      { name: 'Auditing/', type: 'folder', desc: 'Audit trails and security auditing', children: [
+        { name: 'Modules.Auditing/', type: 'folder', desc: 'Runtime — internal implementation' },
+        { name: 'Modules.Auditing.Contracts/', type: 'folder', desc: 'Public API — commands, queries, DTOs' }
+      ]}
+    ]},
+    { name: 'Playground/', type: 'folder', desc: 'Sample host applications', children: [
+      { name: 'Playground.Api/', type: 'folder', desc: 'Reference ASP.NET Core API host' },
+      { name: 'Playground.Blazor/', type: 'folder', desc: 'Reference MudBlazor admin UI' },
+      { name: 'FSH.Playground.AppHost/', type: 'folder', desc: '.NET Aspire orchestrator' }
+    ]},
+    { name: 'Tests/', type: 'folder', desc: 'Test projects', children: [
+      { name: 'Architecture.Tests/', type: 'folder', desc: 'Structural guardrails via NetArchTest' },
+      { name: 'Identity.Tests/', type: 'folder', desc: 'Identity module unit tests' },
+      { name: 'Multitenancy.Tests/', type: 'folder', desc: 'Multitenancy module unit tests' },
+      { name: 'Auditing.Tests/', type: 'folder', desc: 'Auditing module unit tests' },
+      { name: 'Generic.Tests/', type: 'folder', desc: 'Cross-cutting and generic tests' }
+    ]},
+    { name: 'Tools/', type: 'folder', desc: 'Developer tooling', children: [
+      { name: 'CLI/', type: 'folder', desc: 'FSH command-line tool' },
+      { name: 'Migrations.PostgreSQL/', type: 'folder', desc: 'EF Core database migrations' }
+    ]},
+    { name: 'FSH.Framework.slnx', desc: 'Solution file (.slnx format)' },
+    { name: 'Directory.Build.props', desc: 'Shared MSBuild properties' },
+    { name: 'Directory.Packages.props', desc: 'Central NuGet package versions' },
+    { name: '.editorconfig', desc: 'Coding style rules' }
+  ]},
+  { name: 'terraform/', type: 'folder', desc: 'AWS infrastructure-as-code' },
+  { name: 'docs/', type: 'folder', desc: 'Documentation site (Astro + Starlight)' },
+  { name: '.github/workflows/', type: 'folder', desc: 'CI/CD pipelines' },
+  { name: 'docker-compose.yml', desc: 'Local development containers' }
+]} />
 
-### Current Modules
+## Module Dual-Project Structure
 
-- **Identity** — User management, authentication, roles, permissions
-- **Multitenancy** — Tenant management, tenant resolution
-- **Auditing** — Audit trail for entity changes
+Every module in the starter kit is split into exactly two projects: a **runtime** project and a **contracts** project. This separation is the foundation of module isolation.
 
-## Playground
+<FileTree items={[
+  { name: 'Modules.Identity/', type: 'folder', desc: 'Runtime project (internal)', children: [
+    { name: 'Features/', type: 'folder', desc: 'Vertical slice feature folders' },
+    { name: 'Domain/', type: 'folder', desc: 'Entities, aggregates, value objects' },
+    { name: 'Data/', type: 'folder', desc: 'EF Core DbContext, configurations' },
+    { name: 'Services/', type: 'folder', desc: 'Internal service implementations' },
+    { name: 'Events/', type: 'folder', desc: 'Domain and integration event handlers' },
+    { name: 'Authorization/', type: 'folder', desc: 'Permission and policy definitions' }
+  ]},
+  { name: 'Modules.Identity.Contracts/', type: 'folder', desc: 'Public API (shared)', children: [
+    { name: 'v1/', type: 'folder', desc: 'Versioned commands, queries, DTOs, events' }
+  ]}
+]} />
 
-| Project | Purpose |
-|---------|---------|
-| `Playground.Api` | ASP.NET Core host application |
-| `Playground.Blazor` | MudBlazor-based admin UI |
-| `FSH.Playground.AppHost` | .NET Aspire orchestrator |
+**Runtime project** (`Modules.{Name}/`) contains everything internal to the module: command and query handlers, EF Core data access, domain entities, services, and event handlers. No other module should ever reference this project directly.
+
+**Contracts project** (`Modules.{Name}.Contracts/`) is the public API surface. It defines the commands, queries, response DTOs, integration events, and service interfaces that other modules are allowed to consume.
+
+<Aside type="note" title="Module Boundary Rule">
+A module **must not** reference another module's runtime project — only its Contracts project. This ensures modules remain loosely coupled and can evolve independently. This rule is automatically enforced by architecture tests in `Architecture.Tests/`.
+</Aside>
 
 ## Feature Folder Layout
 
-Each feature follows Vertical Slice Architecture:
+Inside every runtime module, features follow the **Vertical Slice Architecture** pattern. Each feature is a self-contained folder that groups its endpoint, handler, and validator together — no scattering code across layers.
+
+The convention is:
+
+<FileTree items={[
+  { name: 'Features/', type: 'folder', children: [
+    { name: 'v1/', type: 'folder', desc: 'API version', children: [
+      { name: '{Area}/', type: 'folder', desc: 'Logical area (e.g., Users, Roles)', children: [
+        { name: '{FeatureName}/', type: 'folder', desc: 'One folder per feature', children: [
+          { name: '{FeatureName}Endpoint.cs', desc: 'Minimal API endpoint definition' },
+          { name: '{FeatureName}CommandHandler.cs', desc: 'CQRS command or query handler' },
+          { name: '{FeatureName}CommandValidator.cs', desc: 'FluentValidation validator' }
+        ]}
+      ]}
+    ]}
+  ]}
+]} />
+
+Here is a real example from the Identity module:
+
+<FileTree items={[
+  { name: 'Features/v1/Users/RegisterUser/', type: 'folder', children: [
+    { name: 'RegisterUserEndpoint.cs', desc: 'POST /api/v1/identity/register' },
+    { name: 'RegisterUserCommandHandler.cs', desc: 'Handles the RegisterUserCommand' },
+    { name: 'RegisterUserCommandValidator.cs', desc: 'Validates registration input' }
+  ]}
+]} />
+
+The corresponding command and response types live in the Contracts project:
+
+<FileTree items={[
+  { name: 'Modules.Identity.Contracts/v1/Users/RegisterUser/', type: 'folder', children: [
+    { name: 'RegisterUserCommand.cs', desc: 'Command definition (ICommand)' },
+    { name: 'RegisterUserResponse.cs', desc: 'Response DTO' }
+  ]}
+]} />
+
+This pattern keeps every file related to a feature co-located. When you need to understand or modify user registration, everything is in one place.
+
+## Dependency Hierarchy
+
+The projects follow a strict dependency hierarchy that flows in one direction — from foundational libraries up through modules to host applications.
 
 ```
-Features/v1/{Area}/{FeatureName}/
-├── {FeatureName}Endpoint.cs
-├── {FeatureName}CommandHandler.cs
-└── {FeatureName}CommandValidator.cs
+Core (no dependencies)
+  └── Shared
+        ├── Persistence
+        ├── Eventing.Abstractions
+        │     └── Eventing
+        ├── Caching
+        ├── Jobs
+        ├── Mailing
+        └── Storage
+              └── Web (host infrastructure)
+                    └── Module Contracts
+                          └── Module Runtimes
+                                └── Playground (host apps)
 ```
+
+- **Core** sits at the bottom with zero external project dependencies. It defines the DDD primitives, exception types, and CQRS interfaces that everything else builds on.
+- **Shared** adds cross-cutting constants, DTOs, and permission contracts.
+- **Infrastructure libraries** (Persistence, Caching, Eventing, Jobs, Mailing, Storage) each depend on Core and/or Shared but not on each other.
+- **Web** ties the infrastructure together and provides the module loading system.
+- **Modules** consume BuildingBlocks and other modules' Contracts projects — never their runtime projects.
+- **Playground** applications sit at the top, composing modules into runnable hosts.
+
+<Aside type="tip" title="Enforced by Architecture Tests">
+The dependency hierarchy is enforced by architecture tests in `Architecture.Tests/`. Any violation — such as a module referencing another module's runtime project or a BuildingBlock depending on a module — will fail the build.
+</Aside>
+
+## Configuration Files
+
+The `src/` directory contains several configuration files that govern how the entire solution is built and styled.
+
+| File | Purpose |
+|------|---------|
+| `Directory.Build.props` | Shared MSBuild properties applied to every project — target framework (`net10.0`), nullable reference types, implicit usings, analyzers, and common metadata. |
+| `Directory.Packages.props` | Central package management. Every NuGet package version is declared here in a single place, so individual `.csproj` files reference packages without specifying versions. |
+| `.editorconfig` | Coding style rules enforced by the IDE and analyzers — indentation, namespace style, naming conventions, and severity levels. |
+| `FSH.Framework.slnx` | The solution file that ties all 27 projects together into the logical groups shown above. |
+
+<Aside type="warning" title="BuildingBlocks Are Protected">
+The `BuildingBlocks/` directory contains shared framework libraries consumed by every module in the solution. Changes here have a **wide blast radius** and can break multiple modules simultaneously. Do not modify BuildingBlocks without explicit approval and thorough testing across all dependent modules.
+</Aside>

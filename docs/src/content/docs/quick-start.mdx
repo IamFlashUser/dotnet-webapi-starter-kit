@@ -1,6 +1,6 @@
 ---
-title: Quick Start
-description: Get the fullstackhero .NET Starter Kit running in minutes.
+title: "Quick Start"
+description: "Get the fullstackhero .NET Starter Kit up and running in minutes."
 ---
 
 import Aside from '../../components/Aside.astro';
@@ -8,13 +8,14 @@ import Badge from '../../components/Badge.astro';
 import Steps from '../../components/Steps.astro';
 import Tabs from '../../components/Tabs.astro';
 import TabPanel from '../../components/TabPanel.astro';
-import FileTree from '../../components/FileTree.astro';
+
+Get the starter kit running locally in under 5 minutes.
 
 <Aside type="tip" title="Prerequisites">
 Make sure you have [.NET 10 SDK](https://dot.net/download), PostgreSQL, and Redis installed before you begin. See [Prerequisites](/docs/prerequisites/) for details.
 </Aside>
 
-## Get Started <Badge>3 steps</Badge>
+## Get Started <Badge>5 min</Badge>
 
 <Steps>
 
@@ -31,57 +32,78 @@ cd dotnet-starter-kit
 dotnet build src/FSH.Framework.slnx
 ```
 
-### Run the API
+<Aside type="tip" title="Modern Solution Format">
+This project uses the `.slnx` solution format — a streamlined, XML-based format introduced in .NET. It replaces the legacy `.sln` file with a cleaner, more readable structure.
+</Aside>
 
-<Tabs labels={["Standard", "With Aspire"]}>
-<TabPanel>
+### Run the Application
 
-```bash
-dotnet run --project src/Playground/Playground.Api
-```
-
-The API will be available at `https://localhost:5001`.
-
-</TabPanel>
+<Tabs labels={["With Aspire (Recommended)", "Standard", "Docker"]}>
 <TabPanel>
 
 ```bash
 dotnet run --project src/Playground/FSH.Playground.AppHost
 ```
 
-This starts the API along with PostgreSQL, Redis, and the Aspire dashboard.
+Aspire orchestrates PostgreSQL, Redis, and the API automatically — no manual setup needed. Once it starts, open the Aspire dashboard at the URL shown in your terminal output to monitor all running services, view logs, and inspect traces.
+
+</TabPanel>
+<TabPanel>
+
+```bash
+dotnet run --project src/Playground/Playground.Api
+```
+
+<Aside type="warning" title="Local Services Required">
+This approach requires PostgreSQL and Redis running locally on their default ports. Configure connection strings in `appsettings.json` or via environment variables if your setup differs.
+</Aside>
+
+</TabPanel>
+<TabPanel>
+
+```bash
+docker-compose up -d
+```
+
+This builds and runs the entire stack including PostgreSQL, Redis, and the API in containers. No local dependencies needed beyond Docker itself.
 
 </TabPanel>
 </Tabs>
 
+### Explore the API
+
+Once the application is running:
+
+- **API base URL** — `https://localhost:5001` (or the port shown in your terminal)
+- **Scalar API docs** — `https://localhost:5001/scalar/v1`
+- **Health check** — `https://localhost:5001/health/live`
+
+Open the Scalar UI in your browser to browse all available endpoints, inspect request/response schemas, and execute API calls directly from the documentation interface. It is the fastest way to explore what the starter kit offers out of the box.
+
 </Steps>
 
-<Aside type="note">
-Visit `https://localhost:5001/scalar/v1` for the interactive API documentation powered by Scalar.
+## Your First API Call
+
+Start by generating an authentication token against the root tenant:
+
+```bash
+curl -X POST https://localhost:5001/api/v1/identity/tokens \
+  -H "Content-Type: application/json" \
+  -H "X-Tenant-ID: root" \
+  -d '{"email": "admin@root.com", "password": "123Pa$$word!"}'
+```
+
+Copy the `token` value from the response and use it to call a protected endpoint:
+
+```bash
+curl https://localhost:5001/api/v1/identity/users \
+  -H "Authorization: Bearer {token}" \
+  -H "X-Tenant-ID: root"
+```
+
+<Aside type="tip" title="Default Credentials">
+The default root tenant comes pre-seeded with an admin user. Use the credentials above to get started.
 </Aside>
-
-## Project Structure
-
-<FileTree items={[
-  { name: 'src', type: 'folder', children: [
-    { name: 'BuildingBlocks', type: 'folder', desc: 'shared framework libraries', children: [
-      { name: 'Core' }, { name: 'Persistence' }, { name: 'Web' }, { name: 'Caching' },
-    ]},
-    { name: 'Modules', type: 'folder', desc: 'bounded context modules', children: [
-      { name: 'Modules.Identity', type: 'folder' },
-      { name: 'Modules.Multitenancy', type: 'folder' },
-      { name: 'Modules.Auditing', type: 'folder' },
-    ]},
-    { name: 'Playground', type: 'folder', desc: 'host applications', children: [
-      { name: 'Playground.Api' },
-      { name: 'Playground.Blazor' },
-      { name: 'FSH.Playground.AppHost' },
-    ]},
-    { name: 'Tests', type: 'folder', desc: 'test projects' },
-  ]},
-  { name: 'docs', type: 'folder', desc: 'this documentation site' },
-  { name: 'FSH.Framework.slnx', desc: 'solution file' },
-]} />
 
 ## Run Tests
 
@@ -89,12 +111,14 @@ Visit `https://localhost:5001/scalar/v1` for the interactive API documentation p
 dotnet test src/FSH.Framework.slnx
 ```
 
+This runs the full test suite including architecture tests (module boundary enforcement via NetArchTest), unit tests, and module-level integration tests.
+
 <Aside type="warning" title="BuildingBlocks">
-Do not modify BuildingBlocks without careful consideration — changes there affect all modules.
+Do not modify files under `src/BuildingBlocks/` without understanding the impact — these are shared framework libraries consumed by all modules. Changes there have a wide blast radius across the entire solution.
 </Aside>
 
 ## Next Steps
 
-- Learn about the [Project Structure](/docs/project-structure/)
-- Understand the [Architecture](/docs/architecture/)
-- Add your first [Feature](/docs/adding-a-feature/)
+- [Project Structure](/docs/project-structure/) — understand the codebase layout
+- [Architecture](/docs/architecture/) — learn about the modular monolith design
+- [Adding a Feature](/docs/adding-a-feature/) — build your first feature
