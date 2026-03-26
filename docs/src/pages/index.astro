@@ -764,9 +764,12 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	.w { max-width: 80rem; margin: 0 auto; padding: 0 2rem; }
 	.br-desk { display: inline; }
 
+	/* Prevent horizontal overflow from absolute-positioned decorative elements */
+	html { overflow-x: hidden; }
+
 	/* ── HERO ─────────────────────── */
 	.hero {
-		position: relative; padding: 8rem 0 4rem;
+		position: relative; padding: 8rem 0 4rem; overflow: hidden;
 	}
 
 	/* animated dot grid */
