@@ -3,9 +3,9 @@ title: "HTTP Resilience"
 description: "Adding retry, circuit breaker, and timeout policies to HTTP clients with Polly."
 ---
 
-import Aside from '../../../components/Aside.astro';
-import Tabs from '../../../components/Tabs.astro';
-import TabPanel from '../../../components/TabPanel.astro';
+import Aside from '../../components/Aside.astro';
+import Tabs from '../../components/Tabs.astro';
+import TabPanel from '../../components/TabPanel.astro';
 
 fullstackhero provides a one-line extension method to add production-grade resilience to any `HttpClient` registration. Under the hood it uses the **Microsoft.Extensions.Http.Resilience** library (built on Polly) to apply a standard resilience pipeline — retry with exponential backoff, circuit breaker, and per-attempt and total request timeouts.
 

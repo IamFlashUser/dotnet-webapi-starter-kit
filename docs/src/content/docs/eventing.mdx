@@ -3,9 +3,9 @@ title: "Eventing"
 description: "Integration events, event bus, and the outbox/inbox pattern for reliable messaging."
 ---
 
-import Aside from '../../../components/Aside.astro';
-import Tabs from '../../../components/Tabs.astro';
-import TabPanel from '../../../components/TabPanel.astro';
+import Aside from '../../components/Aside.astro';
+import Tabs from '../../components/Tabs.astro';
+import TabPanel from '../../components/TabPanel.astro';
 
 fullstackhero provides a complete **integration eventing infrastructure** for cross-module communication. The eventing system is split into two projects — **Eventing.Abstractions** (contracts and interfaces) and **Eventing** (implementations) — so that modules only depend on the abstractions while the concrete transport is configured at the host level.
 

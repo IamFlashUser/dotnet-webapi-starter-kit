@@ -3,8 +3,8 @@ title: "Multitenancy Module"
 description: "Tenant management, resolution strategies, and data isolation."
 ---
 
-import Aside from '../../../../components/Aside.astro';
-import FileTree from '../../../../components/FileTree.astro';
+import Aside from '../../components/Aside.astro';
+import FileTree from '../../components/FileTree.astro';
 
 The Multitenancy module provides SaaS multitenancy built on [Finbuckle.MultiTenant](https://www.finbuckle.com/multitenant/). It supports tenant resolution via claims, headers, and query strings, with per-tenant database isolation and automatic query filtering. Every request is scoped to a tenant, and the module handles the full tenant lifecycle — creation, activation, subscription upgrades, and provisioning.
 

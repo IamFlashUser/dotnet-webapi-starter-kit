@@ -3,8 +3,8 @@ title: "Outbox & Inbox Pattern"
 description: "Reliable messaging with the transactional outbox and idempotent inbox patterns in the fullstackhero .NET Starter Kit."
 ---
 
-import Aside from '../../../components/Aside.astro';
-import Steps from '../../../components/Steps.astro';
+import Aside from '../../components/Aside.astro';
+import Steps from '../../components/Steps.astro';
 
 Saving domain changes and publishing integration events are two separate operations. If the event bus is down when you try to publish, the event is lost. If the event publishes successfully but the database transaction rolls back, downstream consumers act on data that never persisted. Either way, your system ends up in an inconsistent state.
 

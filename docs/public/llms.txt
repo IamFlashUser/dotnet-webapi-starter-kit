@@ -12,28 +12,28 @@
 - [Architecture Overview](https://fullstackhero.net/dotnet-starter-kit/architecture/): Modular monolith + vertical slice architecture
 - [CQRS Pattern](https://fullstackhero.net/dotnet-starter-kit/cqrs/): Commands, queries, source-generated Mediator pipeline
 - [Domain Events](https://fullstackhero.net/dotnet-starter-kit/domain-events/): Domain and integration event patterns
-- [Specifications](https://fullstackhero.net/dotnet-starter-kit/patterns/specifications/): Composable query specifications for EF Core
-- [Outbox & Inbox](https://fullstackhero.net/dotnet-starter-kit/patterns/outbox-inbox/): Reliable messaging with transactional outbox
-- [Module System](https://fullstackhero.net/dotnet-starter-kit/patterns/module-system/): Plug-and-play bounded context modules
+- [Specifications](https://fullstackhero.net/dotnet-starter-kit/specification-pattern/): Composable query specifications for EF Core
+- [Outbox & Inbox](https://fullstackhero.net/dotnet-starter-kit/outbox-inbox-pattern/): Reliable messaging with transactional outbox
+- [Module System](https://fullstackhero.net/dotnet-starter-kit/module-system/): Plug-and-play bounded context modules
 
 ## Modules
-- [Identity](https://fullstackhero.net/dotnet-starter-kit/modules/identity/overview/): Users, roles, JWT auth, sessions, groups, permissions
-- [Multitenancy](https://fullstackhero.net/dotnet-starter-kit/modules/multitenancy/overview/): Tenant resolution, data isolation, provisioning
-- [Auditing](https://fullstackhero.net/dotnet-starter-kit/modules/auditing/overview/): Security, activity, entity change, and exception auditing
+- [Identity](https://fullstackhero.net/dotnet-starter-kit/identity-module/): Users, roles, JWT auth, sessions, groups, permissions
+- [Multitenancy](https://fullstackhero.net/dotnet-starter-kit/multitenancy/): Tenant resolution, data isolation, provisioning
+- [Auditing](https://fullstackhero.net/dotnet-starter-kit/auditing/): Security, activity, entity change, and exception auditing
 
 ## Building Blocks
-- [Overview](https://fullstackhero.net/dotnet-starter-kit/building-blocks/overview/): 10 shared framework libraries
-- [Core](https://fullstackhero.net/dotnet-starter-kit/building-blocks/core/): DDD primitives, exceptions, interfaces
-- [Persistence](https://fullstackhero.net/dotnet-starter-kit/building-blocks/persistence/): EF Core, specifications, pagination
-- [Web](https://fullstackhero.net/dotnet-starter-kit/building-blocks/web/): Module system, middleware, API versioning
-- [Caching](https://fullstackhero.net/dotnet-starter-kit/building-blocks/caching/): Redis distributed + hybrid cache
-- [Eventing](https://fullstackhero.net/dotnet-starter-kit/building-blocks/eventing/): Event bus, outbox/inbox, RabbitMQ
+- [Overview](https://fullstackhero.net/dotnet-starter-kit/building-blocks-overview/): 10 shared framework libraries
+- [Core](https://fullstackhero.net/dotnet-starter-kit/core-building-block/): DDD primitives, exceptions, interfaces
+- [Persistence](https://fullstackhero.net/dotnet-starter-kit/persistence-building-block/): EF Core, specifications, pagination
+- [Web](https://fullstackhero.net/dotnet-starter-kit/web-building-block/): Module system, middleware, API versioning
+- [Caching](https://fullstackhero.net/dotnet-starter-kit/caching/): Redis distributed + hybrid cache
+- [Eventing](https://fullstackhero.net/dotnet-starter-kit/eventing/): Event bus, outbox/inbox, RabbitMQ
 
 ## Deployment
-- [Docker](https://fullstackhero.net/dotnet-starter-kit/deployment/docker/): Multi-stage Dockerfile, docker-compose
-- [.NET Aspire](https://fullstackhero.net/dotnet-starter-kit/deployment/aspire/): Local dev orchestration
-- [AWS Terraform](https://fullstackhero.net/dotnet-starter-kit/deployment/aws-terraform/): ECS Fargate, RDS, ElastiCache
-- [CI/CD](https://fullstackhero.net/dotnet-starter-kit/deployment/ci-cd/): GitHub Actions pipelines
+- [Docker](https://fullstackhero.net/dotnet-starter-kit/docker/): Multi-stage Dockerfile, docker-compose
+- [.NET Aspire](https://fullstackhero.net/dotnet-starter-kit/dotnet-aspire/): Local dev orchestration
+- [AWS Terraform](https://fullstackhero.net/dotnet-starter-kit/aws-terraform-deployment/): ECS Fargate, RDS, ElastiCache
+- [CI/CD](https://fullstackhero.net/dotnet-starter-kit/ci-cd-pipelines/): GitHub Actions pipelines
 
 ## Key Facts
 - Framework: .NET 10 / C# latest

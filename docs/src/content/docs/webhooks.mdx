@@ -3,9 +3,9 @@ title: "Webhooks"
 description: "Outbound webhook subscriptions with HMAC signing and resilient delivery."
 ---
 
-import Aside from '../../../../components/Aside.astro';
-import Tabs from '../../../../components/Tabs.astro';
-import TabPanel from '../../../../components/TabPanel.astro';
+import Aside from '../../components/Aside.astro';
+import Tabs from '../../components/Tabs.astro';
+import TabPanel from '../../components/TabPanel.astro';
 
 The **Webhooks module** enables your application to push event notifications to external systems over HTTP. Consumers register webhook subscriptions with a target URL and a set of event types they are interested in. When a matching event occurs, the module delivers a signed JSON payload to the subscriber's URL with automatic retries via the HTTP resilience pipeline.
 

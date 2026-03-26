@@ -3,9 +3,9 @@ title: "Idempotency"
 description: "Preventing duplicate side effects with idempotency keys on POST/PUT/PATCH endpoints."
 ---
 
-import Aside from '../../../components/Aside.astro';
-import Tabs from '../../../components/Tabs.astro';
-import TabPanel from '../../../components/TabPanel.astro';
+import Aside from '../../components/Aside.astro';
+import Tabs from '../../components/Tabs.astro';
+import TabPanel from '../../components/TabPanel.astro';
 
 fullstackhero provides an **idempotency filter** that prevents duplicate side effects from retried or duplicated HTTP requests. When a client sends an `Idempotency-Key` header, the framework caches the response and replays it for subsequent requests with the same key — ensuring that operations like payment processing, order creation, or webhook delivery are safe to retry.
 

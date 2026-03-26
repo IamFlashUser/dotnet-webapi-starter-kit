@@ -3,9 +3,9 @@ title: "Server-Sent Events"
 description: "Real-time push notifications to clients using Server-Sent Events (SSE)."
 ---
 
-import Aside from '../../../components/Aside.astro';
-import Tabs from '../../../components/Tabs.astro';
-import TabPanel from '../../../components/TabPanel.astro';
+import Aside from '../../components/Aside.astro';
+import Tabs from '../../components/Tabs.astro';
+import TabPanel from '../../components/TabPanel.astro';
 
 fullstackhero includes a built-in **Server-Sent Events (SSE)** infrastructure for pushing real-time notifications to connected clients. The implementation uses `System.Threading.Channels` for backpressure-aware event buffering and supports targeted sends (per user), tenant-scoped broadcasts, and global broadcasts.
 
