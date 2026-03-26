@@ -120,6 +120,27 @@ module "alb" {
 }
 
 ################################################################################
+# WAF (Web Application Firewall)
+################################################################################
+
+module "waf" {
+  count  = var.enable_waf ? 1 : 0
+  source = "../../../modules/waf"
+
+  name    = "${local.name_prefix}-waf"
+  alb_arn = module.alb.arn
+
+  rate_limit                    = var.waf_rate_limit
+  enable_sqli_rule_set          = var.waf_enable_sqli_rule_set
+  enable_ip_reputation_rule_set = var.waf_enable_ip_reputation_rule_set
+  enable_anonymous_ip_rule_set  = var.waf_enable_anonymous_ip_rule_set
+  enable_linux_rule_set         = var.waf_enable_linux_rule_set
+  enable_logging                = var.waf_enable_logging
+
+  tags = local.common_tags
+}
+
+################################################################################
 # S3 Bucket for Application Data
 ################################################################################
 
@@ -352,6 +373,12 @@ module "api_service" {
   enable_circuit_breaker = var.api_enable_circuit_breaker
   use_fargate_spot       = var.api_use_fargate_spot
 
+  # Auto-scaling
+  enable_autoscaling       = var.api_enable_autoscaling
+  autoscaling_min_capacity = var.api_autoscaling_min_capacity
+  autoscaling_max_capacity = var.api_autoscaling_max_capacity
+  autoscaling_cpu_target   = var.api_autoscaling_cpu_target
+
   # When using managed password, connection string comes from secrets
   # When not using managed password, connection string is set directly in env vars
   environment_variables = merge(
@@ -418,6 +445,12 @@ module "blazor_service" {
 
   enable_circuit_breaker = var.blazor_enable_circuit_breaker
   use_fargate_spot       = var.blazor_use_fargate_spot
+
+  # Auto-scaling
+  enable_autoscaling       = var.blazor_enable_autoscaling
+  autoscaling_min_capacity = var.blazor_autoscaling_min_capacity
+  autoscaling_max_capacity = var.blazor_autoscaling_max_capacity
+  autoscaling_cpu_target   = var.blazor_autoscaling_cpu_target
 
   environment_variables = merge(
     {

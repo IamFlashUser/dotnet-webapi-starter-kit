@@ -136,3 +136,12 @@ output "s3_cloudfront_distribution_id" {
   description = "CloudFront distribution ID."
   value       = module.app_s3.cloudfront_distribution_id
 }
+
+################################################################################
+# WAF Outputs
+################################################################################
+
+output "waf_web_acl_arn" {
+  description = "WAF Web ACL ARN (if WAF enabled)."
+  value       = var.enable_waf ? module.waf[0].web_acl_arn : null
+}

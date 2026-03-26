@@ -148,6 +148,12 @@ resource "aws_db_instance" "this" {
   allow_major_version_upgrade = var.allow_major_version_upgrade
   apply_immediately           = var.apply_immediately
 
+  # IAM Authentication
+  iam_database_authentication_enabled = var.iam_database_authentication_enabled
+
+  # CloudWatch Log Exports
+  enabled_cloudwatch_logs_exports = var.cloudwatch_log_exports
+
   # Deletion Protection
   deletion_protection = var.deletion_protection
 

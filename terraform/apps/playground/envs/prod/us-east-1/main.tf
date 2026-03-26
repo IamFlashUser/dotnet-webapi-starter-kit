@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.80.0"
+      version = ">= 5.90.0"
     }
   }
 }
@@ -51,6 +51,15 @@ module "app" {
   acm_certificate_arn            = var.acm_certificate_arn
   alb_enable_deletion_protection = var.alb_enable_deletion_protection
 
+  # WAF
+  enable_waf                        = var.enable_waf
+  waf_rate_limit                    = var.waf_rate_limit
+  waf_enable_sqli_rule_set          = var.waf_enable_sqli_rule_set
+  waf_enable_ip_reputation_rule_set = var.waf_enable_ip_reputation_rule_set
+  waf_enable_anonymous_ip_rule_set  = var.waf_enable_anonymous_ip_rule_set
+  waf_enable_linux_rule_set         = var.waf_enable_linux_rule_set
+  waf_enable_logging                = var.waf_enable_logging
+
   # S3
   app_s3_bucket_name                = var.app_s3_bucket_name
   app_s3_versioning_enabled         = var.app_s3_versioning_enabled
@@ -90,16 +99,24 @@ module "app" {
   api_cpu                    = var.api_cpu
   api_memory                 = var.api_memory
   api_desired_count          = var.api_desired_count
-  api_enable_circuit_breaker = var.api_enable_circuit_breaker
-  api_use_fargate_spot       = var.api_use_fargate_spot
+  api_enable_circuit_breaker    = var.api_enable_circuit_breaker
+  api_use_fargate_spot          = var.api_use_fargate_spot
+  api_enable_autoscaling        = var.api_enable_autoscaling
+  api_autoscaling_min_capacity  = var.api_autoscaling_min_capacity
+  api_autoscaling_max_capacity  = var.api_autoscaling_max_capacity
+  api_autoscaling_cpu_target    = var.api_autoscaling_cpu_target
 
   # Blazor Service
   blazor_container_port         = var.blazor_container_port
   blazor_cpu                    = var.blazor_cpu
   blazor_memory                 = var.blazor_memory
   blazor_desired_count          = var.blazor_desired_count
-  blazor_enable_circuit_breaker = var.blazor_enable_circuit_breaker
-  blazor_use_fargate_spot       = var.blazor_use_fargate_spot
+  blazor_enable_circuit_breaker    = var.blazor_enable_circuit_breaker
+  blazor_use_fargate_spot          = var.blazor_use_fargate_spot
+  blazor_enable_autoscaling        = var.blazor_enable_autoscaling
+  blazor_autoscaling_min_capacity  = var.blazor_autoscaling_min_capacity
+  blazor_autoscaling_max_capacity  = var.blazor_autoscaling_max_capacity
+  blazor_autoscaling_cpu_target    = var.blazor_autoscaling_cpu_target
 }
 
 ################################################################################

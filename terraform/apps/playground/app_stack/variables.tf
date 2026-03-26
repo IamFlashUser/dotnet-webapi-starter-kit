@@ -274,8 +274,8 @@ variable "db_manage_master_user_password" {
 
 variable "db_instance_class" {
   type        = string
-  description = "RDS instance class."
-  default     = "db.t3.micro"
+  description = "RDS instance class. Use Graviton (t4g) for best price-performance."
+  default     = "db.t4g.micro"
 }
 
 variable "db_allocated_storage" {
@@ -299,7 +299,7 @@ variable "db_storage_type" {
 variable "db_engine_version" {
   type        = string
   description = "PostgreSQL engine version."
-  default     = "16"
+  default     = "17"
 }
 
 variable "db_multi_az" {
@@ -344,8 +344,8 @@ variable "db_monitoring_interval" {
 
 variable "redis_node_type" {
   type        = string
-  description = "ElastiCache node type."
-  default     = "cache.t3.micro"
+  description = "ElastiCache node type. Use Graviton (t4g) for best price-performance."
+  default     = "cache.t4g.micro"
 }
 
 variable "redis_num_cache_clusters" {
@@ -357,7 +357,7 @@ variable "redis_num_cache_clusters" {
 variable "redis_engine_version" {
   type        = string
   description = "Redis engine version."
-  default     = "7.1"
+  default     = "7.2"
 }
 
 variable "redis_automatic_failover_enabled" {
@@ -369,6 +369,52 @@ variable "redis_automatic_failover_enabled" {
 variable "redis_transit_encryption_enabled" {
   type        = bool
   description = "Enable in-transit encryption."
+  default     = true
+}
+
+################################################################################
+# WAF Variables
+################################################################################
+
+variable "enable_waf" {
+  type        = bool
+  description = "Enable AWS WAF for ALB protection."
+  default     = true
+}
+
+variable "waf_rate_limit" {
+  type        = number
+  description = "Maximum requests per 5-minute period per IP."
+  default     = 2000
+}
+
+variable "waf_enable_sqli_rule_set" {
+  type        = bool
+  description = "Enable SQL injection protection."
+  default     = true
+}
+
+variable "waf_enable_ip_reputation_rule_set" {
+  type        = bool
+  description = "Enable IP reputation protection."
+  default     = true
+}
+
+variable "waf_enable_anonymous_ip_rule_set" {
+  type        = bool
+  description = "Enable anonymous IP blocking."
+  default     = false
+}
+
+variable "waf_enable_linux_rule_set" {
+  type        = bool
+  description = "Enable Linux OS protection rules."
+  default     = true
+}
+
+variable "waf_enable_logging" {
+  type        = bool
+  description = "Enable WAF logging to CloudWatch."
   default     = true
 }
 
@@ -451,6 +497,30 @@ variable "api_use_fargate_spot" {
   default     = false
 }
 
+variable "api_enable_autoscaling" {
+  type        = bool
+  description = "Enable auto-scaling for the API service."
+  default     = false
+}
+
+variable "api_autoscaling_min_capacity" {
+  type        = number
+  description = "Minimum number of API tasks when auto-scaling."
+  default     = 1
+}
+
+variable "api_autoscaling_max_capacity" {
+  type        = number
+  description = "Maximum number of API tasks when auto-scaling."
+  default     = 10
+}
+
+variable "api_autoscaling_cpu_target" {
+  type        = number
+  description = "Target CPU utilization percentage for API auto-scaling."
+  default     = 70
+}
+
 variable "api_extra_environment_variables" {
   type        = map(string)
   description = "Additional environment variables for API."
@@ -507,6 +577,30 @@ variable "blazor_use_fargate_spot" {
   type        = bool
   description = "Use Fargate Spot capacity."
   default     = false
+}
+
+variable "blazor_enable_autoscaling" {
+  type        = bool
+  description = "Enable auto-scaling for the Blazor service."
+  default     = false
+}
+
+variable "blazor_autoscaling_min_capacity" {
+  type        = number
+  description = "Minimum number of Blazor tasks when auto-scaling."
+  default     = 1
+}
+
+variable "blazor_autoscaling_max_capacity" {
+  type        = number
+  description = "Maximum number of Blazor tasks when auto-scaling."
+  default     = 10
+}
+
+variable "blazor_autoscaling_cpu_target" {
+  type        = number
+  description = "Target CPU utilization percentage for Blazor auto-scaling."
+  default     = 70
 }
 
 variable "blazor_extra_environment_variables" {

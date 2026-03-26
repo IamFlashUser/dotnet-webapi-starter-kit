@@ -239,6 +239,39 @@ resource "aws_cloudfront_distribution" "this" {
 
 locals {
   bucket_policy_statements = concat(
+    # Enforce SSL/TLS for all requests
+    [
+      {
+        Sid       = "EnforceSSLOnly"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource = [
+          "arn:aws:s3:::${aws_s3_bucket.this.bucket}",
+          "arn:aws:s3:::${aws_s3_bucket.this.bucket}/*"
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      },
+      {
+        Sid       = "EnforceTLSVersion"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource = [
+          "arn:aws:s3:::${aws_s3_bucket.this.bucket}",
+          "arn:aws:s3:::${aws_s3_bucket.this.bucket}/*"
+        ]
+        Condition = {
+          NumericLessThan = {
+            "s3:TlsVersion" = "1.2"
+          }
+        }
+      }
+    ],
     var.enable_public_read && length(var.public_read_prefix) > 0 ? [
       {
         Sid       = "AllowPublicReadUploads"
@@ -269,7 +302,6 @@ locals {
 }
 
 resource "aws_s3_bucket_policy" "this" {
-  count  = length(local.bucket_policy_statements) > 0 ? 1 : 0
   bucket = aws_s3_bucket.this.id
   policy = jsonencode({
     Version   = "2012-10-17"

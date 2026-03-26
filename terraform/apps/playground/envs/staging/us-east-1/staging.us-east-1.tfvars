@@ -1,3 +1,14 @@
+################################################################################
+# Staging Override - US East 1
+#
+# This file provides region-specific overrides for staging.
+# Use: terraform apply -var-file="staging.us-east-1.tfvars"
+#
+# NOTE: For database credentials, use AWS Secrets Manager (managed password)
+# or set via environment variable: TF_VAR_db_password="..."
+# NEVER commit plaintext passwords to version control.
+################################################################################
+
 environment = "staging"
 region      = "us-east-1"
 
@@ -25,20 +36,20 @@ private_subnets = {
   }
 }
 
-app_s3_bucket_name = "CHANGE_ME-app-staging-us-east-1"
+app_s3_bucket_name = "fsh-app-staging-us-east-1"
 
 db_name     = "fshdb"
 db_username = "fshadmin"
-db_password = "CHANGE_ME_STRONG_PASSWORD"
 
-api_container_image = "CHANGE_ME_API_IMAGE"
-api_container_port  = 8080
+# Use managed password (recommended)
+db_manage_master_user_password = true
+
+container_image_tag = "staging"
+
 api_cpu             = "256"
 api_memory          = "512"
 api_desired_count   = 2
 
-blazor_container_image = "CHANGE_ME_BLAZOR_IMAGE"
-blazor_container_port  = 8080
 blazor_cpu             = "256"
 blazor_memory          = "512"
 blazor_desired_count   = 2

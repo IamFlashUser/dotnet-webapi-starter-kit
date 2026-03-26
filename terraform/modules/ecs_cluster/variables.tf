@@ -53,6 +53,12 @@ variable "log_retention_in_days" {
   }
 }
 
+variable "kms_key_id" {
+  type        = string
+  description = "KMS key ID for encrypting CloudWatch log groups."
+  default     = null
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to the ECS cluster."

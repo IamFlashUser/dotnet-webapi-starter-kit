@@ -231,14 +231,28 @@ resource "aws_security_group" "vpc_endpoints" {
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS to VPC"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.this.cidr_block]
   }
 
   tags = merge(var.tags, {
     Name = "${var.name}-vpc-endpoints-sg"
+  })
+}
+
+################################################################################
+# Default Security Group - Deny All (AWS Best Practice)
+################################################################################
+
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+
+  # No ingress or egress rules = deny all traffic on the default SG
+  tags = merge(var.tags, {
+    Name = "${var.name}-default-sg-DO-NOT-USE"
   })
 }
 
@@ -266,6 +280,7 @@ resource "aws_cloudwatch_log_group" "flow_logs" {
 
   name              = "/aws/vpc/${var.name}/flow-logs"
   retention_in_days = var.flow_logs_retention_days
+  kms_key_id        = var.kms_key_id
 
   tags = var.tags
 }
@@ -299,14 +314,15 @@ resource "aws_iam_role_policy" "flow_logs" {
     Version = "2012-10-17"
     Statement = [{
       Action = [
-        "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents",
-        "logs:DescribeLogGroups",
         "logs:DescribeLogStreams"
       ]
-      Effect   = "Allow"
-      Resource = "*"
+      Effect = "Allow"
+      Resource = [
+        aws_cloudwatch_log_group.flow_logs[0].arn,
+        "${aws_cloudwatch_log_group.flow_logs[0].arn}:*"
+      ]
     }]
   })
 }

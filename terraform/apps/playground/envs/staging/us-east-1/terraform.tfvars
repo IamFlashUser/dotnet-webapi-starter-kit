@@ -51,6 +51,16 @@ enable_secretsmanager_endpoint = true
 enable_flow_logs = true
 
 ################################################################################
+# WAF Configuration
+################################################################################
+
+enable_waf                        = true
+waf_rate_limit                    = 2000
+waf_enable_sqli_rule_set          = true
+waf_enable_ip_reputation_rule_set = true
+waf_enable_logging                = true
+
+################################################################################
 # S3 Configuration
 ################################################################################
 
@@ -68,16 +78,16 @@ db_username = "fshadmin"
 # Use AWS Secrets Manager for password (recommended)
 db_manage_master_user_password = true
 
-# Staging uses a larger instance class
-db_instance_class              = "db.t3.small"
+# Staging uses Graviton instances
+db_instance_class              = "db.t4g.small"
 db_enable_performance_insights = true
 db_deletion_protection         = true
 
 ################################################################################
-# Redis Configuration
+# Redis Configuration (Graviton)
 ################################################################################
 
-redis_node_type = "cache.t3.small"
+redis_node_type = "cache.t4g.small"
 
 ################################################################################
 # Container Images
@@ -85,11 +95,6 @@ redis_node_type = "cache.t3.small"
 
 # Single tag for all container images
 container_image_tag = "staging"
-
-# Optional: Override defaults if needed
-# container_registry = "ghcr.io/fullstackhero"
-# api_image_name     = "fsh-playground-api"
-# blazor_image_name  = "fsh-playground-blazor"
 
 ################################################################################
 # Service Configuration
@@ -100,6 +105,17 @@ api_use_fargate_spot = true
 
 blazor_desired_count    = 2
 blazor_use_fargate_spot = true
+
+# Auto-scaling for staging
+api_enable_autoscaling       = true
+api_autoscaling_min_capacity = 2
+api_autoscaling_max_capacity = 6
+api_autoscaling_cpu_target   = 70
+
+blazor_enable_autoscaling       = true
+blazor_autoscaling_min_capacity = 2
+blazor_autoscaling_max_capacity = 6
+blazor_autoscaling_cpu_target   = 70
 
 # Enable Container Insights for monitoring
 enable_container_insights = true

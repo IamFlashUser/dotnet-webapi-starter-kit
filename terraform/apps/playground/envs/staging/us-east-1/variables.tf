@@ -170,13 +170,13 @@ variable "db_manage_master_user_password" {
 variable "db_instance_class" {
   type        = string
   description = "RDS instance class."
-  default     = "db.t3.small"
+  default     = "db.t4g.small"
 }
 
 variable "db_engine_version" {
   type        = string
   description = "PostgreSQL engine version."
-  default     = "16"
+  default     = "17"
 }
 
 variable "db_multi_az" {
@@ -204,7 +204,7 @@ variable "db_enable_performance_insights" {
 variable "redis_node_type" {
   type        = string
   description = "ElastiCache node type."
-  default     = "cache.t3.small"
+  default     = "cache.t4g.small"
 }
 
 variable "redis_num_cache_clusters" {
@@ -217,6 +217,52 @@ variable "redis_automatic_failover_enabled" {
   type        = bool
   description = "Enable automatic failover."
   default     = false
+}
+
+################################################################################
+# WAF Variables
+################################################################################
+
+variable "enable_waf" {
+  type        = bool
+  description = "Enable AWS WAF for ALB protection."
+  default     = true
+}
+
+variable "waf_rate_limit" {
+  type        = number
+  description = "Maximum requests per 5-minute period per IP."
+  default     = 2000
+}
+
+variable "waf_enable_sqli_rule_set" {
+  type        = bool
+  description = "Enable SQL injection protection."
+  default     = true
+}
+
+variable "waf_enable_ip_reputation_rule_set" {
+  type        = bool
+  description = "Enable IP reputation protection."
+  default     = true
+}
+
+variable "waf_enable_anonymous_ip_rule_set" {
+  type        = bool
+  description = "Enable anonymous IP blocking."
+  default     = false
+}
+
+variable "waf_enable_linux_rule_set" {
+  type        = bool
+  description = "Enable Linux OS protection rules."
+  default     = true
+}
+
+variable "waf_enable_logging" {
+  type        = bool
+  description = "Enable WAF logging to CloudWatch."
+  default     = true
 }
 
 ################################################################################
@@ -286,6 +332,30 @@ variable "api_use_fargate_spot" {
   default     = true
 }
 
+variable "api_enable_autoscaling" {
+  type        = bool
+  description = "Enable auto-scaling for API."
+  default     = true
+}
+
+variable "api_autoscaling_min_capacity" {
+  type        = number
+  description = "Minimum API tasks when auto-scaling."
+  default     = 2
+}
+
+variable "api_autoscaling_max_capacity" {
+  type        = number
+  description = "Maximum API tasks when auto-scaling."
+  default     = 6
+}
+
+variable "api_autoscaling_cpu_target" {
+  type        = number
+  description = "Target CPU utilization for API auto-scaling."
+  default     = 70
+}
+
 ################################################################################
 # Blazor Service Variables
 ################################################################################
@@ -324,4 +394,28 @@ variable "blazor_use_fargate_spot" {
   type        = bool
   description = "Use Fargate Spot capacity."
   default     = true
+}
+
+variable "blazor_enable_autoscaling" {
+  type        = bool
+  description = "Enable auto-scaling for Blazor."
+  default     = true
+}
+
+variable "blazor_autoscaling_min_capacity" {
+  type        = number
+  description = "Minimum Blazor tasks when auto-scaling."
+  default     = 2
+}
+
+variable "blazor_autoscaling_max_capacity" {
+  type        = number
+  description = "Maximum Blazor tasks when auto-scaling."
+  default     = 6
+}
+
+variable "blazor_autoscaling_cpu_target" {
+  type        = number
+  description = "Target CPU utilization for Blazor auto-scaling."
+  default     = 70
 }

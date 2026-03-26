@@ -13,12 +13,24 @@ resource "aws_lb" "this" {
   enable_http2               = var.enable_http2
   idle_timeout               = var.idle_timeout
   drop_invalid_header_fields = var.drop_invalid_header_fields
+  desync_mitigation_mode     = var.desync_mitigation_mode
+  preserve_host_header       = var.preserve_host_header
+  xff_header_processing_mode = var.xff_header_processing_mode
 
   dynamic "access_logs" {
     for_each = var.access_logs_bucket != null ? [1] : []
     content {
       bucket  = var.access_logs_bucket
       prefix  = var.access_logs_prefix
+      enabled = true
+    }
+  }
+
+  dynamic "connection_logs" {
+    for_each = var.connection_logs_bucket != null ? [1] : []
+    content {
+      bucket  = var.connection_logs_bucket
+      prefix  = var.connection_logs_prefix
       enabled = true
     }
   }

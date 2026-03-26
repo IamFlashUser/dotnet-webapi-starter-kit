@@ -257,6 +257,22 @@ variable "container_health_check" {
 }
 
 ################################################################################
+# Optional Variables - Security
+################################################################################
+
+variable "readonly_root_filesystem" {
+  type        = bool
+  description = "When true, the container root filesystem is read-only. Requires writable tmpfs mounts for /tmp etc."
+  default     = false
+}
+
+variable "kms_key_id" {
+  type        = string
+  description = "KMS key ID for encrypting the CloudWatch log group."
+  default     = null
+}
+
+################################################################################
 # Optional Variables - Logging
 ################################################################################
 
@@ -299,6 +315,84 @@ variable "task_role_arn" {
   type        = string
   description = "Optional task role ARN to attach to the task definition."
   default     = null
+}
+
+################################################################################
+# Auto Scaling
+################################################################################
+
+variable "enable_autoscaling" {
+  type        = bool
+  description = "Enable Application Auto Scaling for the ECS service."
+  default     = false
+}
+
+variable "autoscaling_min_capacity" {
+  type        = number
+  description = "Minimum number of tasks when auto-scaling."
+  default     = 1
+
+  validation {
+    condition     = var.autoscaling_min_capacity >= 1
+    error_message = "Minimum capacity must be at least 1."
+  }
+}
+
+variable "autoscaling_max_capacity" {
+  type        = number
+  description = "Maximum number of tasks when auto-scaling."
+  default     = 10
+
+  validation {
+    condition     = var.autoscaling_max_capacity >= 1
+    error_message = "Maximum capacity must be at least 1."
+  }
+}
+
+variable "autoscaling_cpu_target" {
+  type        = number
+  description = "Target CPU utilization percentage for auto-scaling."
+  default     = 70
+
+  validation {
+    condition     = var.autoscaling_cpu_target > 0 && var.autoscaling_cpu_target <= 100
+    error_message = "CPU target must be between 1 and 100."
+  }
+}
+
+variable "autoscaling_memory_target" {
+  type        = number
+  description = "Target memory utilization percentage for auto-scaling."
+  default     = 80
+
+  validation {
+    condition     = var.autoscaling_memory_target > 0 && var.autoscaling_memory_target <= 100
+    error_message = "Memory target must be between 1 and 100."
+  }
+}
+
+variable "autoscaling_requests_per_target" {
+  type        = number
+  description = "Target ALB request count per task for auto-scaling. Set to 0 to disable request-based scaling."
+  default     = 0
+}
+
+variable "autoscaling_scale_in_cooldown" {
+  type        = number
+  description = "Cooldown period in seconds after a scale-in event."
+  default     = 300
+}
+
+variable "autoscaling_scale_out_cooldown" {
+  type        = number
+  description = "Cooldown period in seconds after a scale-out event."
+  default     = 60
+}
+
+variable "alb_arn_suffix" {
+  type        = string
+  description = "ALB ARN suffix (required for request-based auto-scaling)."
+  default     = ""
 }
 
 ################################################################################

@@ -46,7 +46,7 @@ variable "allowed_cidr_blocks" {
 variable "engine_version" {
   type        = string
   description = "Redis engine version."
-  default     = "7.1"
+  default     = "7.2"
 }
 
 variable "node_type" {
@@ -177,6 +177,33 @@ variable "parameters" {
   }))
   description = "List of Redis parameters to apply."
   default     = []
+}
+
+################################################################################
+# Logging
+################################################################################
+
+variable "enable_slow_log" {
+  type        = bool
+  description = "Enable slow log delivery to CloudWatch Logs."
+  default     = false
+}
+
+variable "enable_engine_log" {
+  type        = bool
+  description = "Enable engine log delivery to CloudWatch Logs."
+  default     = false
+}
+
+variable "log_retention_in_days" {
+  type        = number
+  description = "CloudWatch log retention in days."
+  default     = 30
+
+  validation {
+    condition     = contains([0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653], var.log_retention_in_days)
+    error_message = "Log retention must be a valid CloudWatch Logs retention value."
+  }
 }
 
 ################################################################################

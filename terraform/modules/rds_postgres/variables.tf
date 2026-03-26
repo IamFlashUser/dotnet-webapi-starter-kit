@@ -84,7 +84,7 @@ variable "manage_master_user_password" {
 variable "engine_version" {
   type        = string
   description = "PostgreSQL engine version."
-  default     = "16"
+  default     = "17"
 }
 
 variable "instance_class" {
@@ -199,7 +199,7 @@ variable "multi_az" {
 variable "performance_insights_enabled" {
   type        = bool
   description = "Enable Performance Insights."
-  default     = false
+  default     = true
 }
 
 variable "performance_insights_retention_period" {
@@ -244,6 +244,31 @@ variable "apply_immediately" {
   type        = bool
   description = "Apply changes immediately instead of during maintenance window."
   default     = false
+}
+
+################################################################################
+# IAM Authentication
+################################################################################
+
+variable "iam_database_authentication_enabled" {
+  type        = bool
+  description = "Enable IAM database authentication for passwordless access."
+  default     = false
+}
+
+################################################################################
+# CloudWatch Log Exports
+################################################################################
+
+variable "cloudwatch_log_exports" {
+  type        = list(string)
+  description = "List of log types to export to CloudWatch (postgresql, upgrade)."
+  default     = ["postgresql"]
+
+  validation {
+    condition     = alltrue([for log in var.cloudwatch_log_exports : contains(["postgresql", "upgrade"], log)])
+    error_message = "Valid log types are: postgresql, upgrade."
+  }
 }
 
 ################################################################################

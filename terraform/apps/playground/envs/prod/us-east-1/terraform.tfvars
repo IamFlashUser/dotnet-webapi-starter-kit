@@ -60,6 +60,17 @@ enable_flow_logs         = true
 flow_logs_retention_days = 90
 
 ################################################################################
+# WAF Configuration
+################################################################################
+
+enable_waf                        = true
+waf_rate_limit                    = 2000
+waf_enable_sqli_rule_set          = true
+waf_enable_ip_reputation_rule_set = true
+waf_enable_linux_rule_set         = true
+waf_enable_logging                = true
+
+################################################################################
 # S3 Configuration
 ################################################################################
 
@@ -80,8 +91,8 @@ db_username = "fshadmin"
 # Use AWS Secrets Manager for password (mandatory for production)
 db_manage_master_user_password = true
 
-# Production database settings
-db_instance_class              = "db.t3.medium"
+# Production database settings (Graviton for best price-performance)
+db_instance_class              = "db.t4g.medium"
 db_allocated_storage           = 50
 db_max_allocated_storage       = 200
 db_multi_az                    = true
@@ -91,10 +102,10 @@ db_enable_performance_insights = true
 db_enable_enhanced_monitoring  = true
 
 ################################################################################
-# Redis Configuration
+# Redis Configuration (Graviton for best price-performance)
 ################################################################################
 
-redis_node_type                  = "cache.t3.medium"
+redis_node_type                  = "cache.t4g.medium"
 redis_num_cache_clusters         = 2
 redis_automatic_failover_enabled = true
 
@@ -105,11 +116,6 @@ redis_automatic_failover_enabled = true
 # Single tag for all container images
 container_image_tag = "latest"
 
-# Optional: Override defaults if needed
-# container_registry = "ghcr.io/fullstackhero"
-# api_image_name     = "fsh-playground-api"
-# blazor_image_name  = "fsh-playground-blazor"
-
 ################################################################################
 # Service Configuration (Production - no Spot for stability)
 ################################################################################
@@ -119,6 +125,17 @@ api_use_fargate_spot = false
 
 blazor_desired_count    = 3
 blazor_use_fargate_spot = false
+
+# Auto-scaling for production
+api_enable_autoscaling       = true
+api_autoscaling_min_capacity = 3
+api_autoscaling_max_capacity = 20
+api_autoscaling_cpu_target   = 70
+
+blazor_enable_autoscaling       = true
+blazor_autoscaling_min_capacity = 3
+blazor_autoscaling_max_capacity = 15
+blazor_autoscaling_cpu_target   = 70
 
 # Enable Container Insights for full observability
 enable_container_insights = true

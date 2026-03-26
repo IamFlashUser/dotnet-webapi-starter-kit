@@ -1,3 +1,14 @@
+################################################################################
+# Production Override - US East 1
+#
+# This file provides region-specific overrides for production.
+# Use: terraform apply -var-file="prod.us-east-1.tfvars"
+#
+# NOTE: For database credentials, use AWS Secrets Manager (managed password)
+# or set via environment variable: TF_VAR_db_password="..."
+# NEVER commit plaintext passwords to version control.
+################################################################################
+
 environment = "prod"
 region      = "us-east-1"
 
@@ -12,6 +23,10 @@ public_subnets = {
     cidr_block = "10.30.1.0/24"
     az         = "us-east-1b"
   }
+  c = {
+    cidr_block = "10.30.2.0/24"
+    az         = "us-east-1c"
+  }
 }
 
 private_subnets = {
@@ -23,22 +38,26 @@ private_subnets = {
     cidr_block = "10.30.11.0/24"
     az         = "us-east-1b"
   }
+  c = {
+    cidr_block = "10.30.12.0/24"
+    az         = "us-east-1c"
+  }
 }
 
-app_s3_bucket_name = "CHANGE_ME-app-prod-us-east-1"
+app_s3_bucket_name = "fsh-app-prod-us-east-1"
 
 db_name     = "fshdb"
 db_username = "fshadmin"
-db_password = "CHANGE_ME_STRONG_PASSWORD"
 
-api_container_image = "CHANGE_ME_API_IMAGE"
-api_container_port  = 8080
+# Use managed password (recommended for production)
+db_manage_master_user_password = true
+
+container_image_tag = "latest"
+
 api_cpu             = "512"
 api_memory          = "1024"
 api_desired_count   = 3
 
-blazor_container_image = "CHANGE_ME_BLAZOR_IMAGE"
-blazor_container_port  = 8080
 blazor_cpu             = "512"
 blazor_memory          = "1024"
 blazor_desired_count   = 3

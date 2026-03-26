@@ -128,9 +128,52 @@ resource "aws_elasticache_replication_group" "this" {
   # Notifications
   notification_topic_arn = var.notification_topic_arn
 
+  # Log Delivery
+  dynamic "log_delivery_configuration" {
+    for_each = var.enable_slow_log ? [1] : []
+    content {
+      destination      = aws_cloudwatch_log_group.slow_log[0].name
+      destination_type = "cloudwatch-logs"
+      log_format       = "json"
+      log_type         = "slow-log"
+    }
+  }
+
+  dynamic "log_delivery_configuration" {
+    for_each = var.enable_engine_log ? [1] : []
+    content {
+      destination      = aws_cloudwatch_log_group.engine_log[0].name
+      destination_type = "cloudwatch-logs"
+      log_format       = "json"
+      log_type         = "engine-log"
+    }
+  }
+
   tags = var.tags
 
   lifecycle {
     ignore_changes = [auth_token]
   }
+}
+
+################################################################################
+# Log Groups
+################################################################################
+
+resource "aws_cloudwatch_log_group" "slow_log" {
+  count = var.enable_slow_log ? 1 : 0
+
+  name              = "/aws/elasticache/${var.name}/slow-log"
+  retention_in_days = var.log_retention_in_days
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_log_group" "engine_log" {
+  count = var.enable_engine_log ? 1 : 0
+
+  name              = "/aws/elasticache/${var.name}/engine-log"
+  retention_in_days = var.log_retention_in_days
+
+  tags = var.tags
 }

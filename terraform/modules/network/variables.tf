@@ -104,6 +104,12 @@ variable "enable_flow_logs" {
   default     = false
 }
 
+variable "kms_key_id" {
+  type        = string
+  description = "KMS key ID for encrypting CloudWatch log groups. Uses default AWS key if not specified."
+  default     = null
+}
+
 variable "flow_logs_retention_days" {
   type        = number
   description = "Number of days to retain flow logs in CloudWatch."

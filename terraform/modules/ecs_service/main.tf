@@ -5,6 +5,7 @@
 resource "aws_cloudwatch_log_group" "this" {
   name              = "/ecs/${var.name}"
   retention_in_days = var.log_retention_in_days
+  kms_key_id        = var.kms_key_id
 
   tags = var.tags
 }
@@ -195,6 +196,14 @@ resource "aws_ecs_task_definition" "this" {
             awslogs-stream-prefix = var.name
           }
         }
+
+        # Security hardening
+        readonlyRootFilesystem = var.readonly_root_filesystem
+
+        # Enable init process for proper signal handling (PID 1 zombie reaping)
+        linuxParameters = {
+          initProcessEnabled = true
+        }
       },
       var.container_health_check != null ? {
         healthCheck = {
@@ -282,4 +291,76 @@ resource "aws_ecs_service" "this" {
   depends_on = [aws_lb_listener_rule.this]
 
   tags = var.tags
+}
+
+################################################################################
+# Application Auto Scaling
+################################################################################
+
+resource "aws_appautoscaling_target" "this" {
+  count = var.enable_autoscaling ? 1 : 0
+
+  max_capacity       = var.autoscaling_max_capacity
+  min_capacity       = var.autoscaling_min_capacity
+  resource_id        = "service/${split("/", var.cluster_arn)[1]}/${aws_ecs_service.this.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "cpu" {
+  count = var.enable_autoscaling ? 1 : 0
+
+  name               = "${var.name}-cpu-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.this[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
+  service_namespace  = aws_appautoscaling_target.this[0].service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+    target_value       = var.autoscaling_cpu_target
+    scale_in_cooldown  = var.autoscaling_scale_in_cooldown
+    scale_out_cooldown = var.autoscaling_scale_out_cooldown
+  }
+}
+
+resource "aws_appautoscaling_policy" "memory" {
+  count = var.enable_autoscaling ? 1 : 0
+
+  name               = "${var.name}-memory-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.this[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
+  service_namespace  = aws_appautoscaling_target.this[0].service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+    }
+    target_value       = var.autoscaling_memory_target
+    scale_in_cooldown  = var.autoscaling_scale_in_cooldown
+    scale_out_cooldown = var.autoscaling_scale_out_cooldown
+  }
+}
+
+resource "aws_appautoscaling_policy" "requests" {
+  count = var.enable_autoscaling && var.autoscaling_requests_per_target > 0 ? 1 : 0
+
+  name               = "${var.name}-request-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.this[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.this[0].scalable_dimension
+  service_namespace  = aws_appautoscaling_target.this[0].service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ALBRequestCountPerTarget"
+      resource_label         = "${split("/", var.alb_arn_suffix)[1]}/${split("/", var.alb_arn_suffix)[2]}/${split("/", var.alb_arn_suffix)[3]}/${aws_lb_target_group.this.arn_suffix}"
+    }
+    target_value       = var.autoscaling_requests_per_target
+    scale_in_cooldown  = var.autoscaling_scale_in_cooldown
+    scale_out_cooldown = var.autoscaling_scale_out_cooldown
+  }
 }

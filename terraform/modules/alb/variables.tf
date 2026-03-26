@@ -66,6 +66,34 @@ variable "drop_invalid_header_fields" {
   default     = true
 }
 
+variable "desync_mitigation_mode" {
+  type        = string
+  description = "How the ALB handles requests that might pose a security risk due to HTTP desync (monitor, defensive, strictest)."
+  default     = "defensive"
+
+  validation {
+    condition     = contains(["monitor", "defensive", "strictest"], var.desync_mitigation_mode)
+    error_message = "Desync mitigation mode must be monitor, defensive, or strictest."
+  }
+}
+
+variable "preserve_host_header" {
+  type        = bool
+  description = "Preserve the Host header in the HTTP request and send it to the target without modification."
+  default     = false
+}
+
+variable "xff_header_processing_mode" {
+  type        = string
+  description = "How the X-Forwarded-For header is processed (append, preserve, remove)."
+  default     = "append"
+
+  validation {
+    condition     = contains(["append", "preserve", "remove"], var.xff_header_processing_mode)
+    error_message = "XFF header processing mode must be append, preserve, or remove."
+  }
+}
+
 ################################################################################
 # HTTPS Configuration
 ################################################################################
@@ -90,18 +118,19 @@ variable "additional_certificate_arns" {
 
 variable "ssl_policy" {
   type        = string
-  description = "SSL policy for HTTPS listener."
+  description = "SSL policy for HTTPS listener. Use TLS 1.3 policies for best security."
   default     = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
   validation {
     condition = contains([
       "ELBSecurityPolicy-TLS13-1-2-2021-06",
       "ELBSecurityPolicy-TLS13-1-3-2021-06",
+      "ELBSecurityPolicy-TLS13-1-2-Ext1-2021-06",
+      "ELBSecurityPolicy-TLS13-1-2-Ext2-2021-06",
       "ELBSecurityPolicy-FS-1-2-Res-2020-10",
-      "ELBSecurityPolicy-FS-1-2-2019-08",
-      "ELBSecurityPolicy-2016-08"
+      "ELBSecurityPolicy-FS-1-2-2019-08"
     ], var.ssl_policy)
-    error_message = "SSL policy must be a valid ELB security policy."
+    error_message = "SSL policy must be a valid ELB security policy supporting TLS 1.2+."
   }
 }
 
@@ -119,6 +148,18 @@ variable "access_logs_prefix" {
   type        = string
   description = "S3 prefix for access logs."
   default     = "alb-logs"
+}
+
+variable "connection_logs_bucket" {
+  type        = string
+  description = "S3 bucket for connection logs."
+  default     = null
+}
+
+variable "connection_logs_prefix" {
+  type        = string
+  description = "S3 prefix for connection logs."
+  default     = "alb-connection-logs"
 }
 
 ################################################################################

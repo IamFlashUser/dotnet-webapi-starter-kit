@@ -54,6 +54,7 @@ resource "aws_cloudwatch_log_group" "execute_command" {
 
   name              = "/aws/ecs/${var.name}/execute-command"
   retention_in_days = var.log_retention_in_days
+  kms_key_id        = var.kms_key_id
 
   tags = var.tags
 }
