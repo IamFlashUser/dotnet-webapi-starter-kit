@@ -38,6 +38,11 @@ output "cloudwatch_log_group_arn" {
   value       = aws_cloudwatch_log_group.this.arn
 }
 
+output "target_group_arn_suffix" {
+  description = "The ARN suffix of the target group (for CloudWatch alarms)"
+  value       = aws_lb_target_group.this.arn_suffix
+}
+
 output "execution_role_arn" {
   description = "The ARN of the task execution role"
   value       = aws_iam_role.task_execution.arn

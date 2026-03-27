@@ -38,11 +38,11 @@ resource "aws_vpc_security_group_ingress_rule" "redis_cidr" {
   tags = var.tags
 }
 
-resource "aws_vpc_security_group_egress_rule" "all" {
+resource "aws_vpc_security_group_egress_rule" "vpc" {
   security_group_id = aws_security_group.this.id
-  description       = "Allow all outbound traffic"
+  description       = "Allow outbound traffic within VPC only"
   ip_protocol       = "-1"
-  cidr_ipv4         = "0.0.0.0/0"
+  cidr_ipv4         = var.vpc_cidr_block
 
   tags = var.tags
 }
@@ -165,6 +165,7 @@ resource "aws_cloudwatch_log_group" "slow_log" {
 
   name              = "/aws/elasticache/${var.name}/slow-log"
   retention_in_days = var.log_retention_in_days
+  kms_key_id        = var.kms_key_id
 
   tags = var.tags
 }
@@ -174,6 +175,7 @@ resource "aws_cloudwatch_log_group" "engine_log" {
 
   name              = "/aws/elasticache/${var.name}/engine-log"
   retention_in_days = var.log_retention_in_days
+  kms_key_id        = var.kms_key_id
 
   tags = var.tags
 }

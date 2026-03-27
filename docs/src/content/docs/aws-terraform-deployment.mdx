@@ -267,15 +267,15 @@ The Terraform configuration expects container images to be available in a regist
 
 ```bash
 # Build the API image
-docker build -t ghcr.io/fullstackhero/fsh-playground-api:v1.0.0 \
-  -f src/Playground/Playground.Api/Dockerfile .
+docker build -t ghcr.io/fullstackhero/fsh-api:v1.0.0 \
+  -f src/Playground/FSH.Api/Dockerfile .
 
 # Build the Blazor image
 docker build -t ghcr.io/fullstackhero/fsh-playground-blazor:v1.0.0 \
   -f src/Playground/Playground.Blazor/Dockerfile .
 
 # Push to registry
-docker push ghcr.io/fullstackhero/fsh-playground-api:v1.0.0
+docker push ghcr.io/fullstackhero/fsh-api:v1.0.0
 docker push ghcr.io/fullstackhero/fsh-playground-blazor:v1.0.0
 ```
 

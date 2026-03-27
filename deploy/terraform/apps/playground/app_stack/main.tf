@@ -3,11 +3,14 @@
 ################################################################################
 
 locals {
-  common_tags = {
-    Environment = var.environment
-    Project     = "dotnet-starter-kit"
-    ManagedBy   = "terraform"
-  }
+  common_tags = merge(
+    {
+      Environment = var.environment
+      Project     = "dotnet-starter-kit"
+      ManagedBy   = "terraform"
+    },
+    var.owner != null ? { Owner = var.owner } : {}
+  )
   aspnetcore_environment = var.environment == "dev" ? "Development" : "Production"
   name_prefix            = "${var.environment}-${var.region}"
 
@@ -249,9 +252,10 @@ resource "aws_iam_role_policy" "api_task_secrets" {
 module "rds" {
   source = "../../../modules/rds_postgres"
 
-  name       = "${local.name_prefix}-postgres"
-  vpc_id     = module.network.vpc_id
-  subnet_ids = module.network.private_subnet_ids
+  name           = "${local.name_prefix}-postgres"
+  vpc_id         = module.network.vpc_id
+  vpc_cidr_block = var.vpc_cidr_block
+  subnet_ids     = module.network.private_subnet_ids
 
   # Use CIDR block to allow access from private subnets (ECS services)
   allowed_cidr_blocks = [var.vpc_cidr_block]
@@ -276,6 +280,9 @@ module "rds" {
 
   performance_insights_enabled = var.db_enable_performance_insights
   monitoring_interval          = var.db_enable_enhanced_monitoring ? var.db_monitoring_interval : 0
+
+  create_parameter_group = var.db_create_parameter_group
+  parameters             = var.db_parameters
 
   tags = local.common_tags
 }
@@ -323,9 +330,10 @@ locals {
 module "redis" {
   source = "../../../modules/elasticache_redis"
 
-  name       = "${local.name_prefix}-redis"
-  vpc_id     = module.network.vpc_id
-  subnet_ids = module.network.private_subnet_ids
+  name           = "${local.name_prefix}-redis"
+  vpc_id         = module.network.vpc_id
+  vpc_cidr_block = var.vpc_cidr_block
+  subnet_ids     = module.network.private_subnet_ids
 
   # Use CIDR block to allow access from private subnets (ECS services)
   allowed_cidr_blocks = [var.vpc_cidr_block]
@@ -410,6 +418,44 @@ module "api_service" {
       valueFrom = aws_secretsmanager_secret.db_connection_string[0].arn
     }
   ] : []
+
+  tags = local.common_tags
+}
+
+################################################################################
+# CloudWatch Alarms
+################################################################################
+
+module "alarms" {
+  count  = var.enable_alarms ? 1 : 0
+  source = "../../../modules/cloudwatch_alarms"
+
+  name                 = local.name_prefix
+  alarm_email_addresses = var.alarm_email_addresses
+
+  ecs_services = {
+    api = {
+      cluster_name = module.ecs_cluster.name
+      service_name = module.api_service.service_name
+    }
+    blazor = {
+      cluster_name = module.ecs_cluster.name
+      service_name = module.blazor_service.service_name
+    }
+  }
+
+  rds_instance_identifier    = module.rds.identifier
+  redis_replication_group_id = module.redis.replication_group_id
+  alb_arn_suffix             = module.alb.arn_suffix
+
+  alb_target_group_arns = {
+    api = {
+      target_group_arn_suffix = module.api_service.target_group_arn_suffix
+    }
+    blazor = {
+      target_group_arn_suffix = module.blazor_service.target_group_arn_suffix
+    }
+  }
 
   tags = local.common_tags
 }

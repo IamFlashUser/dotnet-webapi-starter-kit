@@ -22,6 +22,12 @@ variable "region" {
   }
 }
 
+variable "owner" {
+  type        = string
+  description = "Owner or team responsible for this infrastructure (used in tags for cost allocation and auditing)."
+  default     = null
+}
+
 variable "domain_name" {
   type        = string
   description = "Domain name for the application (optional)."
@@ -338,6 +344,22 @@ variable "db_monitoring_interval" {
   default     = 60
 }
 
+variable "db_create_parameter_group" {
+  type        = bool
+  description = "Create a custom PostgreSQL parameter group with production-tuned settings."
+  default     = false
+}
+
+variable "db_parameters" {
+  type = list(object({
+    name         = string
+    value        = string
+    apply_method = optional(string, "immediate")
+  }))
+  description = "Custom PostgreSQL parameters."
+  default     = []
+}
+
 ################################################################################
 # Redis Variables
 ################################################################################
@@ -419,6 +441,22 @@ variable "waf_enable_logging" {
 }
 
 ################################################################################
+# CloudWatch Alarms Variables
+################################################################################
+
+variable "enable_alarms" {
+  type        = bool
+  description = "Enable CloudWatch alarms for ECS, RDS, Redis, and ALB."
+  default     = false
+}
+
+variable "alarm_email_addresses" {
+  type        = list(string)
+  description = "Email addresses for alarm notifications via SNS."
+  default     = []
+}
+
+################################################################################
 # Container Image Variables
 ################################################################################
 
@@ -430,13 +468,18 @@ variable "container_registry" {
 
 variable "container_image_tag" {
   type        = string
-  description = "Container image tag (shared across all services)."
+  description = "Container image tag (shared across all services). Must be an immutable tag (git SHA or semver)."
+
+  validation {
+    condition     = var.container_image_tag != "latest" && var.container_image_tag != "" && !can(regex("^(dev|staging|prod|main|master)$", var.container_image_tag))
+    error_message = "Container image tag must be an immutable identifier (git SHA or semver). Mutable tags like 'latest', 'dev', 'staging', 'prod', 'main', 'master' are not allowed."
+  }
 }
 
 variable "api_image_name" {
   type        = string
   description = "API container image name (without registry or tag)."
-  default     = "fsh-playground-api"
+  default     = "fsh-api"
 }
 
 variable "blazor_image_name" {

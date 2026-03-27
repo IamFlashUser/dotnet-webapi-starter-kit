@@ -284,6 +284,9 @@ resource "aws_ecs_service" "this" {
     rollback = var.enable_circuit_breaker_rollback
   }
 
+  propagate_tags          = "SERVICE"
+  wait_for_steady_state   = var.wait_for_steady_state
+
   lifecycle {
     ignore_changes = [desired_count]
   }
@@ -357,7 +360,7 @@ resource "aws_appautoscaling_policy" "requests" {
   target_tracking_scaling_policy_configuration {
     predefined_metric_specification {
       predefined_metric_type = "ALBRequestCountPerTarget"
-      resource_label         = "${split("/", var.alb_arn_suffix)[1]}/${split("/", var.alb_arn_suffix)[2]}/${split("/", var.alb_arn_suffix)[3]}/${aws_lb_target_group.this.arn_suffix}"
+      resource_label         = "${var.alb_arn_suffix}/${aws_lb_target_group.this.arn_suffix}"
     }
     target_value       = var.autoscaling_requests_per_target
     scale_in_cooldown  = var.autoscaling_scale_in_cooldown

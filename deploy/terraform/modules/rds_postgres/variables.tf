@@ -39,6 +39,11 @@ variable "allowed_cidr_blocks" {
   default     = []
 }
 
+variable "vpc_cidr_block" {
+  type        = string
+  description = "VPC CIDR block (used to restrict egress to VPC only)."
+}
+
 variable "db_name" {
   type        = string
   description = "Database name."

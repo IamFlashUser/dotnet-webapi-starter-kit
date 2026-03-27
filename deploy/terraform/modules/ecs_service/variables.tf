@@ -186,6 +186,12 @@ variable "enable_circuit_breaker_rollback" {
   default     = true
 }
 
+variable "wait_for_steady_state" {
+  type        = bool
+  description = "Wait for the ECS service to reach a steady state after deployment. Recommended for production."
+  default     = false
+}
+
 ################################################################################
 # Optional Variables - Health Check
 ################################################################################
@@ -293,9 +299,8 @@ variable "log_retention_in_days" {
 
 variable "environment_variables" {
   type        = map(string)
-  description = "Plain environment variables for the container."
+  description = "Plain environment variables for the container. Sensitive values should use the secrets variable instead."
   default     = {}
-  sensitive   = true
 }
 
 variable "secrets" {
