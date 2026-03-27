@@ -166,10 +166,10 @@ jobs:
 
       - name: Publish API container image
         run: |
-          dotnet publish src/Playground/Playground.Api/Playground.Api.csproj \
+          dotnet publish src/Playground/FSH.Api/FSH.Api.csproj \
             -c Release -r linux-x64 \
             -p:PublishProfile=DefaultContainer \
-            -p:ContainerRepository=ghcr.io/${{ github.repository_owner }}/fsh-playground-api \
+            -p:ContainerRepository=ghcr.io/${{ github.repository_owner }}/fsh-api \
             -p:ContainerImageTags='"dev-${{ github.sha }};dev-latest"'
 
       - name: Publish Blazor container image
@@ -263,10 +263,10 @@ jobs:
 
       - name: Build and push API container
         run: |
-          dotnet publish src/Playground/Playground.Api/Playground.Api.csproj \
+          dotnet publish src/Playground/FSH.Api/FSH.Api.csproj \
             -c Release -r linux-x64 \
             -p:PublishProfile=DefaultContainer \
-            -p:ContainerRepository=ghcr.io/${{ github.repository_owner }}/fsh-playground-api \
+            -p:ContainerRepository=ghcr.io/${{ github.repository_owner }}/fsh-api \
             -p:ContainerImageTags='"${{ steps.version.outputs.version }};latest"'
 
       - name: Build and push Blazor container

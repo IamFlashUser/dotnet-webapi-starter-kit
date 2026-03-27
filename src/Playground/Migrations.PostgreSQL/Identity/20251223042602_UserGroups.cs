@@ -3,7 +3,7 @@ using System;
 
 #nullable disable
 
-namespace FSH.Playground.Migrations.PostgreSQL.Identity
+namespace FSH.Migrations.PostgreSQL.Identity
 {
     /// <inheritdoc />
     public partial class UserGroups : Migration

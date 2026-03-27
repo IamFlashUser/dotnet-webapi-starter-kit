@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace FSH.Playground.Migrations.PostgreSQL.Audit
+namespace FSH.Migrations.PostgreSQL.Audit
 {
     [DbContext(typeof(AuditDbContext))]
     [Migration("20251203033647_Add Audits")]

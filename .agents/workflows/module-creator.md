@@ -121,8 +121,8 @@ public sealed class {Name}DbContext : DbContext
 ### Step 4: Register Module
 
 Show changes needed in:
-1. `src/Playground/Playground.Api/Program.cs` - Add to moduleAssemblies
-2. `src/Playground/Playground.Api/Playground.Api.csproj` - Add ProjectReference
+1. `src/Playground/FSH.Api/Program.cs` - Add to moduleAssemblies
+2. `src/Playground/FSH.Api/FSH.Api.csproj` - Add ProjectReference
 3. Solution file - Add both projects
 
 ### Step 5: Add to Solution
@@ -140,7 +140,7 @@ dotnet sln src/FSH.Framework.slnx add src/Modules/{Name}/Modules.{Name}.Contract
 - [ ] DbContext created with schema
 - [ ] Registered in Program.cs
 - [ ] Added to solution
-- [ ] Referenced from Playground.Api
+- [ ] Referenced from FSH.Api
 - [ ] Build passes with 0 warnings
 
 ## Verification

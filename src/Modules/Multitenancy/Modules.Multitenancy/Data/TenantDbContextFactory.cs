@@ -20,7 +20,7 @@ public sealed class TenantDbContextFactory : IDesignTimeDbContextFactory<TenantD
         var connectionString = configuration["DatabaseOptions:ConnectionString"]
             ?? "Host=localhost;Database=fsh-tenant;Username=postgres;Password=postgres";
         var migrationsAssembly = configuration["DatabaseOptions:MigrationsAssembly"]
-            ?? "FSH.Playground.Migrations.PostgreSQL";
+            ?? "FSH.Migrations.PostgreSQL";
         var optionsBuilder = new DbContextOptionsBuilder<TenantDbContext>();
 
         switch (provider.ToUpperInvariant())

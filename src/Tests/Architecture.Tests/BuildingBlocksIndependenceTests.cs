@@ -58,7 +58,7 @@ public class BuildingBlocksIndependenceTests
                 .ShouldNot()
                 .HaveDependencyOnAny(
                     "FSH.Playground",
-                    "Playground.Api",
+                    "FSH.Api",
                     "Playground.Blazor")
                 .GetResult();
 

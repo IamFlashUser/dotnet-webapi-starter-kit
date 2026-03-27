@@ -125,11 +125,11 @@ public sealed class {Module}DbContext : DbContext
 ```bash
 dotnet ef migrations add Add{Entity} \
   --project src/Playground/Migrations.PostgreSQL \
-  --startup-project src/Playground/Playground.Api
+  --startup-project src/Playground/FSH.Api
 
 dotnet ef database update \
   --project src/Playground/Migrations.PostgreSQL \
-  --startup-project src/Playground/Playground.Api
+  --startup-project src/Playground/FSH.Api
 ```
 
 ## Interfaces Reference

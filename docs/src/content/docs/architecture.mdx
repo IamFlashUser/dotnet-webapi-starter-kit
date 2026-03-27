@@ -37,7 +37,7 @@ The codebase is organized into three layers, each with a clear responsibility:
 ┌─────────────────────────────────────────────────────────────┐
 │                        Playground                           │
 │          (Host applications that compose modules)           │
-│       Playground.Api  ·  Playground.Blazor  ·  AppHost     │
+│       FSH.Api  ·  Playground.Blazor  ·  AppHost             │
 ├─────────────────────────────────────────────────────────────┤
 │                         Modules                             │
 │            (Independent bounded contexts)                   │
@@ -77,7 +77,7 @@ The codebase is organized into three layers, each with a clear responsibility:
       { name: 'Webhooks/', type: 'folder', desc: 'Outbound webhook subscriptions and delivery' }
     ]},
     { name: 'Playground/', type: 'folder', desc: 'Host applications', children: [
-      { name: 'Playground.Api/', type: 'folder', desc: 'Reference ASP.NET Core API host' },
+      { name: 'FSH.Api/', type: 'folder', desc: 'Reference ASP.NET Core API host' },
       { name: 'Playground.Blazor/', type: 'folder', desc: 'MudBlazor admin dashboard' },
       { name: 'FSH.Playground.AppHost/', type: 'folder', desc: '.NET Aspire orchestrator' }
     ]},

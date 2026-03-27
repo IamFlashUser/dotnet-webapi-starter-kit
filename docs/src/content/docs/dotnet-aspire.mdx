@@ -16,7 +16,7 @@ The `FSH.Playground.AppHost` project orchestrates the entire development environ
 
 - **PostgreSQL** container with a persistent volume (`fsh-postgres-data`) and a database named `fsh`
 - **Redis** container with a persistent volume (`fsh-redis-data`)
-- **Playground.Api** with environment variables for OTLP, database, and Redis connections
+- **FSH.Api** with environment variables for OTLP, database, and Redis connections
 - **Playground.Blazor** UI wired to the API
 
 ```csharp
@@ -27,7 +27,7 @@ var postgres = builder.AddPostgres("postgres")
 var redis = builder.AddRedis("redis")
     .WithDataVolume("fsh-redis-data");
 
-var api = builder.AddProject<Projects.Playground_Api>("api")
+var api = builder.AddProject<Projects.FSH_Api>("api")
     .WithReference(postgres)
     .WithReference(redis)
     .WaitFor(postgres)

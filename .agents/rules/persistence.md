@@ -279,7 +279,7 @@ dotnet ef migrations add InitialCatalog \
 ### Applying Migrations
 
 ```bash
-# Automatic on startup (Playground.Api)
+# Automatic on startup (FSH.Api)
 # Or manually:
 dotnet ef database update \
     --project src/Playground/Migrations.PostgreSQL \

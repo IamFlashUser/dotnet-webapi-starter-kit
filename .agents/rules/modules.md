@@ -252,7 +252,7 @@ public static class Extensions
 ### 8. Wire Up in Program.cs
 
 ```csharp
-// In Playground.Api/Program.cs
+// In FSH.Api/Program.cs
 builder.Services.AddCatalogModule();
 
 // ...

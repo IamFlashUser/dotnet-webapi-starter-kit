@@ -68,7 +68,7 @@ Additional module folders: `Domain/`, `Data/`, `Services/`, `Events/`, `Authoriz
 dotnet build src/FSH.Framework.slnx
 
 # Run API (from repo root)
-dotnet run --project src/Playground/Playground.Api
+dotnet run --project src/Playground/FSH.Api
 
 # Run with Aspire
 dotnet run --project src/Playground/FSH.Playground.AppHost

@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<RootNamespace>FSH.Playground.Api</RootNamespace>
-		<AssemblyName>FSH.Playground.Api</AssemblyName>
+		<RootNamespace>FSH.Api</RootNamespace>
+		<AssemblyName>FSH.Api</AssemblyName>
 		<IsPackable>false</IsPackable>
 
 		<!-- Container configuration -->
 		<ContainerPort>8080</ContainerPort>
 		<ContainerUser>root</ContainerUser>
-		<ContainerRepository>fsh-playground-api</ContainerRepository>
+		<ContainerRepository>fsh-api</ContainerRepository>
     	<PublishProfile>DefaultContainer</PublishProfile>
 	</PropertyGroup>
 

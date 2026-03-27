@@ -1,25 +1,33 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// Postgres container + database
-var postgres = builder.AddPostgres("postgres").WithDataVolume("fsh-postgres-data").AddDatabase("fsh");
+// Infrastructure
+var postgres = builder.AddPostgres("postgres")
+    .WithDataVolume("fsh-postgres-data")
+    .WithLifetime(ContainerLifetime.Persistent)
+    .AddDatabase("fsh");
 
-var redis = builder.AddRedis("redis").WithDataVolume("fsh-redis-data");
+var redis = builder.AddRedis("redis")
+    .WithDataVolume("fsh-redis-data")
+    .WithLifetime(ContainerLifetime.Persistent);
 
-builder.AddProject<Projects.Playground_Api>("playground-api")
+// API Service
+var api = builder.AddProject<Projects.FSH_Api>("fsh-api")
     .WithReference(postgres)
-    .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
-    .WithEnvironment("OpenTelemetryOptions__Exporter__Otlp__Endpoint", "https://localhost:4317")
-    .WithEnvironment("OpenTelemetryOptions__Exporter__Otlp__Protocol", "grpc")
-    .WithEnvironment("OpenTelemetryOptions__Exporter__Otlp__Enabled", "true")
+    .WithReference(redis)
+    .WaitFor(postgres)
+    .WaitFor(redis)
+    .WithExternalHttpEndpoints()
     .WithEnvironment("DatabaseOptions__Provider", "POSTGRESQL")
     .WithEnvironment("DatabaseOptions__ConnectionString", postgres.Resource.ConnectionStringExpression)
-    .WithEnvironment("DatabaseOptions__MigrationsAssembly", "FSH.Playground.Migrations.PostgreSQL")
-    .WaitFor(postgres)
-    .WithReference(redis)
+    .WithEnvironment("DatabaseOptions__MigrationsAssembly", "FSH.Migrations.PostgreSQL")
     .WithEnvironment("CachingOptions__Redis", redis.Resource.ConnectionStringExpression)
-    .WithEnvironment("CachingOptions__EnableSsl", "true")
-    .WaitFor(redis);
+    .WithEnvironment("CachingOptions__EnableSsl", "false");
 
-builder.AddProject<Projects.Playground_Blazor>("playground-blazor");
+// Blazor UI
+builder.AddProject<Projects.Playground_Blazor>("playground-blazor")
+    .WithReference(api)
+    .WaitFor(api)
+    .WithExternalHttpEndpoints()
+    .WithEnvironment("Api__BaseUrl", api.GetEndpoint("http"));
 
 await builder.Build().RunAsync();

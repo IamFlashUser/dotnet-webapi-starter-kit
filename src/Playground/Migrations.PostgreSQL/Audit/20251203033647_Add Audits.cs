@@ -3,7 +3,7 @@ using System;
 
 #nullable disable
 
-namespace FSH.Playground.Migrations.PostgreSQL.Audit
+namespace FSH.Migrations.PostgreSQL.Audit
 {
     /// <inheritdoc />
     public partial class AddAudits : Migration

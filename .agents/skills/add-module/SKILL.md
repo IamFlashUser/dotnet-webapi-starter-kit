@@ -152,7 +152,7 @@ dotnet sln src/FSH.Framework.slnx add src/Modules/{Name}/Modules.{Name}.Contract
 
 ## Step 7: Reference from API
 
-In `src/Playground/Playground.Api/Playground.Api.csproj`:
+In `src/Playground/FSH.Api/FSH.Api.csproj`:
 ```xml
 <ProjectReference Include="..\..\Modules\{Name}\Modules.{Name}\Modules.{Name}.csproj" />
 ```
@@ -172,5 +172,5 @@ dotnet test src/FSH.Framework.slnx
 - [ ] DbContext created with proper schema
 - [ ] Registered in Program.cs moduleAssemblies
 - [ ] Added to solution file
-- [ ] Referenced from Playground.Api
+- [ ] Referenced from FSH.Api
 - [ ] Build passes with 0 warnings

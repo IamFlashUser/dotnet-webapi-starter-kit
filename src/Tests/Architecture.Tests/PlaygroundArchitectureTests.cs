@@ -12,7 +12,7 @@ public class PlaygroundArchitectureTests
         // Assemblies / namespaces that represent Playground hosts.
         string[] playgroundNamespaces =
         {
-            "FSH.Playground.Api",
+            "FSH.Api",
             "Playground.Blazor"
         };
 

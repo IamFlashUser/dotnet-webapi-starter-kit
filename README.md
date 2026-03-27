@@ -19,7 +19,7 @@ An opinionated, production-first starter for building multi-tenant SaaS and ente
 ## Repository map
 - `src/BuildingBlocks` — Core abstractions (DDD primitives, exceptions), Persistence, Caching, Mailing, Jobs, Storage, Web host wiring.
 - `src/Modules` — `Identity`, `Multitenancy`, `Auditing` runtime + contracts projects.
-- `src/Playground` — Reference host (`Playground.Api`), Aspire app host (`FSH.Playground.AppHost`), Blazor UI, Postgres migrations.
+- `src/Playground` — Reference host (`FSH.Api`), Aspire app host (`FSH.Playground.AppHost`), Blazor UI, Postgres migrations.
 - `src/Tests` — Architecture tests that enforce layering and module boundaries.
 - `docs/framework` — Deep dives on architecture, modules, and developer recipes.
 - `terraform` — Infra as code scaffolding (optional starting point).
@@ -34,7 +34,7 @@ Prereqs: .NET 10 SDK, Aspire workload, Docker running (for Postgres/Redis).
 
 ### Run the API only
 - Set env vars or appsettings for `DatabaseOptions__Provider`, `DatabaseOptions__ConnectionString`, `DatabaseOptions__MigrationsAssembly`, `CachingOptions__Redis`, and JWT options.
-- Run: `dotnet run --project src/Playground/Playground.Api`
+- Run: `dotnet run --project src/Playground/FSH.Api`
 - The host applies migrations/seeding via `UseHeroMultiTenantDatabases()` and maps module endpoints via `UseHeroPlatform`.
 
 ## Bring the framework into your API
@@ -43,7 +43,7 @@ Prereqs: .NET 10 SDK, Aspire workload, Docker running (for Postgres/Redis).
   - Register Mediator with assemblies containing your commands/queries and module handlers.
   - Call `builder.AddHeroPlatform(...)` to enable auth, OpenAPI, caching, mailing, jobs, health, OTel, rate limiting.
   - Call `builder.AddModules(moduleAssemblies)` and `app.UseHeroPlatform(p => p.MapModules = true);`.
-- Configure connection strings, Redis, JWT, CORS, and OTel endpoints via configuration. Example wiring lives in `src/Playground/Playground.Api/Program.cs`.
+- Configure connection strings, Redis, JWT, CORS, and OTel endpoints via configuration. Example wiring lives in `src/Playground/FSH.Api/Program.cs`.
 
 ## Included modules
 - **Identity** — ASP.NET Identity + JWT issuance/refresh, user/role/permission management, profile image storage, login/refresh auditing, health checks.

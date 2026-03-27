@@ -3,7 +3,7 @@ using System;
 
 #nullable disable
 
-namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
+namespace FSH.Migrations.PostgreSQL.MultiTenancy
 {
     /// <inheritdoc />
     public partial class AddTenantTheme : Migration

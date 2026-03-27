@@ -5,7 +5,7 @@ WORKDIR /app
 COPY src/ ./src/
 
 RUN dotnet restore src/FSH.Framework.slnx
-RUN dotnet publish src/Playground/Playground.Api/Playground.Api.csproj -c Release -o /app/publish --no-restore
+RUN dotnet publish src/Playground/FSH.Api/FSH.Api.csproj -c Release -o /app/publish --no-restore
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-preview AS runtime
@@ -18,4 +18,4 @@ EXPOSE 8080
 
 USER $APP_UID
 
-ENTRYPOINT ["dotnet", "Playground.Api.dll"]
+ENTRYPOINT ["dotnet", "FSH.Api.dll"]
