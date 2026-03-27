@@ -15,12 +15,12 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 		<div class="hero-glow" aria-hidden="true"></div>
 		<div class="w">
 			<div class="hero-center">
-				<div class="hero-eyebrow">
-					<span class="pulse"></span>
-					<code>v10.0</code>
-					<span class="sep">/</span>
-					<span>.NET 10 &bull; C# latest &bull; Aspire</span>
-				</div>
+				<a href="/dotnet-starter-kit/quick-start/" class="hero-pill">
+					<span class="pill-glow"></span>
+					<span class="pill-badge"><span class="pulse"></span>v10.0</span>
+					<span class="pill-text">.NET 10 &bull; C# latest &bull; Aspire</span>
+					<svg class="pill-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4.5 3l3 3-3 3"/></svg>
+				</a>
 				<h1>Build fast.<br /><span class="g">Ship faster.</span></h1>
 				<p class="hero-p">
 					Production-ready .NET starter kit with multitenancy, identity, CQRS,<br class="br-desk" />
@@ -923,21 +923,54 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 
 	.hero-center { text-align: center; }
 
-	.hero-eyebrow {
-		display: inline-flex; align-items: center; gap: 0.5rem;
-		font-size: 0.78rem; font-weight: 500; color: var(--text-dim);
-		margin-bottom: 1.25rem;
+	/* hero pill / eyebrow */
+	.hero-pill {
+		display: inline-flex; align-items: center; gap: 0.6rem;
+		font-size: 0.82rem; font-weight: 500; color: var(--text-dim);
+		margin-bottom: 1.5rem;
+		padding: 0.35rem 0.9rem 0.35rem 0.4rem;
+		border-radius: 9999px;
+		border: 1px solid var(--border-bright);
+		background: var(--bg-card);
+		position: relative; overflow: hidden;
+		transition: border-color 0.25s ease-out, color 0.25s ease-out;
+		text-decoration: none;
 	}
-	.hero-eyebrow code {
-		font-family: var(--mono); font-size: 0.72rem; font-weight: 600;
+	.hero-pill:hover {
+		border-color: var(--brand);
+		color: var(--text);
+	}
+	.hero-pill:hover .pill-arrow { transform: translateX(2px); }
+
+	.pill-glow {
+		position: absolute; inset: 0; opacity: 0;
+		background: radial-gradient(ellipse at 30% 50%, var(--brand-glow-strong), transparent 70%);
+		transition: opacity 0.3s ease-out; pointer-events: none;
+	}
+	.hero-pill:hover .pill-glow { opacity: 1; }
+
+	.pill-badge {
+		display: inline-flex; align-items: center; gap: 0.35rem;
+		font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
 		background: var(--brand-glow); color: var(--brand);
-		padding: 0.15rem 0.45rem; border-radius: 4px;
+		padding: 0.2rem 0.55rem; border-radius: 9999px;
+		border: 1px solid rgba(74,222,128,0.15);
+		position: relative;
 	}
-	.hero-eyebrow .sep { color: var(--text-faint); }
+	.pill-text {
+		position: relative; font-size: 0.8rem;
+	}
+	.pill-arrow {
+		position: relative; color: var(--text-faint);
+		transition: transform 0.2s ease-out, color 0.2s ease-out;
+		flex-shrink: 0;
+	}
+	.hero-pill:hover .pill-arrow { color: var(--brand); }
 
 	.pulse {
 		width: 6px; height: 6px; border-radius: 50%;
 		background: var(--brand); animation: blink 2s ease-in-out infinite;
+		flex-shrink: 0;
 	}
 	@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
 
@@ -1988,7 +2021,8 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 		.hero { padding: 5rem 0 2rem; }
 		.hero h1 { font-size: 2.25rem; }
 		.hero-p { font-size: 1.05rem; line-height: 1.6; }
-		.hero-eyebrow { font-size: 0.88rem; }
+		.hero-pill { font-size: 0.85rem; }
+		.pill-text { font-size: 0.82rem; }
 		.br-desk { display: none; }
 		.hero-term-wrap { margin-top: 2rem; padding: 0; }
 		.hero-term { box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
@@ -2150,8 +2184,8 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 
 	@media (max-width: 480px) {
 		.hero h1 { font-size: 2rem; }
-		.hero-eyebrow span:last-child { display: none; }
-		.hero-eyebrow .sep { display: none; }
+		.pill-text { display: none; }
+		.pill-arrow { display: none; }
 		.stack-grid { grid-template-columns: 1fr; }
 		.nums-strip { gap: 0.5rem; }
 		.ns { padding: 0.45rem 0.75rem; }
