@@ -897,7 +897,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 
 	/* ── HERO ─────────────────────── */
 	.hero {
-		position: relative; padding: 8rem 0 4rem; overflow: hidden;
+		position: relative; padding: 8rem 0 2rem; overflow: hidden;
 	}
 
 	/* particle constellation */
@@ -958,7 +958,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	.hero-row { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
 
 	.hero-term-wrap {
-		max-width: 40rem; margin: 3rem auto 0;
+		max-width: 40rem; margin: 2rem auto 0;
 		padding: 0 0.5rem;
 	}
 
@@ -1030,7 +1030,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	}
 
 	/* ── NUMBERS ──────────────────── */
-	.nums { padding: 2.5rem 0; border-bottom: 1px solid var(--border); }
+	.nums { padding: 1.75rem 0; border-bottom: 1px solid var(--border); }
 	.nums-strip {
 		display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;
 	}
@@ -1687,7 +1687,8 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 		overflow: hidden;
 	}
 	.au-img {
-		width: 100%; height: 100%; object-fit: cover; display: block;
+		width: 100% !important; height: 100% !important; object-fit: cover; display: block;
+		max-width: none !important;
 	}
 
 	/* body */
@@ -1984,15 +1985,29 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	/* ── RESPONSIVE ───────────────── */
 	@media (max-width: 768px) {
 		/* hero */
-		.hero { padding: 6rem 0 2rem; }
-		.hero h1 { font-size: 2rem; }
-		.hero-p { font-size: 0.95rem; }
+		.hero { padding: 5rem 0 2rem; }
+		.hero h1 { font-size: 2.25rem; }
+		.hero-p { font-size: 1.05rem; line-height: 1.6; }
+		.hero-eyebrow { font-size: 0.88rem; }
 		.br-desk { display: none; }
 		.hero-term-wrap { margin-top: 2rem; padding: 0; }
 		.hero-term { box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+		.ht-body { font-size: 0.82rem; }
+
+		/* buttons */
+		.btn { font-size: 0.95rem; padding: 0.6rem 1.4rem; }
 
 		/* stats */
 		.nums-strip { flex-wrap: wrap; justify-content: center; }
+		.ns-val { font-size: 1rem; }
+		.ns-label { font-size: 0.88rem; }
+
+		/* section headers */
+		.sec-hd h2 { font-size: 1.6rem; }
+		.sec-sub { font-size: 1rem; }
+		.sec-tag { font-size: 0.75rem; }
+		.nl-h2 { font-size: 1.5rem; }
+		.code-h2 { font-size: 1.5rem; }
 
 		/* bento */
 		.bento-grid {
@@ -2002,45 +2017,56 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 		.b-card { border: 1px solid var(--border); border-radius: 12px; }
 		.b-span2 { flex-direction: column; gap: 1.25rem; }
 		.b-visual { min-width: 0; width: 100%; }
+		.b-card h3 { font-size: 1.15rem; }
+		.b-card p { font-size: 0.95rem; }
+		.b-label { font-size: 0.75rem; }
+		.b-tag-row code { font-size: 0.78rem; }
+		.bsp { font-size: 0.88rem; }
 
 		/* newsletter */
 		.nl-content { grid-template-columns: 1fr; }
 		.nl-text { padding: 2rem 1.5rem 1.5rem; }
+		.nl-p { font-size: 0.95rem; }
+		.nl-perk { font-size: 0.9rem; }
 		.nl-form-wrap { padding: 0 1.5rem 2rem; border-left: none; border-top: 1px solid var(--border); padding-top: 1.5rem; }
 		.nl-form-card { max-width: none; }
+		.nl-input { font-size: 1rem; }
+		.nl-btn { font-size: 1rem; }
+		.nl-label { font-size: 0.78rem; }
+		.nl-proof { font-size: 0.78rem; }
 
 		/* architecture */
 		.arch-panels {
 			grid-template-columns: 1fr;
-			overflow: visible;
-			border-radius: 0;
-			border: none;
-			background: none;
-			gap: 1rem;
+			overflow: visible; border-radius: 0; border: none; background: none; gap: 1rem;
 		}
 		.arch-panel {
 			padding: 1.25rem;
 			border: 1px solid var(--border);
 			border-radius: 12px;
 		}
+		.ap-desc { font-size: 0.92rem; }
+		.ap-badge { font-size: 0.75rem; }
 		.ap-mod-body { gap: 0; }
-		.ap-mod-name { font-size: 0.78rem; }
-		.ap-mod-type { font-size: 0.58rem; }
-		.ap-file { font-size: 0.68rem; }
-		.ap-rule-badge { font-size: 0.6rem; white-space: normal; }
-		.al-items span { font-size: 0.7rem; padding: 0.15rem 0.4rem; }
-		.al-tag { min-width: 4rem; font-size: 0.55rem; }
-		.al { padding: 0.65rem 0.85rem; flex-wrap: wrap; }
-		.vsa-request, .vsa-result { font-size: 0.7rem; }
-		.vsa-file-name { font-size: 0.72rem; }
-		.vsa-file-desc { font-size: 0.65rem; }
-		.vsa-slice-path { font-size: 0.65rem; }
+		.ap-mod-name { font-size: 0.88rem; }
+		.ap-mod-type { font-size: 0.68rem; }
+		.ap-file { font-size: 0.8rem; }
+		.ap-col-label { font-size: 0.68rem; }
+		.ap-rule-badge { font-size: 0.72rem; white-space: normal; }
+		.ap-shared-items span { font-size: 0.78rem; }
+		.vsa-request, .vsa-result { font-size: 0.82rem; }
+		.vsa-file-name { font-size: 0.85rem; }
+		.vsa-file-desc { font-size: 0.78rem; }
+		.vsa-slice-path { font-size: 0.78rem; }
+		.vsa-insight { font-size: 0.88rem; }
 
 		/* code */
 		.code-layout { grid-template-columns: 1fr; gap: 1.5rem; }
 		.code-text { text-align: center; }
+		.code-p { font-size: 1rem; }
 		.code-list { align-items: center; }
-		.code-block pre { font-size: 0.7rem; }
+		.code-list li { font-size: 0.95rem; }
+		.code-block pre { font-size: 0.78rem; }
 
 		/* stack */
 		.stack-grid {
@@ -2048,6 +2074,8 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 			overflow: visible; border-radius: 0; border: none; background: none; gap: 0.75rem;
 		}
 		.sg-card { border: 1px solid var(--border); border-radius: 10px; }
+		.sg-card li { font-size: 0.95rem; }
+		.sg-card h4 { font-size: 0.75rem; }
 
 		/* diy */
 		.diy-grid {
@@ -2055,8 +2083,14 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 			overflow: visible; border-radius: 0; border: none; background: none; gap: 0.75rem;
 		}
 		.diy-card { border: 1px solid var(--border); border-radius: 10px; }
+		.diy-card h4 { font-size: 1.05rem; }
+		.diy-card p { font-size: 0.92rem; }
+		.diy-weeks { font-size: 0.78rem; }
 		.diy-total-inner { flex-direction: column; gap: 0; }
 		.diy-total-left, .diy-total-right { padding: 1.25rem 1.5rem; }
+		.diy-total-val { font-size: 1.85rem; }
+		.diy-total-sub { font-size: 0.88rem; }
+		.diy-total-label { font-size: 0.75rem; }
 		.diy-total-vs { padding: 0.25rem 0; }
 
 		/* teams */
@@ -2065,32 +2099,40 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 			overflow: visible; border-radius: 0; border: none; background: none; gap: 0.75rem;
 		}
 		.team-card { border: 1px solid var(--border); border-radius: 10px; }
+		.team-card h4 { font-size: 1.05rem; }
+		.team-card p { font-size: 0.92rem; }
 
 		/* testimonials */
 		.social-grid { grid-template-columns: 1fr; }
+		.quote-card p { font-size: 0.98rem; }
+		.quote-author strong { font-size: 0.9rem; }
+		.quote-author span { font-size: 0.8rem; }
 
 		/* author */
 		.au-outer { grid-template-columns: 1fr; }
 		.au-img-col { width: 100%; height: 360px; }
 		.au-body { padding: 1.5rem; text-align: center; align-items: center; }
 		.au-meta { justify-content: center; }
-		.au-bio { text-align: center; }
+		.au-name { font-size: 1.5rem; }
+		.au-role { font-size: 0.95rem; }
+		.au-bio { text-align: center; font-size: 0.98rem; }
 		.au-nums { width: 100%; overflow-x: auto; justify-content: center; }
-		.au-n { flex: 1; min-width: 0; padding: 0.5rem 0.5rem; }
+		.au-n { flex: 1; min-width: 0; padding: 0.5rem 0.5rem; font-size: 0.85rem; }
+		.au-nv { font-size: 1.05rem; }
 		.au-socials { flex-wrap: wrap; justify-content: center; }
 
-		/* cta */
-		.cta-box { padding: 2rem 1.25rem; }
-		.cta-term pre { font-size: 0.7rem; }
+		/* faq */
+		.faq-item summary { font-size: 1.02rem; }
+		.faq-item p { font-size: 0.95rem; }
 
-		/* sections */
-		.sec-hd h2 { font-size: 1.4rem; }
-		.nl-h2 { font-size: 1.3rem; }
-		.code-h2 { font-size: 1.3rem; }
-		.au-name { font-size: 1.3rem; }
+		/* cta */
+		.cta-box { padding: 2.5rem 1.25rem; }
+		.cta-box h2 { font-size: 1.6rem; }
+		.cta-box > p { font-size: 1.05rem; }
+		.cta-term pre { font-size: 0.78rem; }
 
 		/* general */
-		.w { padding: 0 1rem; }
+		.w { padding: 0 1.25rem; }
 		section { padding-top: 3.5rem; padding-bottom: 3.5rem; }
 
 		/* center everything on mobile */
@@ -2107,12 +2149,12 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	}
 
 	@media (max-width: 480px) {
-		.hero h1 { font-size: 1.75rem; }
+		.hero h1 { font-size: 2rem; }
 		.hero-eyebrow span:last-child { display: none; }
 		.hero-eyebrow .sep { display: none; }
 		.stack-grid { grid-template-columns: 1fr; }
 		.nums-strip { gap: 0.5rem; }
-		.ns { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
+		.ns { padding: 0.45rem 0.75rem; }
 		.au-img-col { height: 300px; }
 	}
 </style>
