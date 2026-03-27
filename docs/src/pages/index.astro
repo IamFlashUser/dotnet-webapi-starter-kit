@@ -1716,13 +1716,15 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 
 	/* image column */
 	.au-img-col {
-		position: relative; width: 340px;
+		position: relative; width: 340px; min-height: 380px;
 		background: linear-gradient(180deg, rgba(74,222,128,0.04), var(--bg-card));
 		overflow: hidden;
 	}
 	.au-img {
-		width: 100% !important; height: 100% !important; object-fit: cover; display: block;
-		max-width: none !important;
+		width: 100% !important; height: 100% !important;
+		max-width: none !important; max-height: none !important;
+		object-fit: cover; object-position: center top;
+		display: block; position: absolute; inset: 0;
 	}
 
 	/* body */
