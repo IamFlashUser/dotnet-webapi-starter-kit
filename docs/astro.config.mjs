@@ -5,6 +5,9 @@ import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 
 export default defineConfig({
+  devToolbar: {
+    enabled: false,
+  },
   site: 'https://fullstackhero.net',
   adapter: cloudflare({
     imageService: 'compile',
