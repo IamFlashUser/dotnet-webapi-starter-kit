@@ -8,7 +8,7 @@ import Steps from '../../components/Steps.astro';
 
 ## Overview
 
-Tenant context is resolved at the HTTP layer and flows through every layer of the application — middleware, DbContext, audit context, and event publishing. The framework uses **Finbuckle.MultiTenant** with multiple resolution strategies, ensuring that tenant isolation is enforced consistently across the entire stack.
+Tenant context is resolved at the HTTP layer and flows through every layer of the application - middleware, DbContext, audit context, and event publishing. The framework uses **Finbuckle.MultiTenant** with multiple resolution strategies, ensuring that tenant isolation is enforced consistently across the entire stack.
 
 ## Tenant Resolution Flow
 
@@ -42,8 +42,8 @@ For unauthenticated requests, the tenant is resolved from the `X-Tenant-ID` head
 
 The `BaseDbContext` integrates with Finbuckle to route queries to the correct tenant-specific connection string. Two key mechanisms ensure data isolation:
 
-- **Connection string routing** — Each tenant can have its own database connection string, configured in the tenant store.
-- **Global query filters** — Entities implementing `IHasTenant` are automatically filtered by the current tenant ID. This acts as a safety net, ensuring that even if connection strings are shared, tenants cannot see each other's data.
+- **Connection string routing** - Each tenant can have its own database connection string, configured in the tenant store.
+- **Global query filters** - Entities implementing `IHasTenant` are automatically filtered by the current tenant ID. This acts as a safety net, ensuring that even if connection strings are shared, tenants cannot see each other's data.
 
 ```csharp
 // Automatic global filter applied by BaseDbContext
@@ -84,11 +84,11 @@ Forgetting to set the `X-Tenant-ID` header on API calls will result in a 401 for
 
 Tenants are stored in the database and managed through the Multitenancy module. Each tenant record includes:
 
-- **Identifier** — Unique tenant key used for resolution.
-- **Name** — Human-readable tenant name.
-- **Connection String** — Optional per-tenant database connection string.
-- **Admin Email** — The tenant administrator's email.
-- **Validity** — Active/inactive status and validity period.
+- **Identifier** - Unique tenant key used for resolution.
+- **Name** - Human-readable tenant name.
+- **Connection String** - Optional per-tenant database connection string.
+- **Admin Email** - The tenant administrator's email.
+- **Validity** - Active/inactive status and validity period.
 
 <Aside type="tip">
 

@@ -9,7 +9,7 @@ fullstackhero uses the **Specification Pattern** to encapsulate query logic into
 
 ## What is the Specification Pattern?
 
-In a typical EF Core application, query logic tends to accumulate directly inside handlers — filtering, includes, sorting, and projections are all inline. This leads to duplication and makes queries difficult to test in isolation.
+In a typical EF Core application, query logic tends to accumulate directly inside handlers - filtering, includes, sorting, and projections are all inline. This leads to duplication and makes queries difficult to test in isolation.
 
 The Specification Pattern solves this by moving query concerns into dedicated classes that describe **what** data is needed rather than **how** to retrieve it. Each specification declares its criteria, includes, ordering, and projections, and the framework evaluates them against an `IQueryable<T>` at runtime.
 
@@ -58,7 +58,7 @@ public abstract class Specification<T> : ISpecification<T> where T : class
 
 <Aside type="tip">
 
-Specifications default to `AsNoTracking` for performance. If you need to track changes, don't use specifications — query directly through `DbContext`.
+Specifications default to `AsNoTracking` for performance. If you need to track changes, don't use specifications - query directly through `DbContext`.
 
 </Aside>
 
@@ -93,7 +93,7 @@ public sealed class GetTenantsSpecification : Specification<AppTenantInfo, Tenan
 }
 ```
 
-The constructor receives the query object and uses it to conditionally build up criteria. Each `Where()` call adds an independent filter — they are all AND-combined at evaluation time. The `Select()` call defines the projection to a DTO, and `ApplySortingOverride()` handles client-controlled sorting with a safe fallback.
+The constructor receives the query object and uses it to conditionally build up criteria. Each `Where()` call adds an independent filter - they are all AND-combined at evaluation time. The `Select()` call defines the projection to a DTO, and `ApplySortingOverride()` handles client-controlled sorting with a safe fallback.
 
 ## Client-Controlled Sorting
 
@@ -105,9 +105,9 @@ Clients pass sort strings in the format `"name,-identifier"` where:
 - Multiple keys are comma-separated and applied in order
 
 The method accepts three parameters:
-1. **`sortExpression`** — the raw sort string from the client (nullable)
-2. **`applyDefaultOrdering`** — a callback that sets the default sort when no valid client keys are provided
-3. **`sortMappings`** — a whitelist dictionary mapping allowed sort keys to their corresponding expressions
+1. **`sortExpression`** - the raw sort string from the client (nullable)
+2. **`applyDefaultOrdering`** - a callback that sets the default sort when no valid client keys are provided
+3. **`sortMappings`** - a whitelist dictionary mapping allowed sort keys to their corresponding expressions
 
 ```csharp
 ApplySortingOverride(query.Sort,
@@ -124,7 +124,7 @@ If the client sends `"name,-createdAt"`, the specification applies `OrderBy(Name
 
 <Aside type="note">
 
-The sort whitelist prevents injection — only mapped sort keys are accepted. Any unrecognized keys in the sort string are silently ignored.
+The sort whitelist prevents injection - only mapped sort keys are accepted. Any unrecognized keys in the sort string are silently ignored.
 
 </Aside>
 
@@ -142,7 +142,7 @@ public async ValueTask<PagedResponse<TenantDto>> Handle(GetTenantsQuery query, C
 }
 ```
 
-The handler remains focused on orchestration — constructing the specification, applying it to the query, and returning the result. All query details live in the specification class.
+The handler remains focused on orchestration - constructing the specification, applying it to the query, and returning the result. All query details live in the specification class.
 
 ### How Evaluation Works
 
@@ -163,7 +163,7 @@ internal static class SpecificationEvaluator
 }
 ```
 
-The evaluation pipeline ensures a consistent order: query behaviors first, then criteria, includes, and finally ordering. This is handled automatically — you never call the evaluator directly.
+The evaluation pipeline ensures a consistent order: query behaviors first, then criteria, includes, and finally ordering. This is handled automatically - you never call the evaluator directly.
 
 ## Specification with Projection
 
@@ -180,7 +180,7 @@ public sealed class GetUserDetailsSpecification : Specification<ApplicationUser,
 }
 ```
 
-Projections are translated to SQL by EF Core, so only the selected columns are fetched from the database — not the entire entity.
+Projections are translated to SQL by EF Core, so only the selected columns are fetched from the database - not the entire entity.
 
 ## Available Methods
 

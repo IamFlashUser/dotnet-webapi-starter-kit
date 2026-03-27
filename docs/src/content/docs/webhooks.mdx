@@ -202,8 +202,8 @@ Webhook delivery resilience is controlled by the global `HttpResilienceOptions`.
 
 Subscriptions specify which events they want to receive via the `Events` array in the create command. Events are stored as a comma-separated string internally.
 
-- **Exact match** — `["user.registered", "order.created"]` receives only those two event types
-- **Wildcard** — `["*"]` receives all events
+- **Exact match** - `["user.registered", "order.created"]` receives only those two event types
+- **Wildcard** - `["*"]` receives all events
 
 The `MatchesEvent` method performs case-insensitive comparison and checks for the wildcard pattern.
 

@@ -7,7 +7,7 @@ import Aside from '../../components/Aside.astro';
 import Tabs from '../../components/Tabs.astro';
 import TabPanel from '../../components/TabPanel.astro';
 
-fullstackhero provides a one-line extension method to add production-grade resilience to any `HttpClient` registration. Under the hood it uses the **Microsoft.Extensions.Http.Resilience** library (built on Polly) to apply a standard resilience pipeline — retry with exponential backoff, circuit breaker, and per-attempt and total request timeouts.
+fullstackhero provides a one-line extension method to add production-grade resilience to any `HttpClient` registration. Under the hood it uses the **Microsoft.Extensions.Http.Resilience** library (built on Polly) to apply a standard resilience pipeline - retry with exponential backoff, circuit breaker, and per-attempt and total request timeouts.
 
 ## AddHeroResilience
 
@@ -18,7 +18,7 @@ builder.Services.AddHttpClient("Webhooks")
     .AddHeroResilience(builder.Configuration);
 ```
 
-This wires up the standard resilience handler with settings read from the `HttpResilienceOptions` configuration section. If `Enabled` is `false`, the method returns immediately without adding any handlers — useful for disabling resilience in integration tests.
+This wires up the standard resilience handler with settings read from the `HttpResilienceOptions` configuration section. If `Enabled` is `false`, the method returns immediately without adding any handlers - useful for disabling resilience in integration tests.
 
 ## Resilience Pipeline
 
@@ -145,7 +145,7 @@ public sealed class WebhookDeliveryService(
 
 ## OpenTelemetry Integration
 
-The resilience pipeline automatically integrates with OpenTelemetry when it is enabled in your application. Polly emits telemetry for each resilience event (retries, circuit breaker state changes, timeouts), and the `Microsoft.Extensions.Http.Resilience` library enriches HTTP client traces with resilience metadata. No additional configuration is required — if you have called `AddHeroOpenTelemetry()` via the platform builder, resilience telemetry is captured automatically.
+The resilience pipeline automatically integrates with OpenTelemetry when it is enabled in your application. Polly emits telemetry for each resilience event (retries, circuit breaker state changes, timeouts), and the `Microsoft.Extensions.Http.Resilience` library enriches HTTP client traces with resilience metadata. No additional configuration is required - if you have called `AddHeroOpenTelemetry()` via the platform builder, resilience telemetry is captured automatically.
 
 <Aside type="note" title="Disable for Tests">
 Set `"Enabled": false` in your test configuration to bypass resilience handlers during integration testing. This avoids unexpected retries and timeouts that can slow down or complicate test execution.

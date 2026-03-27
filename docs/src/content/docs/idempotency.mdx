@@ -7,7 +7,7 @@ import Aside from '../../components/Aside.astro';
 import Tabs from '../../components/Tabs.astro';
 import TabPanel from '../../components/TabPanel.astro';
 
-fullstackhero provides an **idempotency filter** that prevents duplicate side effects from retried or duplicated HTTP requests. When a client sends an `Idempotency-Key` header, the framework caches the response and replays it for subsequent requests with the same key — ensuring that operations like payment processing, order creation, or webhook delivery are safe to retry.
+fullstackhero provides an **idempotency filter** that prevents duplicate side effects from retried or duplicated HTTP requests. When a client sends an `Idempotency-Key` header, the framework caches the response and replays it for subsequent requests with the same key - ensuring that operations like payment processing, order creation, or webhook delivery are safe to retry.
 
 ## How It Works
 
@@ -32,8 +32,8 @@ Client sends POST with Idempotency-Key header
 
 1. The client includes an `Idempotency-Key` header with a unique value (typically a UUID)
 2. The filter checks the distributed cache for a previously stored response under that key
-3. **Cache hit** — the cached response is replayed with the `Idempotency-Replayed: true` header, and the handler is never invoked
-4. **Cache miss** — the handler executes, and the response (status code, content type, body) is cached for the configured TTL
+3. **Cache hit** - the cached response is replayed with the `Idempotency-Replayed: true` header, and the handler is never invoked
+4. **Cache miss** - the handler executes, and the response (status code, content type, body) is cached for the configured TTL
 5. If no `Idempotency-Key` header is present, the request passes through without any idempotency behavior
 
 ## IdempotencyOptions
@@ -64,7 +64,7 @@ Enable idempotency via `FshPlatformOptions`:
 ```csharp
 builder.AddHeroPlatform(options =>
 {
-    options.EnableCaching = true,       // Required — idempotency uses ICacheService
+    options.EnableCaching = true,       // Required - idempotency uses ICacheService
     options.EnableIdempotency = true
 });
 ```
@@ -110,7 +110,7 @@ public static class CreateOrderEndpoint
 }
 ```
 
-Only endpoints with `.WithIdempotency()` participate in idempotency. The filter is opt-in per endpoint — it does not apply globally.
+Only endpoints with `.WithIdempotency()` participate in idempotency. The filter is opt-in per endpoint - it does not apply globally.
 
 ## Tenant-Scoped Cache Keys
 
@@ -124,21 +124,21 @@ If no tenant context is available, `"global"` is used as the tenant segment. Thi
 
 ## Idempotency-Replayed Header
 
-When a cached response is returned, the framework sets the `Idempotency-Replayed: true` response header. Clients can use this header to distinguish between fresh executions and replayed responses — useful for logging, metrics, or conditional client-side behavior.
+When a cached response is returned, the framework sets the `Idempotency-Replayed: true` response header. Clients can use this header to distinguish between fresh executions and replayed responses - useful for logging, metrics, or conditional client-side behavior.
 
 ## Client Usage Example
 
 A client that needs safe retries includes the `Idempotency-Key` header on mutating requests:
 
 ```bash
-# First request — handler executes, response is cached
+# First request - handler executes, response is cached
 curl -X POST https://api.example.com/api/v1/orders \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000" \
   -d '{"productId": "abc", "quantity": 1}'
 
-# Retry (network timeout, etc.) — cached response is replayed
+# Retry (network timeout, etc.) - cached response is replayed
 curl -X POST https://api.example.com/api/v1/orders \
   -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
@@ -148,13 +148,13 @@ curl -X POST https://api.example.com/api/v1/orders \
 ```
 
 <Aside type="tip" title="Key Generation">
-Use UUIDs (v4 or v7) as idempotency keys. The key should be generated client-side and be unique per logical operation. Do not reuse keys across different operations — each distinct action should have its own key.
+Use UUIDs (v4 or v7) as idempotency keys. The key should be generated client-side and be unique per logical operation. Do not reuse keys across different operations - each distinct action should have its own key.
 </Aside>
 
 ## Error Handling
 
 The idempotency filter handles errors gracefully:
 
-- **Cache failures** — if the cache is unavailable when storing a response, the failure is logged as a warning but the original response is still returned to the client. The next retry will execute the handler again.
-- **Missing header** — requests without the `Idempotency-Key` header pass through to the handler without any idempotency behavior. The header is fully opt-in.
-- **Key too long** — if the key exceeds `MaxKeyLength`, a 400 Bad Request is returned immediately before the handler executes.
+- **Cache failures** - if the cache is unavailable when storing a response, the failure is logged as a warning but the original response is still returned to the client. The next retry will execute the handler again.
+- **Missing header** - requests without the `Idempotency-Key` header pass through to the handler without any idempotency behavior. The header is fully opt-in.
+- **Key too long** - if the key exceeds `MaxKeyLength`, a 400 Bad Request is returned immediately before the handler executes.

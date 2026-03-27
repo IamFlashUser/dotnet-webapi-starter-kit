@@ -44,7 +44,7 @@ The `TokenService.IssueAsync()` method builds the JWT with claims including `sub
 
 ### Session and refresh token are persisted
 
-The handler stores a hashed refresh token for the user and creates a `UserSession` record for session tracking. Session creation is non-blocking — if it fails (e.g., migrations not yet applied), login still succeeds.
+The handler stores a hashed refresh token for the user and creates a `UserSession` record for session tracking. Session creation is non-blocking - if it fails (e.g., migrations not yet applied), login still succeeds.
 
 ### Token issuance is audited with fingerprint
 
@@ -71,7 +71,7 @@ The handler returns a `TokenResponse` containing the access token, refresh token
 
 ## JWT Configuration
 
-Token behavior is controlled through the `Jwt` section in your application settings. These options are validated at startup — missing or invalid values will prevent the application from starting.
+Token behavior is controlled through the `Jwt` section in your application settings. These options are validated at startup - missing or invalid values will prevent the application from starting.
 
 ```json
 {
@@ -87,14 +87,14 @@ Token behavior is controlled through the `Jwt` section in your application setti
 
 | Property | Default | Description |
 |----------|---------|-------------|
-| `Issuer` | — | Token issuer identifier (required) |
-| `Audience` | — | Intended audience for the token (required) |
-| `SigningKey` | — | HMAC-SHA256 signing key (required, minimum 32 characters) |
+| `Issuer` | - | Token issuer identifier (required) |
+| `Audience` | - | Intended audience for the token (required) |
+| `SigningKey` | - | HMAC-SHA256 signing key (required, minimum 32 characters) |
 | `AccessTokenMinutes` | `30` | Access token lifetime in minutes |
 | `RefreshTokenDays` | `7` | Refresh token lifetime in days |
 
 <Aside variant="warning" title="Signing Key Security">
-The signing key must be at least 32 characters. Use a strong, unique key in production. Never commit signing keys to source control — use environment variables, user secrets, or a vault provider instead.
+The signing key must be at least 32 characters. Use a strong, unique key in production. Never commit signing keys to source control - use environment variables, user secrets, or a vault provider instead.
 </Aside>
 
 ## Refresh Tokens
@@ -164,7 +164,7 @@ The Identity module exposes endpoints for all standard password workflows under 
 | `POST` | `/reset-password` | Anonymous | Reset a password using the token received via email. |
 | `GET` | `/confirm-email` | Anonymous | Confirm a user's email address with a verification code. |
 
-The **change password** endpoint requires the user to be authenticated and enforces password history rules — the new password cannot match any of the last N passwords (configured by `PasswordHistoryCount`).
+The **change password** endpoint requires the user to be authenticated and enforces password history rules - the new password cannot match any of the last N passwords (configured by `PasswordHistoryCount`).
 
 The **forgot password** and **reset password** endpoints work together as a two-step flow: the user requests a reset token via email, then submits the token along with their new password to complete the reset.
 
@@ -182,5 +182,5 @@ All authentication operations are recorded through the `ISecurityAudit` interfac
 These audit records provide a complete security trail for compliance and incident investigation. See the [Auditing module](/modules/auditing) for details on how audit data is stored and queried.
 
 <Aside variant="tip" title="Token Fingerprinting">
-Token fingerprinting is built in — each token generation is logged with a SHA256 fingerprint (first 8 bytes, hex-encoded) for security audit trails. The raw token value is never stored, ensuring that audit logs cannot be used to impersonate users even if the audit database is compromised.
+Token fingerprinting is built in - each token generation is logged with a SHA256 fingerprint (first 8 bytes, hex-encoded) for security audit trails. The raw token value is never stored, ensuring that audit logs cannot be used to impersonate users even if the audit database is compromised.
 </Aside>

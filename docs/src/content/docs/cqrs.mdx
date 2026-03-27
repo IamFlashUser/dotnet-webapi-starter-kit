@@ -12,14 +12,14 @@ fullstackhero uses **CQRS (Command Query Responsibility Segregation)** to cleanl
 
 CQRS splits your application's operations into two distinct paths:
 
-- **Commands** — change state (create, update, delete). Return a confirmation or result.
-- **Queries** — read state. Return data without side effects.
+- **Commands** - change state (create, update, delete). Return a confirmation or result.
+- **Queries** - read state. Return data without side effects.
 
 This separation makes each side independently optimizable, testable, and scalable. Commands can enforce complex business rules while queries can be tuned for read performance, each without affecting the other.
 
 ## Mediator Library
 
-The starter kit uses [Mediator](https://github.com/martinothamar/Mediator) by Martin Othamar — a **source-generator-based** mediator implementation for .NET. At compile time, Mediator generates the dispatch code directly, eliminating the runtime reflection overhead of traditional mediator libraries.
+The starter kit uses [Mediator](https://github.com/martinothamar/Mediator) by Martin Othamar - a **source-generator-based** mediator implementation for .NET. At compile time, Mediator generates the dispatch code directly, eliminating the runtime reflection overhead of traditional mediator libraries.
 
 <Aside type="warning" title="Mediator, not MediatR">
 
@@ -74,7 +74,7 @@ Query handlers implement `IQueryHandler<TQuery, TResponse>` and follow the same 
 
 ## Handlers
 
-Handlers contain the business logic for a command or query. They are defined inside `Modules.{Name}/Features/v1/{Area}/{Feature}/` and are private to the module — never exposed through Contracts.
+Handlers contain the business logic for a command or query. They are defined inside `Modules.{Name}/Features/v1/{Area}/{Feature}/` and are private to the module - never exposed through Contracts.
 
 Here is the handler for `RegisterUserCommand`:
 
@@ -108,7 +108,7 @@ Key conventions for handlers:
 - Use `.ConfigureAwait(false)` on every `await` call
 - Use `ArgumentNullException.ThrowIfNull()` as a guard clause at method entry
 - One handler per file, named `{Feature}CommandHandler` or `{Feature}QueryHandler`
-- Mark handlers as `sealed` — they are not designed for inheritance
+- Mark handlers as `sealed` - they are not designed for inheritance
 
 ## Validation Pipeline
 
@@ -155,13 +155,13 @@ If any validation rule fails, a `ValidationException` is thrown before the handl
 
 <Aside type="tip" title="Auto-Registration">
 
-Validators are auto-registered by `ModuleLoader.AddModules()` which calls `AddValidatorsFromAssemblies()`. You do not need to manually register validators — just create the class and it will be discovered at startup.
+Validators are auto-registered by `ModuleLoader.AddModules()` which calls `AddValidatorsFromAssemblies()`. You do not need to manually register validators - just create the class and it will be discovered at startup.
 
 </Aside>
 
 ## Tracing Pipeline
 
-The `MediatorTracingBehavior` wraps every request with an OpenTelemetry span. This means every command and query is automatically traced with timing, message type, and success/failure status — no manual instrumentation needed. Traces flow through to your configured OTLP exporter (visible in the Aspire dashboard or any OpenTelemetry-compatible backend).
+The `MediatorTracingBehavior` wraps every request with an OpenTelemetry span. This means every command and query is automatically traced with timing, message type, and success/failure status - no manual instrumentation needed. Traces flow through to your configured OTLP exporter (visible in the Aspire dashboard or any OpenTelemetry-compatible backend).
 
 ## Request Flow
 
@@ -175,7 +175,7 @@ The client sends an HTTP request. ASP.NET routes it to the matching minimal API 
 
 ### Endpoint calls `mediator.Send(command)`
 
-The endpoint delegates to the mediator. No business logic lives in the endpoint — it is purely a thin HTTP adapter.
+The endpoint delegates to the mediator. No business logic lives in the endpoint - it is purely a thin HTTP adapter.
 
 ### ValidationBehavior runs all registered validators
 
@@ -209,6 +209,6 @@ The response bubbles back through the pipeline behaviors and the endpoint return
 
 ## Next Steps
 
-- [Adding a Feature](/dotnet-starter-kit/adding-a-feature/) — build a complete vertical slice end to end
-- [Domain Events](/dotnet-starter-kit/domain-events/) — raise and handle events from your domain entities
-- [Architecture](/dotnet-starter-kit/architecture/) — understand module boundaries and communication
+- [Adding a Feature](/dotnet-starter-kit/adding-a-feature/) - build a complete vertical slice end to end
+- [Domain Events](/dotnet-starter-kit/domain-events/) - raise and handle events from your domain entities
+- [Architecture](/dotnet-starter-kit/architecture/) - understand module boundaries and communication

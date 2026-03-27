@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════
-   fullstackhero docs — custom styles
+   fullstackhero docs - custom styles
    ═══════════════════════════════════════════════════════════ */
 
-/* Override the 125% base font for docs — keep it at 100% */
+/* Override the 125% base font for docs - keep it at 100% */
 .docs-layout { font-size: 0.8rem; }
 
 /* ── Layout ──────────────────────────────────────────────── */
@@ -298,7 +298,7 @@
 	margin: 2rem 0;
 }
 
-/* Tables — scrollable wrapper for mobile */
+/* Tables - scrollable wrapper for mobile */
 .prose .table-wrapper {
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
@@ -639,7 +639,7 @@ body.sidebar-open {
 	padding-top: 0.15rem;
 }
 
-/* Links — shared by TOC and Nav */
+/* Links - shared by TOC and Nav */
 .dmp-toc, .dmp-nav {
 	list-style: none;
 	padding: 0;

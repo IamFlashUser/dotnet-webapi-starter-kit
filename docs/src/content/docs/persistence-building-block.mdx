@@ -5,16 +5,16 @@ description: "Entity Framework Core abstractions, specifications, pagination, an
 
 import Aside from '../../components/Aside.astro';
 
-The Persistence building block provides the data access foundation for every module in the starter kit. It wraps Entity Framework Core with opinionated defaults for multitenancy, auditing, soft deletes, domain event dispatch, and pagination — so modules get production-ready data access by extending a single base class.
+The Persistence building block provides the data access foundation for every module in the starter kit. It wraps Entity Framework Core with opinionated defaults for multitenancy, auditing, soft deletes, domain event dispatch, and pagination - so modules get production-ready data access by extending a single base class.
 
 Key components:
 
-- **BaseDbContext** — multitenant-aware EF Core context with soft delete query filters
-- **Specifications** — composable, reusable query objects
-- **Pagination** — `ToPagedResponseAsync()` extension for consistent paged results
-- **Interceptors** — automatic domain event publishing and audit field population
-- **Model Builder Extensions** — convention-based global query filters
-- **Database Provider Configuration** — switchable PostgreSQL / SQL Server support
+- **BaseDbContext** - multitenant-aware EF Core context with soft delete query filters
+- **Specifications** - composable, reusable query objects
+- **Pagination** - `ToPagedResponseAsync()` extension for consistent paged results
+- **Interceptors** - automatic domain event publishing and audit field population
+- **Model Builder Extensions** - convention-based global query filters
+- **Database Provider Configuration** - switchable PostgreSQL / SQL Server support
 
 ## BaseDbContext
 
@@ -31,9 +31,9 @@ public class BaseDbContext(
 
 What it does automatically:
 
-- **Soft delete filtering** — applies a global query filter (`WHERE IsDeleted = false`) to every entity implementing `ISoftDeletable`, so deleted records are excluded from all queries by default.
-- **Tenant connection routing** — reads the current tenant's connection string from `IMultiTenantContextAccessor` and configures the database provider accordingly. Each tenant can have its own database.
-- **SaveChanges override** — sets `TenantNotSetMode.Overwrite` to allow saving entities when a tenant context is being established (e.g., during seeding or migration).
+- **Soft delete filtering** - applies a global query filter (`WHERE IsDeleted = false`) to every entity implementing `ISoftDeletable`, so deleted records are excluded from all queries by default.
+- **Tenant connection routing** - reads the current tenant's connection string from `IMultiTenantContextAccessor` and configures the database provider accordingly. Each tenant can have its own database.
+- **SaveChanges override** - sets `TenantNotSetMode.Overwrite` to allow saving entities when a tenant context is being established (e.g., during seeding or migration).
 
 A module creates its own context by inheriting from `BaseDbContext` and registering its entity configurations:
 
@@ -80,12 +80,12 @@ public sealed class ActiveUsersByRoleSpec : Specification<AppUser>
 
 Key features of `Specification<T>`:
 
-- **Where()** — add filter criteria (combined with logical AND)
-- **Include()** — eager loading via expressions or string paths
-- **OrderBy() / OrderByDescending()** — primary ordering
-- **ThenBy() / ThenByDescending()** — secondary ordering
-- **ApplySortingOverride()** — accept client-provided sort expressions with a whitelisted key mapping
-- **AsNoTracking** — enabled by default for read-optimized queries
+- **Where()** - add filter criteria (combined with logical AND)
+- **Include()** - eager loading via expressions or string paths
+- **OrderBy() / OrderByDescending()** - primary ordering
+- **ThenBy() / ThenByDescending()** - secondary ordering
+- **ApplySortingOverride()** - accept client-provided sort expressions with a whitelisted key mapping
+- **AsNoTracking** - enabled by default for read-optimized queries
 
 <Aside type="tip" title="Dedicated Guide">
 
@@ -153,7 +153,7 @@ public async ValueTask<PagedResponse<UserDto>> Handle(
 
 ## Interceptors
 
-The Persistence building block registers two EF Core `SaveChangesInterceptor` implementations that run automatically on every `SaveChangesAsync` call. Modules do not need to configure these — they are added globally by `AddHeroDatabaseOptions()`.
+The Persistence building block registers two EF Core `SaveChangesInterceptor` implementations that run automatically on every `SaveChangesAsync` call. Modules do not need to configure these - they are added globally by `AddHeroDatabaseOptions()`.
 
 ### DomainEventsInterceptor
 
@@ -206,7 +206,7 @@ entity.IsDeleted = ...;      // handled by interceptor on Delete()
 
 <Aside type="note" title="Recursion Guard">
 
-The interceptor uses an `AsyncLocal` flag to prevent `StackOverflowException` from nested `SaveChanges` calls — for example, when an event handler triggered by `DomainEventsInterceptor` causes another save.
+The interceptor uses an `AsyncLocal` flag to prevent `StackOverflowException` from nested `SaveChanges` calls - for example, when an event handler triggered by `DomainEventsInterceptor` causes another save.
 
 </Aside>
 
@@ -256,8 +256,8 @@ PostgreSQL is the default and primary supported provider. SQL Server support is 
 
 When the application runs in the `Development` environment, the database configuration automatically enables:
 
-- **Sensitive data logging** — connection strings and parameter values appear in logs
-- **Detailed errors** — EF Core provides verbose error messages with query details
+- **Sensitive data logging** - connection strings and parameter values appear in logs
+- **Detailed errors** - EF Core provides verbose error messages with query details
 
 These are disabled in all other environments to protect sensitive information.
 
@@ -277,7 +277,7 @@ public void ConfigureServices(IHostApplicationBuilder builder)
 
 ## Next Steps
 
-- [Specifications Pattern](/dotnet-starter-kit/specification-pattern/) — deep dive into composable query objects
-- [Domain Events](/dotnet-starter-kit/domain-events/) — how events flow from entities through interceptors to handlers
-- [CQRS Pattern](/dotnet-starter-kit/cqrs/) — the command/query pipeline that sits above persistence
-- [Adding a Feature](/dotnet-starter-kit/adding-a-feature/) — build a complete vertical slice with data access
+- [Specifications Pattern](/dotnet-starter-kit/specification-pattern/) - deep dive into composable query objects
+- [Domain Events](/dotnet-starter-kit/domain-events/) - how events flow from entities through interceptors to handlers
+- [CQRS Pattern](/dotnet-starter-kit/cqrs/) - the command/query pipeline that sits above persistence
+- [Adding a Feature](/dotnet-starter-kit/adding-a-feature/) - build a complete vertical slice with data access

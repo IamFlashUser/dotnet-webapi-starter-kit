@@ -7,7 +7,7 @@ import Aside from '../../components/Aside.astro';
 import Tabs from '../../components/Tabs.astro';
 import TabPanel from '../../components/TabPanel.astro';
 
-fullstackhero provides a **caching abstraction** with two implementations behind a single `ICacheService` interface — a distributed cache backed by Redis, and a hybrid cache that layers in-memory caching on top of Redis. Modules interact only with the interface, so you can switch implementations without changing application code.
+fullstackhero provides a **caching abstraction** with two implementations behind a single `ICacheService` interface - a distributed cache backed by Redis, and a hybrid cache that layers in-memory caching on top of Redis. Modules interact only with the interface, so you can switch implementations without changing application code.
 
 ## ICacheService Interface
 
@@ -23,7 +23,7 @@ public interface ICacheService
 }
 ```
 
-The API is intentionally minimal — get, set, remove, and refresh. The `sliding` parameter on `SetItemAsync` overrides the default sliding expiration for that specific entry. `RefreshItemAsync` resets the sliding expiration window without retrieving the value, which is useful for keeping hot entries alive.
+The API is intentionally minimal - get, set, remove, and refresh. The `sliding` parameter on `SetItemAsync` overrides the default sliding expiration for that specific entry. `RefreshItemAsync` resets the sliding expiration window without retrieving the value, which is useful for keeping hot entries alive.
 
 ## Distributed Cache (DistributedCacheService)
 
@@ -31,9 +31,9 @@ The `DistributedCacheService` wraps `IDistributedCache` and uses Redis as the ba
 
 ### How It Works
 
-- **JSON serialization** — values are serialized to JSON before storage and deserialized on retrieval, so any serializable type can be cached.
-- **Key normalization** — all cache keys are automatically prefixed with the configured `KeyPrefix` (default `fsh_`) and normalized to lowercase. This prevents key collisions across applications sharing the same Redis instance.
-- **Graceful error handling** — cache failures are caught and logged rather than propagated. A cache miss or Redis outage will not crash your application — the caller simply receives `null` and can fall back to the primary data source.
+- **JSON serialization** - values are serialized to JSON before storage and deserialized on retrieval, so any serializable type can be cached.
+- **Key normalization** - all cache keys are automatically prefixed with the configured `KeyPrefix` (default `fsh_`) and normalized to lowercase. This prevents key collisions across applications sharing the same Redis instance.
+- **Graceful error handling** - cache failures are caught and logged rather than propagated. A cache miss or Redis outage will not crash your application - the caller simply receives `null` and can fall back to the primary data source.
 
 ## Hybrid Cache (HybridCacheService)
 
@@ -41,25 +41,25 @@ The `HybridCacheService` implements a two-level caching strategy that combines t
 
 ### Cache Layers
 
-- **L1 — `IMemoryCache` (in-process)** — extremely fast, no network overhead, but local to a single application instance.
-- **L2 — `IDistributedCache` (Redis)** — shared across all instances, slightly slower due to network round-trips and serialization.
+- **L1 - `IMemoryCache` (in-process)** - extremely fast, no network overhead, but local to a single application instance.
+- **L2 - `IDistributedCache` (Redis)** - shared across all instances, slightly slower due to network round-trips and serialization.
 
 ### Lookup Flow
 
-1. **Check L1 (memory)** — if the key exists in the local memory cache, return it immediately. No serialization or network call needed.
-2. **Check L2 (Redis)** — if the key is not in memory, query Redis. If found, deserialize the value and populate the local memory cache for future requests.
-3. **Cache miss** — if neither layer has the value, return `null`. The caller retrieves the data from the primary source and calls `SetItemAsync` to populate both layers.
+1. **Check L1 (memory)** - if the key exists in the local memory cache, return it immediately. No serialization or network call needed.
+2. **Check L2 (Redis)** - if the key is not in memory, query Redis. If found, deserialize the value and populate the local memory cache for future requests.
+3. **Cache miss** - if neither layer has the value, return `null`. The caller retrieves the data from the primary source and calls `SetItemAsync` to populate both layers.
 
 ### Expiration Strategy
 
-The memory cache uses **80% of the distributed cache's expiration time**. This ensures the local cache expires slightly earlier than Redis, causing the next request to refresh from the authoritative distributed store. This approach balances performance with freshness — local reads are fast, but stale entries are naturally evicted before the Redis entry expires.
+The memory cache uses **80% of the distributed cache's expiration time**. This ensures the local cache expires slightly earlier than Redis, causing the next request to refresh from the authoritative distributed store. This approach balances performance with freshness - local reads are fast, but stale entries are naturally evicted before the Redis entry expires.
 
 For example, with the default configuration:
 - Redis sliding expiration: **5 minutes**
 - Memory sliding expiration: **4 minutes** (80% of 5 minutes)
 
 <Aside type="tip" title="Multi-Instance Deployments">
-The hybrid cache is ideal for multi-instance deployments — each instance has fast local access with Redis as the shared backing store.
+The hybrid cache is ideal for multi-instance deployments - each instance has fast local access with Redis as the shared backing store.
 </Aside>
 
 ## Configuration
@@ -100,7 +100,7 @@ Add the corresponding section to your `appsettings.json`:
 | `KeyPrefix` | Prefix prepended to all cache keys | `"fsh_"` |
 
 <Aside type="note" title="Development Without Redis">
-If the Redis connection string is empty, the distributed cache falls back to in-memory — useful for development without Redis.
+If the Redis connection string is empty, the distributed cache falls back to in-memory - useful for development without Redis.
 </Aside>
 
 ## Usage
@@ -128,7 +128,7 @@ public sealed class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQue
             .ConfigureAwait(false);
         if (cached is not null) return cached;
 
-        // Cache miss — load from database
+        // Cache miss - load from database
         ProductDto product = await _dbContext.Products
             .Where(p => p.Id == query.ProductId)
             .Select(p => new ProductDto(p.Id, p.Name, p.Price))
@@ -152,4 +152,4 @@ await _cache.RemoveItemAsync($"product:{command.ProductId}", ct)
     .ConfigureAwait(false);
 ```
 
-The key prefix is applied automatically — you do not need to include `fsh_` in your application-level cache keys.
+The key prefix is applied automatically - you do not need to include `fsh_` in your application-level cache keys.

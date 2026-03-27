@@ -15,34 +15,34 @@ The `UserSession` entity captures a comprehensive snapshot of each authenticatio
 
 **Identity & Ownership**
 
-- **UserId** — the authenticated user this session belongs to
-- **RefreshTokenHash** — hashed refresh token tied to this session
+- **UserId** - the authenticated user this session belongs to
+- **RefreshTokenHash** - hashed refresh token tied to this session
 
 **Network & Client**
 
-- **IpAddress** — originating IP address of the session
-- **UserAgent** — raw User-Agent header from the client request
+- **IpAddress** - originating IP address of the session
+- **UserAgent** - raw User-Agent header from the client request
 
 **Device Information**
 
-- **DeviceType** — classified device category (Desktop, Mobile, Tablet, etc.)
-- **Browser** — browser name (Chrome, Firefox, Safari, etc.)
-- **BrowserVersion** — browser version string
-- **OperatingSystem** — OS name (Windows, macOS, Linux, Android, iOS, etc.)
-- **OsVersion** — OS version string
+- **DeviceType** - classified device category (Desktop, Mobile, Tablet, etc.)
+- **Browser** - browser name (Chrome, Firefox, Safari, etc.)
+- **BrowserVersion** - browser version string
+- **OperatingSystem** - OS name (Windows, macOS, Linux, Android, iOS, etc.)
+- **OsVersion** - OS version string
 
 **Timestamps**
 
-- **CreatedAt** — when the session was first created
-- **LastActivityAt** — updated on each token refresh to track session liveness
-- **ExpiresAt** — absolute expiration time for the session
+- **CreatedAt** - when the session was first created
+- **LastActivityAt** - updated on each token refresh to track session liveness
+- **ExpiresAt** - absolute expiration time for the session
 
 **Revocation**
 
-- **IsRevoked** — whether the session has been revoked
-- **RevokedAt** — timestamp of revocation
-- **RevokedBy** — user ID of who revoked the session (self or admin)
-- **RevokedReason** — optional reason for revocation
+- **IsRevoked** - whether the session has been revoked
+- **RevokedAt** - timestamp of revocation
+- **RevokedBy** - user ID of who revoked the session (self or admin)
+- **RevokedReason** - optional reason for revocation
 
 ### Endpoints
 
@@ -59,15 +59,15 @@ The `UserSession` entity captures a comprehensive snapshot of each authenticatio
 
 Sessions follow a predictable lifecycle:
 
-1. **Created** — a new `UserSession` is created when a token pair is generated during authentication
-2. **Updated** — the `LastActivityAt` timestamp is refreshed each time the user performs a token refresh, keeping the session alive
-3. **Expired** — sessions that pass their `ExpiresAt` time are no longer valid
-4. **Revoked** — sessions can be explicitly revoked by the user or an administrator
-5. **Cleaned up** — the `SessionCleanupHostedService` runs as a background service and periodically removes expired and revoked sessions from the database
+1. **Created** - a new `UserSession` is created when a token pair is generated during authentication
+2. **Updated** - the `LastActivityAt` timestamp is refreshed each time the user performs a token refresh, keeping the session alive
+3. **Expired** - sessions that pass their `ExpiresAt` time are no longer valid
+4. **Revoked** - sessions can be explicitly revoked by the user or an administrator
+5. **Cleaned up** - the `SessionCleanupHostedService` runs as a background service and periodically removes expired and revoked sessions from the database
 
 ### Device Detection
 
-The `DeviceTypeClassifier` parses the incoming `User-Agent` header to extract structured device information. This enables the UI to show users a human-readable list of their active sessions (e.g., "Chrome 125 on Windows 11 — Desktop") and helps administrators identify suspicious login patterns across devices and locations.
+The `DeviceTypeClassifier` parses the incoming `User-Agent` header to extract structured device information. This enables the UI to show users a human-readable list of their active sessions (e.g., "Chrome 125 on Windows 11 - Desktop") and helps administrators identify suspicious login patterns across devices and locations.
 
 ## Groups
 
@@ -77,12 +77,12 @@ Groups provide a layer of indirection between users and roles, making permission
 
 The `Group` entity supports the following properties:
 
-- **Name** — display name for the group
-- **Description** — optional description of the group's purpose
-- **IsDefault** — when true, new users are automatically added to this group during registration
-- **IsSystemGroup** — marks framework-managed groups that cannot be deleted
-- **CreatedOnUtc** — audit timestamp for creation
-- **LastModifiedOnUtc** — audit timestamp for last modification
+- **Name** - display name for the group
+- **Description** - optional description of the group's purpose
+- **IsDefault** - when true, new users are automatically added to this group during registration
+- **IsSystemGroup** - marks framework-managed groups that cannot be deleted
+- **CreatedOnUtc** - audit timestamp for creation
+- **LastModifiedOnUtc** - audit timestamp for last modification
 
 Groups also support **soft delete**, so removing a group does not permanently destroy the record.
 
@@ -103,8 +103,8 @@ Groups also support **soft delete**, so removing a group does not permanently de
 
 A user's effective permissions are the union of:
 
-1. **Direct role assignments** — roles assigned explicitly to the user
-2. **Group-derived roles** — roles inherited from all groups the user belongs to
+1. **Direct role assignments** - roles assigned explicitly to the user
+2. **Group-derived roles** - roles inherited from all groups the user belongs to
 
 The `GroupRoleService` resolves group-derived permissions at login time, merging them with direct assignments to produce the final set of claims written into the JWT. This means permission changes to a group take effect the next time affected users authenticate.
 

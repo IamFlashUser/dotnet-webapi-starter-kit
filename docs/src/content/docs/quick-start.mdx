@@ -33,7 +33,7 @@ dotnet build src/FSH.Framework.slnx
 ```
 
 <Aside type="tip" title="Modern Solution Format">
-This project uses the `.slnx` solution format — a streamlined, XML-based format introduced in .NET. It replaces the legacy `.sln` file with a cleaner, more readable structure.
+This project uses the `.slnx` solution format - a streamlined, XML-based format introduced in .NET. It replaces the legacy `.sln` file with a cleaner, more readable structure.
 </Aside>
 
 ### Run the Application
@@ -45,7 +45,7 @@ This project uses the `.slnx` solution format — a streamlined, XML-based forma
 dotnet run --project src/Playground/FSH.Playground.AppHost
 ```
 
-Aspire orchestrates PostgreSQL, Redis, and the API automatically — no manual setup needed. Once it starts, open the Aspire dashboard at the URL shown in your terminal output to monitor all running services, view logs, and inspect traces.
+Aspire orchestrates PostgreSQL, Redis, and the API automatically - no manual setup needed. Once it starts, open the Aspire dashboard at the URL shown in your terminal output to monitor all running services, view logs, and inspect traces.
 
 </TabPanel>
 <TabPanel>
@@ -74,9 +74,9 @@ This builds and runs the entire stack including PostgreSQL, Redis, and the API i
 
 Once the application is running:
 
-- **API base URL** — `https://localhost:5001` (or the port shown in your terminal)
-- **Scalar API docs** — `https://localhost:5001/scalar/v1`
-- **Health check** — `https://localhost:5001/health/live`
+- **API base URL** - `https://localhost:5001` (or the port shown in your terminal)
+- **Scalar API docs** - `https://localhost:5001/scalar/v1`
+- **Health check** - `https://localhost:5001/health/live`
 
 Open the Scalar UI in your browser to browse all available endpoints, inspect request/response schemas, and execute API calls directly from the documentation interface. It is the fastest way to explore what the starter kit offers out of the box.
 
@@ -114,11 +114,11 @@ dotnet test src/FSH.Framework.slnx
 This runs the full test suite including architecture tests (module boundary enforcement via NetArchTest), unit tests, and module-level integration tests.
 
 <Aside type="warning" title="BuildingBlocks">
-Do not modify files under `src/BuildingBlocks/` without understanding the impact — these are shared framework libraries consumed by all modules. Changes there have a wide blast radius across the entire solution.
+Do not modify files under `src/BuildingBlocks/` without understanding the impact - these are shared framework libraries consumed by all modules. Changes there have a wide blast radius across the entire solution.
 </Aside>
 
 ## Next Steps
 
-- [Project Structure](/dotnet-starter-kit/project-structure/) — understand the codebase layout
-- [Architecture](/dotnet-starter-kit/architecture/) — learn about the modular monolith design
-- [Adding a Feature](/dotnet-starter-kit/adding-a-feature/) — build your first feature
+- [Project Structure](/dotnet-starter-kit/project-structure/) - understand the codebase layout
+- [Architecture](/dotnet-starter-kit/architecture/) - learn about the modular monolith design
+- [Adding a Feature](/dotnet-starter-kit/adding-a-feature/) - build your first feature

@@ -1,4 +1,4 @@
-# fullstackhero .NET Starter Kit — Complete Reference
+# fullstackhero .NET Starter Kit - Complete Reference
 
 > Production-ready, open-source .NET 10 modular monolith starter kit for building multi-tenant SaaS and enterprise applications. MIT licensed. 6,400+ GitHub stars.
 
@@ -6,7 +6,7 @@
 
 fullstackhero is a production-ready .NET 10 framework that gives development teams a complete foundation for building enterprise SaaS applications. Instead of spending weeks wiring up authentication, multitenancy, CQRS, caching, background jobs, and observability, teams clone the starter kit and start building business features immediately.
 
-The architecture is a Modular Monolith with Vertical Slice Architecture (VSA). Each module is an independent bounded context (Identity, Multitenancy, Auditing) that communicates through Contracts projects only. Features are organized as vertical slices — each feature folder contains its endpoint, handler, validator, and response DTO.
+The architecture is a Modular Monolith with Vertical Slice Architecture (VSA). Each module is an independent bounded context (Identity, Multitenancy, Auditing) that communicates through Contracts projects only. Features are organized as vertical slices - each feature folder contains its endpoint, handler, validator, and response DTO.
 
 ## Architecture
 
@@ -49,16 +49,16 @@ Enterprise audit trails capturing four event types: entity changes (CRUD with be
 
 ## Building Blocks (10 shared libraries)
 
-1. **Core** — DDD primitives (BaseEntity, AggregateRoot, DomainEvent), exceptions (CustomException, NotFoundException, ForbiddenException), ICurrentUser
-2. **Persistence** — EF Core abstractions, Specification pattern, pagination, domain events interceptor, auditable entity interceptor
-3. **Web** — Module system (IModule, ModuleLoader), GlobalExceptionHandler (ProblemDetails RFC 9457), API versioning, rate limiting, security headers, OpenAPI/Scalar, health checks, Serilog + OpenTelemetry
-4. **Caching** — ICacheService with distributed (Redis) and hybrid (L1 memory + L2 Redis) implementations
-5. **Eventing** — IEventBus (InMemory + RabbitMQ), outbox/inbox pattern, integration events, JsonEventSerializer
-6. **Jobs** — IJobService wrapping Hangfire, tenant-aware job processing, OpenTelemetry telemetry filter
-7. **Mailing** — IMailService with SMTP (MailKit) and SendGrid providers
-8. **Storage** — IStorageService with local filesystem and AWS S3 providers
-9. **Shared** — Permission constants, claim helpers, multitenancy constants, pagination DTOs
-10. **Blazor.UI** — MudBlazor component library with tenant-aware theming
+1. **Core** - DDD primitives (BaseEntity, AggregateRoot, DomainEvent), exceptions (CustomException, NotFoundException, ForbiddenException), ICurrentUser
+2. **Persistence** - EF Core abstractions, Specification pattern, pagination, domain events interceptor, auditable entity interceptor
+3. **Web** - Module system (IModule, ModuleLoader), GlobalExceptionHandler (ProblemDetails RFC 9457), API versioning, rate limiting, security headers, OpenAPI/Scalar, health checks, Serilog + OpenTelemetry
+4. **Caching** - ICacheService with distributed (Redis) and hybrid (L1 memory + L2 Redis) implementations
+5. **Eventing** - IEventBus (InMemory + RabbitMQ), outbox/inbox pattern, integration events, JsonEventSerializer
+6. **Jobs** - IJobService wrapping Hangfire, tenant-aware job processing, OpenTelemetry telemetry filter
+7. **Mailing** - IMailService with SMTP (MailKit) and SendGrid providers
+8. **Storage** - IStorageService with local filesystem and AWS S3 providers
+9. **Shared** - Permission constants, claim helpers, multitenancy constants, pagination DTOs
+10. **Blazor.UI** - MudBlazor component library with tenant-aware theming
 
 ## Getting Started
 
@@ -76,7 +76,7 @@ API docs: https://localhost:5001/scalar/v1
 
 - **Docker**: Multi-stage Dockerfile + docker-compose (PostgreSQL, Redis, OTEL collector)
 - **.NET Aspire**: Local development orchestration with dashboard
-- **AWS Terraform**: Full IaC — VPC, ECS Fargate, ALB, RDS PostgreSQL, ElastiCache Redis, S3
+- **AWS Terraform**: Full IaC - VPC, ECS Fargate, ALB, RDS PostgreSQL, ElastiCache Redis, S3
 - **CI/CD**: GitHub Actions (build, test, publish to GHCR + NuGet)
 
 ## Links

@@ -84,7 +84,7 @@ const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 			});
 		}
 
-		// Position immediately — no fade-in delay
+		// Position immediately - no fade-in delay
 		updateActive();
 		window.addEventListener('scroll', updateActive, { passive: true });
 	}

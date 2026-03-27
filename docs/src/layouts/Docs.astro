@@ -41,7 +41,7 @@ const techArticleSchema = {
 	"@context": "https://schema.org",
 	"@type": "TechArticle",
 	"headline": title,
-	"description": description || `${title} — fullstackhero documentation`,
+	"description": description || `${title} - fullstackhero documentation`,
 	"url": pageUrl,
 	"dateModified": new Date().toISOString().split('T')[0],
 	"author": {
@@ -113,7 +113,7 @@ const breadcrumbSchema = {
 };
 ---
 
-<Landing title={`${title} — fullstackhero`} description={description || 'fullstackhero documentation'}>
+<Landing title={`${title} - fullstackhero`} description={description || 'fullstackhero documentation'}>
 	<Nav />
 
 	<!-- Mobile panel (full-screen: TOC + Nav + Socials) -->
@@ -269,7 +269,7 @@ const breadcrumbSchema = {
 		});
 	</script>
 
-	<!-- Docs mobile menu — simple: hijack burger, toggle panel -->
+	<!-- Docs mobile menu - simple: hijack burger, toggle panel -->
 	<script>
 		const panel = document.getElementById('docs-mobile-panel');
 		const burger = document.getElementById('hd-burger');

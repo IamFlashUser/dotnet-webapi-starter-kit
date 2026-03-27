@@ -23,20 +23,20 @@ The workflow only runs when changes are made to files under the `src/` path, ski
 ## Pipeline Stages
 
 <Steps>
-  1. **Build** — Sets up the .NET 10 SDK, restores dependencies, builds the solution, and checks for vulnerable NuGet packages. Any known CVE in a dependency fails the pipeline immediately.
+  1. **Build** - Sets up the .NET 10 SDK, restores dependencies, builds the solution, and checks for vulnerable NuGet packages. Any known CVE in a dependency fails the pipeline immediately.
 
-  2. **Test** — Runs five test projects in parallel to minimize pipeline duration:
+  2. **Test** - Runs five test projects in parallel to minimize pipeline duration:
      - Architecture Tests
      - Auditing Tests
      - Generic Tests
      - Identity Tests
      - Multitenancy Tests
 
-  3. **Dev Publish** — Triggered on pushes to the `develop` branch. Builds the container image and pushes it to GitHub Container Registry (GHCR) with two tags:
+  3. **Dev Publish** - Triggered on pushes to the `develop` branch. Builds the container image and pushes it to GitHub Container Registry (GHCR) with two tags:
      - `dev-{sha}` (commit-specific)
      - `dev-latest` (rolling)
 
-  4. **Release Publish** — Triggered on pushes to `main` or version tags. Performs two operations:
+  4. **Release Publish** - Triggered on pushes to `main` or version tags. Performs two operations:
      - Packs 11 NuGet packages and pushes them to NuGet.org
      - Builds the container image and pushes to GHCR with version-specific tags
 </Steps>
@@ -45,19 +45,19 @@ The workflow only runs when changes are made to files under the `src/` path, ski
 
 The CodeQL workflow is defined in `.github/workflows/codeql.yml` and provides automated security scanning:
 
-- **Triggers** — Runs on pull requests and on a weekly schedule
-- **Language** — Analyzes C# code for security vulnerabilities, code quality issues, and common mistakes
-- **Results** — Findings appear directly in the pull request Security tab
+- **Triggers** - Runs on pull requests and on a weekly schedule
+- **Language** - Analyzes C# code for security vulnerabilities, code quality issues, and common mistakes
+- **Results** - Findings appear directly in the pull request Security tab
 
 ## Release Drafter
 
 The release drafter configuration in `.github/release-drafter.yml` automatically categorizes merged pull requests into release notes:
 
-- **Breaking Changes** — PRs labeled with `breaking`
-- **Features** — PRs labeled with `feature` or `enhancement`
-- **Bug Fixes** — PRs labeled with `bug` or `fix`
-- **Dependencies** — PRs labeled with `dependencies`
-- **Documentation** — PRs labeled with `documentation`
+- **Breaking Changes** - PRs labeled with `breaking`
+- **Features** - PRs labeled with `feature` or `enhancement`
+- **Bug Fixes** - PRs labeled with `bug` or `fix`
+- **Dependencies** - PRs labeled with `dependencies`
+- **Documentation** - PRs labeled with `documentation`
 
 When you publish a GitHub release, the drafter populates the release body with all changes since the last release, organized by category.
 

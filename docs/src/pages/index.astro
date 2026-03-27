@@ -6,12 +6,12 @@ import { Image } from 'astro:assets';
 import mukeshPhoto from '../assets/mukesh_murugan.png';
 ---
 
-<Landing title="fullstackhero — .NET Starter Kit" description="A production-ready modular .NET framework for building enterprise applications.">
+<Landing title="fullstackhero - .NET Starter Kit" description="A production-ready modular .NET framework for building enterprise applications.">
 	<Nav />
 
 	<!-- ════ HERO ════ -->
 	<section class="hero">
-		<div class="hero-grid" aria-hidden="true"></div>
+		<div class="hero-constellation" aria-hidden="true"></div>
 		<div class="hero-glow" aria-hidden="true"></div>
 		<div class="w">
 			<div class="hero-center">
@@ -43,14 +43,14 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 						<span class="ht-dot ht-y"></span>
 						<span class="ht-dot ht-g"></span>
 					</div>
-					<div class="ht-body">
-						<div class="ht-line"><span class="ht-p">~</span> <span class="ht-comment"># clone &amp; run in 60 seconds</span></div>
-						<div class="ht-line"><span class="ht-p">~</span> git clone https://github.com/fullstackhero/dotnet-starter-kit</div>
-						<div class="ht-line"><span class="ht-p">~</span> cd dotnet-starter-kit</div>
-						<div class="ht-line"><span class="ht-p">~</span> dotnet run <span class="ht-flag">--project</span> src/Playground/Playground.Api</div>
+					<div class="ht-body" id="hero-term-body">
+						<div class="ht-line" data-type data-delay="300"><span class="ht-p">~</span> <span class="ht-comment"># clone &amp; run in 60 seconds</span></div>
+						<div class="ht-line" data-type data-delay="600"><span class="ht-p">~</span> git clone https://github.com/fullstackhero/dotnet-starter-kit</div>
+						<div class="ht-line" data-type data-delay="900"><span class="ht-p">~</span> cd dotnet-starter-kit</div>
+						<div class="ht-line" data-type data-delay="1100"><span class="ht-p">~</span> dotnet run <span class="ht-flag">--project</span> src/Playground/Playground.Api</div>
 						<div class="ht-blank"></div>
-						<div class="ht-line ht-out"><span class="ht-ok">info:</span> Now listening on <span class="ht-url">https://localhost:5001</span></div>
-						<div class="ht-line ht-out"><span class="ht-ok">info:</span> Scalar docs at <span class="ht-url">localhost:5001/scalar/v1</span></div>
+						<div class="ht-line ht-out" data-type data-delay="1600"><span class="ht-ok">info:</span> Now listening on <span class="ht-url">https://localhost:5001</span></div>
+						<div class="ht-line ht-out" data-type data-delay="1900"><span class="ht-ok">info:</span> Scalar docs at <span class="ht-url">localhost:5001/scalar/v1</span></div>
 					</div>
 					<div class="ht-footer">
 						<a href="/dotnet-starter-kit/quick-start/" class="ht-link">
@@ -96,20 +96,20 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ BENTO FEATURES ════ -->
-	<section class="bento" id="features">
+	<section class="bento" id="features" data-reveal>
 		<div class="w">
 			<div class="sec-hd sec-hd-c">
 				<span class="sec-tag">Features</span>
 				<h2>Everything wired.<br />Nothing wasted.</h2>
 				<p class="sec-sub">A framework, not a template. Every piece is built to work together.</p>
 			</div>
-			<div class="bento-grid">
+			<div class="bento-grid" data-reveal-stagger>
 				<!-- row 1: wide -->
 				<div class="b-card b-span2 b-accent">
 					<div class="b-inner">
 						<span class="b-label">Architecture</span>
 						<h3>Modular Monolith + Vertical Slices</h3>
-						<p>Isolated modules. Enforced contracts. Each feature is one folder — endpoint, handler, validator. Architecture tests verify boundaries at build time.</p>
+						<p>Isolated modules. Enforced contracts. Each feature is one folder - endpoint, handler, validator. Architecture tests verify boundaries at build time.</p>
 					</div>
 					<div class="b-visual">
 						<div class="b-tree">
@@ -145,7 +145,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 				<div class="b-card">
 					<span class="b-label">Data</span>
 					<h3>EF Core + PostgreSQL</h3>
-					<p>Code-first migrations, soft deletes, audit trails, specification pattern, and tenant-scoped DbContext — pre-configured.</p>
+					<p>Code-first migrations, soft deletes, audit trails, specification pattern, and tenant-scoped DbContext - pre-configured.</p>
 					<div class="b-tag-row"><code>Npgsql</code><code>Specification&lt;T&gt;</code></div>
 				</div>
 
@@ -154,7 +154,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 					<div class="b-inner">
 						<span class="b-label">Observability & Infra</span>
 						<h3>Production-grade from day one</h3>
-						<p>Structured logging, distributed traces, metrics collection, background jobs, and local orchestration — pre-wired so you never fly blind.</p>
+						<p>Structured logging, distributed traces, metrics collection, background jobs, and local orchestration - pre-wired so you never fly blind.</p>
 					</div>
 					<div class="b-stack-pills">
 						<div class="bsp"><span class="bsp-dot bsp-g"></span>Serilog</div>
@@ -170,7 +170,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ NEWSLETTER ════ -->
-	<section class="nl-sec">
+	<section class="nl-sec" data-reveal>
 		<div class="w">
 			<div class="nl-outer">
 				<div class="nl-glow" aria-hidden="true"></div>
@@ -182,7 +182,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 						<h2 class="nl-h2">Level up your .NET game.<br />Every Tuesday.</h2>
 						<p class="nl-p">
 							Practical architecture patterns, production tips, deep dives into EF Core,
-							CQRS, modular monoliths, and fullstackhero updates — straight to your inbox.
+							CQRS, modular monoliths, and fullstackhero updates - straight to your inbox.
 						</p>
 
 						<div class="nl-perks">
@@ -231,7 +231,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ ARCHITECTURE ════ -->
-	<section class="arch">
+	<section class="arch" data-reveal>
 		<div class="w">
 			<div class="sec-hd sec-hd-c">
 				<span class="sec-tag">Architecture</span>
@@ -420,7 +420,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ CODE ════ -->
-	<section class="code-sec">
+	<section class="code-sec" data-reveal>
 		<div class="w">
 			<div class="code-layout">
 				<div class="code-text">
@@ -429,7 +429,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 					<p class="code-p">One file per feature. Endpoint, validation, and dispatch in a single vertical slice. No scattered layers. No ceremony.</p>
 					<ul class="code-list">
 						<li><span class="cl-check">&#10003;</span> Endpoint + handler + validator per feature</li>
-						<li><span class="cl-check">&#10003;</span> Source-gen mediator — zero reflection</li>
+						<li><span class="cl-check">&#10003;</span> Source-gen mediator - zero reflection</li>
 						<li><span class="cl-check">&#10003;</span> FluentValidation auto-registered</li>
 						<li><span class="cl-check">&#10003;</span> Permission-based auth in one line</li>
 					</ul>
@@ -464,13 +464,13 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ STACK ════ -->
-	<section class="stack-sec">
+	<section class="stack-sec" data-reveal>
 		<div class="w">
 			<div class="sec-hd sec-hd-c">
 				<span class="sec-tag">Stack</span>
 				<h2>Battle-tested. Zero fluff.</h2>
 			</div>
-			<div class="stack-grid">
+			<div class="stack-grid" data-reveal-stagger>
 				<div class="sg-card">
 					<h4>Runtime</h4>
 					<ul><li>.NET 10 / C# latest</li><li>Minimal APIs</li><li>Asp.Versioning</li><li>.NET Aspire</li></ul>
@@ -492,14 +492,14 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ COST OF DIY ════ -->
-	<section class="diy">
+	<section class="diy" data-reveal>
 		<div class="w">
 			<div class="sec-hd sec-hd-c">
 				<span class="sec-tag">The real cost</span>
 				<h2>What you'd build without fullstackhero.</h2>
 				<p class="sec-sub">Every .NET team builds the same infrastructure. Every time. From scratch.</p>
 			</div>
-			<div class="diy-grid">
+			<div class="diy-grid" data-reveal-stagger>
 				<div class="diy-card">
 					<span class="diy-weeks">2-3 weeks</span>
 					<h4>Auth & Identity</h4>
@@ -550,19 +550,19 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ BUILT FOR TEAMS ════ -->
-	<section class="teams">
+	<section class="teams" data-reveal>
 		<div class="w">
 			<div class="sec-hd sec-hd-c">
 				<span class="sec-tag">Built for teams</span>
 				<h2>Not just a starter.<br />A shared foundation.</h2>
 			</div>
-			<div class="teams-grid">
+			<div class="teams-grid" data-reveal-stagger>
 				<div class="team-card">
 					<div class="tc-icon">
 						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--brand)" stroke-width="1.5"><path d="M16 8l-6 6-6-6"/></svg>
 					</div>
 					<h4>Onboard in hours, not weeks</h4>
-					<p>Consistent patterns across every module. New devs follow the same conventions from day one — feature folders, CQRS handlers, FluentValidation.</p>
+					<p>Consistent patterns across every module. New devs follow the same conventions from day one - feature folders, CQRS handlers, FluentValidation.</p>
 				</div>
 				<div class="team-card">
 					<div class="tc-icon">
@@ -583,7 +583,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--brand)" stroke-width="1.5"><path d="M4 10h12M10 4v12"/></svg>
 					</div>
 					<h4>Add modules, not complexity</h4>
-					<p>Need a Catalog module? Create two projects, implement IModule, wire it up. The framework handles the rest — DI, routing, migrations, auth.</p>
+					<p>Need a Catalog module? Create two projects, implement IModule, wire it up. The framework handles the rest - DI, routing, migrations, auth.</p>
 				</div>
 				<div class="team-card">
 					<div class="tc-icon">
@@ -604,13 +604,13 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ TESTIMONIALS ════ -->
-	<section class="social">
+	<section class="social" data-reveal>
 		<div class="w">
 			<div class="sec-hd sec-hd-c">
 				<span class="sec-tag">Community</span>
 				<h2>Trusted by .NET teams worldwide.</h2>
 			</div>
-			<div class="social-grid">
+			<div class="social-grid" data-reveal-stagger>
 				<div class="quote-card">
 					<p>"Saved our team 2 months of infrastructure work. We went from zero to our first business feature in a day."</p>
 					<div class="quote-author">
@@ -637,7 +637,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ AUTHOR ════ -->
-	<section class="author">
+	<section class="author" data-reveal>
 		<div class="w">
 			<div class="au-outer">
 				<!-- left: photo -->
@@ -693,7 +693,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	</section>
 
 	<!-- ════ FAQ ════ -->
-	<section class="faq">
+	<section class="faq" data-reveal>
 		<div class="w">
 			<div class="sec-hd sec-hd-c">
 				<span class="sec-tag">FAQ</span>
@@ -702,34 +702,34 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 			<div class="faq-list">
 				<details class="faq-item">
 					<summary>Is this opinionated? Can I swap out libraries?</summary>
-					<p>Yes, it's opinionated — that's the point. But it's your code after you clone it. Swap PostgreSQL for SQL Server, replace Mediator with MediatR, use a different auth provider. The architecture is the value, not any single library.</p>
+					<div class="faq-answer"><p>Yes, it's opinionated - that's the point. But it's your code after you clone it. Swap PostgreSQL for SQL Server, replace Mediator with MediatR, use a different auth provider. The architecture is the value, not any single library.</p></div>
 				</details>
 				<details class="faq-item">
 					<summary>Is this production-ready or just a demo?</summary>
-					<p>Production-ready. It's been used in real applications for 5 years, battle-tested by thousands of developers. The patterns (CQRS, modular monolith, VSA) are proven at scale. But do your own security review — as with any framework.</p>
+					<div class="faq-answer"><p>Production-ready. It's been used in real applications for 5 years, battle-tested by thousands of developers. The patterns (CQRS, modular monolith, VSA) are proven at scale. But do your own security review - as with any framework.</p></div>
 				</details>
 				<details class="faq-item">
 					<summary>Can I remove modules I don't need?</summary>
-					<p>Absolutely. Modules are independent bounded contexts. Don't need Auditing? Remove the project reference and the module registration line. The architecture is designed for this.</p>
+					<div class="faq-answer"><p>Absolutely. Modules are independent bounded contexts. Don't need Auditing? Remove the project reference and the module registration line. The architecture is designed for this.</p></div>
 				</details>
 				<details class="faq-item">
 					<summary>How does this compare to Clean Architecture templates?</summary>
-					<p>fullstackhero uses Vertical Slice Architecture inside a Modular Monolith — not traditional Clean Architecture layers. You get feature cohesion (everything for a feature in one folder) instead of layer separation (controllers in one folder, services in another). Both are valid; VSA tends to scale better with team size.</p>
+					<div class="faq-answer"><p>fullstackhero uses Vertical Slice Architecture inside a Modular Monolith - not traditional Clean Architecture layers. You get feature cohesion (everything for a feature in one folder) instead of layer separation (controllers in one folder, services in another). Both are valid; VSA tends to scale better with team size.</p></div>
 				</details>
 				<details class="faq-item">
 					<summary>What databases are supported?</summary>
-					<p>PostgreSQL out of the box via Npgsql. Since it's built on EF Core, switching to SQL Server, MySQL, or SQLite requires changing the provider registration and connection string. The rest of the data layer (entities, specifications, migrations) stays the same.</p>
+					<div class="faq-answer"><p>PostgreSQL out of the box via Npgsql. Since it's built on EF Core, switching to SQL Server, MySQL, or SQLite requires changing the provider registration and connection string. The rest of the data layer (entities, specifications, migrations) stays the same.</p></div>
 				</details>
 				<details class="faq-item">
 					<summary>Is there commercial support?</summary>
-					<p>fullstackhero is open-source and MIT licensed. Community support is available via GitHub Issues and Discussions. For bugs, feature requests, or questions — open an issue on GitHub.</p>
+					<div class="faq-answer"><p>fullstackhero is open-source and MIT licensed. Community support is available via GitHub Issues and Discussions. For bugs, feature requests, or questions - open an issue on GitHub.</p></div>
 				</details>
 			</div>
 		</div>
 	</section>
 
 	<!-- ════ CTA ════ -->
-	<section class="cta-sec">
+	<section class="cta-sec" data-reveal>
 		<div class="w">
 			<div class="cta-box">
 				<div class="cta-glow" aria-hidden="true"></div>
@@ -824,7 +824,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
             "name": "Is fullstackhero opinionated? Can I swap out libraries?",
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes, it's opinionated — that's the point. But it's your code after you clone it. Swap PostgreSQL for SQL Server, replace Mediator with MediatR, use a different auth provider. The architecture is the value, not any single library."
+                "text": "Yes, it's opinionated - that's the point. But it's your code after you clone it. Swap PostgreSQL for SQL Server, replace Mediator with MediatR, use a different auth provider. The architecture is the value, not any single library."
             }
         },
         {
@@ -840,7 +840,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
             "name": "How does fullstackhero compare to Clean Architecture templates?",
             "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "fullstackhero uses Vertical Slice Architecture inside a Modular Monolith — not traditional Clean Architecture layers. You get feature cohesion (everything for a feature in one folder) instead of layer separation. Both are valid; VSA tends to scale better with team size."
+                "text": "fullstackhero uses Vertical Slice Architecture inside a Modular Monolith - not traditional Clean Architecture layers. You get feature cohesion (everything for a feature in one folder) instead of layer separation. Both are valid; VSA tends to scale better with team size."
             }
         },
         {
@@ -900,19 +900,14 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 		position: relative; padding: 8rem 0 4rem; overflow: hidden;
 	}
 
-	/* animated dot grid */
-	.hero-grid {
+	/* particle constellation */
+	.hero-constellation {
 		position: absolute; inset: 0; z-index: 0; overflow: hidden;
-		background-image:
-			radial-gradient(circle, rgba(74,222,128,0.1) 1px, transparent 1px);
-		background-size: 32px 32px;
-		mask-image: radial-gradient(ellipse 60% 50% at 50% 40%, #000 20%, transparent 75%);
-		-webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 40%, #000 20%, transparent 75%);
-		animation: grid-drift 20s linear infinite;
+		pointer-events: none;
 	}
-	@keyframes grid-drift {
-		0%   { background-position: 0 0; }
-		100% { background-position: 32px 32px; }
+	.hero-constellation canvas {
+		position: absolute; inset: 0;
+		width: 100%; height: 100%;
 	}
 
 	/* glow blob */
@@ -1796,12 +1791,194 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 		flex-shrink: 0; margin-left: 1rem; transition: transform .2s;
 	}
 	.faq-item[open] summary::after {
-		content: '−';
+		content: '+';
 	}
 	.faq-item summary:hover { color: var(--brand); }
 	.faq-item p {
-		padding: 0 0 1.25rem; font-size: 0.88rem; line-height: 1.7;
+		font-size: 0.88rem; line-height: 1.7;
 		color: var(--text-dim);
+	}
+
+	/* ── SCROLL REVEAL ───────────── */
+	/*  Only opacity + translate3d = GPU composited, no layout/paint */
+	[data-reveal] {
+		opacity: 0;
+		transform: translate3d(0, 20px, 0);
+		transition: opacity 0.8s ease-out,
+					transform 0.8s ease-out;
+		will-change: opacity, transform;
+	}
+	[data-reveal].visible {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+
+	/* staggered children */
+	[data-reveal-stagger] > * {
+		opacity: 0;
+		transform: translate3d(0, 14px, 0);
+		transition: opacity 0.7s ease-out,
+					transform 0.7s ease-out;
+		will-change: opacity, transform;
+	}
+	[data-reveal-stagger].visible > * {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+	[data-reveal-stagger].visible > *:nth-child(1) { transition-delay: 0ms; }
+	[data-reveal-stagger].visible > *:nth-child(2) { transition-delay: 80ms; }
+	[data-reveal-stagger].visible > *:nth-child(3) { transition-delay: 160ms; }
+	[data-reveal-stagger].visible > *:nth-child(4) { transition-delay: 230ms; }
+	[data-reveal-stagger].visible > *:nth-child(5) { transition-delay: 300ms; }
+	[data-reveal-stagger].visible > *:nth-child(6) { transition-delay: 360ms; }
+
+	/* ── HERO GLOW BREATHING ─────── */
+	.hero-glow {
+		animation: glow-breathe 5s ease-in-out infinite;
+		will-change: opacity, transform;
+	}
+	@keyframes glow-breathe {
+		0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+		50% { opacity: 1; transform: translateX(-50%) scale(1.06); }
+	}
+
+	/* ── TERMINAL TYPING ─────────── */
+	/* clip-path is GPU composited, unlike width */
+	.ht-line[data-type] {
+		white-space: nowrap;
+		clip-path: inset(0 100% 0 0);
+		opacity: 1;
+		transition: clip-path 0.5s ease-out;
+	}
+	.ht-line[data-type].typed {
+		clip-path: inset(0 0 0 0);
+	}
+	/* output lines: fade in */
+	.ht-line.ht-out[data-type] {
+		clip-path: none;
+		opacity: 0;
+		transform: translate3d(0, 3px, 0);
+		transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+	}
+	.ht-line.ht-out[data-type].typed {
+		opacity: 0.6;
+		transform: translate3d(0, 0, 0);
+	}
+
+	/* ── CARD HOVER LIFT ─────────── */
+	/* translate3d forces GPU layer, separate shadow on pseudo to avoid paint */
+	.b-card, .quote-card, .team-card, .diy-card {
+		position: relative;
+	}
+	@media (min-width: 769px) {
+		.b-card:not(.b-span2),
+		.quote-card,
+		.team-card,
+		.diy-card {
+			transition: background .2s ease,
+						transform 0.3s ease-out;
+		}
+		.b-card:hover:not(.b-span2),
+		.quote-card:hover,
+		.team-card:hover,
+		.diy-card:hover {
+			transform: translate3d(0, -2px, 0);
+		}
+	}
+
+	/* ── FAQ SMOOTH ACCORDION ────── */
+	/* Use grid rows for smooth height: 0fr -> 1fr is GPU friendly */
+	.faq-item .faq-answer {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 0.4s ease-out;
+	}
+	.faq-item[open] .faq-answer {
+		grid-template-rows: 1fr;
+	}
+	.faq-answer > p {
+		overflow: hidden;
+		opacity: 0;
+		padding: 0 0 0;
+		transition: opacity 0.3s ease-out;
+	}
+	.faq-item[open] .faq-answer > p {
+		opacity: 1;
+		padding: 0 0 1.25rem;
+		transition-delay: 0.1s;
+	}
+	.faq-item summary::after {
+		transition: transform 0.3s ease-out;
+	}
+	.faq-item[open] summary::after {
+		transform: rotate(45deg);
+	}
+
+	/* ── BUTTON HOVER ────────────── */
+	.btn {
+		transition: background .2s ease-out,
+					box-shadow .2s ease-out,
+					transform .2s ease-out;
+	}
+	.btn:hover {
+		transform: translate3d(0, -1px, 0);
+	}
+	.btn:active {
+		transform: translate3d(0, 0, 0);
+		transition-duration: 0.08s;
+	}
+	.btn-o {
+		transition: color .2s ease-out, border-color .2s ease-out,
+					background .2s ease-out, transform .2s ease-out;
+	}
+
+	/* ── HERO ENTRANCE ───────────── */
+	.hero-center {
+		animation: hero-in 0.9s ease-out both;
+	}
+	.hero-term-wrap {
+		animation: hero-in 0.9s ease-out 0.12s both;
+	}
+	@keyframes hero-in {
+		from { opacity: 0; transform: translate3d(0, 16px, 0); }
+		to { opacity: 1; transform: translate3d(0, 0, 0); }
+	}
+
+	/* ── NUMS ENTRANCE ───────────── */
+	.nums-strip .ns {
+		opacity: 0;
+		transform: translate3d(0, 8px, 0);
+		animation: stat-in 0.6s ease-out both;
+	}
+	.nums-strip .ns:nth-child(1) { animation-delay: 0.35s; }
+	.nums-strip .ns:nth-child(2) { animation-delay: 0.45s; }
+	.nums-strip .ns:nth-child(3) { animation-delay: 0.55s; }
+	.nums-strip .ns:nth-child(4) { animation-delay: 0.65s; }
+	@keyframes stat-in {
+		from { opacity: 0; transform: translate3d(0, 8px, 0); }
+		to { opacity: 1; transform: translate3d(0, 0, 0); }
+	}
+
+	/* ── CTA GLOW PULSE ──────────── */
+	.cta-glow {
+		animation: cta-pulse 4s ease-in-out infinite;
+		will-change: opacity;
+	}
+	@keyframes cta-pulse {
+		0%, 100% { opacity: 0.6; }
+		50% { opacity: 1; }
+	}
+
+	/* ── REDUCED MOTION ──────────── */
+	@media (prefers-reduced-motion: reduce) {
+		*, *::before, *::after {
+			animation-duration: 0.01ms !important;
+			transition-duration: 0.01ms !important;
+		}
+		[data-reveal], [data-reveal-stagger] > * {
+			opacity: 1 !important;
+			transform: none !important;
+		}
 	}
 
 	/* ── RESPONSIVE ───────────────── */
@@ -1939,3 +2116,162 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 		.au-img-col { height: 300px; }
 	}
 </style>
+
+<script>
+	// ── Scroll Reveal (IntersectionObserver) ──
+	const revealEls = document.querySelectorAll('[data-reveal], [data-reveal-stagger]');
+	if (revealEls.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		const revealObserver = new IntersectionObserver((entries) => {
+			entries.forEach(e => {
+				if (e.isIntersecting) {
+					e.target.classList.add('visible');
+					revealObserver.unobserve(e.target);
+				}
+			});
+		}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+		revealEls.forEach(el => revealObserver.observe(el));
+	} else {
+		// Reduced motion or no elements: show everything immediately
+		revealEls.forEach(el => el.classList.add('visible'));
+	}
+
+	// ── Terminal Typing Animation ──
+	const typeLines = document.querySelectorAll('.ht-line[data-type]');
+	if (typeLines.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		typeLines.forEach(line => {
+			const delay = parseInt(line.getAttribute('data-delay') || '0', 10);
+			setTimeout(() => line.classList.add('typed'), delay);
+		});
+	} else {
+		typeLines.forEach(line => {
+			line.style.width = 'auto';
+			line.style.opacity = '1';
+			if (line.classList.contains('ht-out')) line.style.opacity = '0.6';
+		});
+	}
+
+	// ── FAQ Smooth Close ──
+	// The grid-rows transition handles opening. For closing, we need to
+	// prevent instant close so the 0fr transition can play out.
+	document.querySelectorAll('.faq-item').forEach(item => {
+		const summary = item.querySelector('summary');
+		if (!summary) return;
+		summary.addEventListener('click', (e) => {
+			if (item.open) {
+				e.preventDefault();
+				item.classList.add('closing');
+				const answer = item.querySelector('.faq-answer');
+				if (answer) {
+					(answer as HTMLElement).style.gridTemplateRows = '0fr';
+					const p = answer.querySelector('p');
+					if (p) (p as HTMLElement).style.opacity = '0';
+				}
+				setTimeout(() => {
+					item.open = false;
+					item.classList.remove('closing');
+					if (answer) {
+						(answer as HTMLElement).style.removeProperty('grid-template-rows');
+						const p = answer.querySelector('p');
+						if (p) (p as HTMLElement).style.removeProperty('opacity');
+					}
+				}, 400);
+			}
+		});
+	});
+
+	// ── Particle Constellation ──
+	(function () {
+		const box = document.querySelector('.hero-constellation') as HTMLElement;
+		if (!box || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+		const canvas = document.createElement('canvas');
+		box.appendChild(canvas);
+		const c = canvas.getContext('2d')!;
+		if (!c) return;
+
+		let w = 0, h = 0, dpr = 1, raf = 0;
+		const LINK_DIST = 120;       // max distance to draw a line
+		const PARTICLE_COUNT = 60;   // sweet spot: visible but not busy
+
+		interface P { x: number; y: number; vx: number; vy: number; r: number; }
+		let particles: P[] = [];
+
+		function resize() {
+			dpr = Math.min(devicePixelRatio || 1, 2);
+			w = box.clientWidth;
+			h = box.clientHeight;
+			canvas.width = w * dpr;
+			canvas.height = h * dpr;
+			c.setTransform(dpr, 0, 0, dpr, 0, 0);
+		}
+
+		function seed() {
+			particles = [];
+			for (let i = 0; i < PARTICLE_COUNT; i++) {
+				particles.push({
+					x: Math.random() * w,
+					y: Math.random() * h,
+					vx: (Math.random() - 0.5) * 0.3,
+					vy: (Math.random() - 0.5) * 0.3,
+					r: 1 + Math.random() * 1.2,
+				});
+			}
+		}
+
+		resize();
+		seed();
+		window.addEventListener('resize', () => { resize(); seed(); });
+
+		function draw() {
+			c.clearRect(0, 0, w, h);
+			const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+			const dot = isDark ? '74,222,128' : '15,23,42';    // green in dark, slate in light
+			const line = isDark ? '74,222,128' : '15,23,42';
+
+			// move
+			for (const p of particles) {
+				p.x += p.vx;
+				p.y += p.vy;
+				if (p.x < -10) p.x = w + 10;
+				if (p.x > w + 10) p.x = -10;
+				if (p.y < -10) p.y = h + 10;
+				if (p.y > h + 10) p.y = -10;
+			}
+
+			// lines
+			for (let i = 0; i < particles.length; i++) {
+				for (let j = i + 1; j < particles.length; j++) {
+					const dx = particles[i].x - particles[j].x;
+					const dy = particles[i].y - particles[j].y;
+					const dist = Math.sqrt(dx * dx + dy * dy);
+					if (dist < LINK_DIST) {
+						const alpha = (1 - dist / LINK_DIST) * (isDark ? 0.15 : 0.25);
+						c.beginPath();
+						c.moveTo(particles[i].x, particles[i].y);
+						c.lineTo(particles[j].x, particles[j].y);
+						c.strokeStyle = `rgba(${line},${alpha})`;
+						c.lineWidth = 0.6;
+						c.stroke();
+					}
+				}
+			}
+
+			// dots
+			for (const p of particles) {
+				c.beginPath();
+				c.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+				c.fillStyle = `rgba(${dot},${isDark ? 0.25 : 0.4})`;
+				c.fill();
+			}
+
+			raf = requestAnimationFrame(draw);
+		}
+		draw();
+
+		// pause off-screen
+		new IntersectionObserver(([e]) => {
+			if (e.isIntersecting) { if (!raf) draw(); }
+			else { cancelAnimationFrame(raf); raf = 0; }
+		}, { threshold: 0 }).observe(box);
+	})();
+</script>

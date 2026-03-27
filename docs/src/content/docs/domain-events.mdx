@@ -6,11 +6,11 @@ description: "How domain events and integration events work in the fullstackhero
 import Aside from '../../components/Aside.astro';
 import Steps from '../../components/Steps.astro';
 
-Domain events are the backbone of reactive, loosely-coupled module design in fullstackhero. They represent **things that have already happened** within your domain — immutable records of facts that other parts of the system can react to.
+Domain events are the backbone of reactive, loosely-coupled module design in fullstackhero. They represent **things that have already happened** within your domain - immutable records of facts that other parts of the system can react to.
 
 ## What are Domain Events?
 
-A domain event captures a meaningful state change in your application. When a user registers, an order is placed, or a tenant is activated, the responsible entity records an event describing what happened. Other components — within the same module or across modules — can subscribe to these events and react accordingly, without the originating code needing to know about them.
+A domain event captures a meaningful state change in your application. When a user registers, an order is placed, or a tenant is activated, the responsible entity records an event describing what happened. Other components - within the same module or across modules - can subscribe to these events and react accordingly, without the originating code needing to know about them.
 
 This pattern keeps your modules decoupled: the entity that raises the event has no knowledge of who listens or what they do with it.
 
@@ -39,15 +39,15 @@ public abstract record DomainEvent(
 
 Every domain event carries four pieces of metadata:
 
-- **EventId** — a unique identifier for this specific event occurrence
-- **OccurredOnUtc** — the exact timestamp when the event was created
-- **CorrelationId** — optional tracing identifier to correlate related operations
-- **TenantId** — optional tenant context for multitenant scenarios
+- **EventId** - a unique identifier for this specific event occurrence
+- **OccurredOnUtc** - the exact timestamp when the event was created
+- **CorrelationId** - optional tracing identifier to correlate related operations
+- **TenantId** - optional tenant context for multitenant scenarios
 
 The `Create<T>` factory method generates a new `EventId` and captures the current UTC timestamp automatically, so you never need to supply these values manually.
 
 <Aside type="tip" title="Immutable by Design">
-Domain events are records, making them immutable and naturally suited for event sourcing patterns. Once created, they cannot be modified — they are a permanent record of what happened.
+Domain events are records, making them immutable and naturally suited for event sourcing patterns. Once created, they cannot be modified - they are a permanent record of what happened.
 </Aside>
 
 ## Raising Domain Events
@@ -84,7 +84,7 @@ public void Activate()
 }
 ```
 
-In this example, the `Activate()` method changes the entity state and then raises a `UserActivatedEvent`. The event is not published immediately — it is held in the entity's internal list until the persistence layer flushes it.
+In this example, the `Activate()` method changes the entity state and then raises a `UserActivatedEvent`. The event is not published immediately - it is held in the entity's internal list until the persistence layer flushes it.
 
 ## Automatic Dispatch
 
@@ -150,7 +150,7 @@ Each collected event is published through `IPublisher.Publish()`, which routes i
 
 ### Handlers process the events
 
-Registered `INotificationHandler<T>` implementations receive and process each domain event — sending emails, updating read models, triggering side effects, or raising integration events.
+Registered `INotificationHandler<T>` implementations receive and process each domain event - sending emails, updating read models, triggering side effects, or raising integration events.
 
 </Steps>
 
@@ -160,8 +160,8 @@ While domain events are scoped to a single module and dispatched in-process, **i
 
 Integration events use two key interfaces:
 
-- **`IIntegrationEvent`** — marker interface for events that cross module boundaries
-- **`IIntegrationEventHandler<T>`** — interface for handling integration events in consuming modules
+- **`IIntegrationEvent`** - marker interface for events that cross module boundaries
+- **`IIntegrationEventHandler<T>`** - interface for handling integration events in consuming modules
 
 ```csharp
 public record UserRegisteredIntegrationEvent(

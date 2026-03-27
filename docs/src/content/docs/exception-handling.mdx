@@ -61,9 +61,9 @@ public class CustomException : Exception
 
 The framework provides several built-in exception types that inherit from `CustomException`:
 
-- **NotFoundException** — Returns 404. Use when an entity or resource cannot be found.
-- **ForbiddenException** — Returns 403. Use when the user lacks permission.
-- **UnauthorizedException** — Returns 401. Use when authentication is required but missing or invalid.
+- **NotFoundException** - Returns 404. Use when an entity or resource cannot be found.
+- **ForbiddenException** - Returns 403. Use when the user lacks permission.
+- **UnauthorizedException** - Returns 401. Use when authentication is required but missing or invalid.
 
 ## Using Exceptions in Handlers
 
@@ -112,4 +112,4 @@ Never return raw exception messages in production. The `GlobalExceptionHandler` 
 
 FluentValidation failures are automatically caught by the validation pipeline behavior in the mediator. When validation fails, a `ValidationException` is thrown with all validation errors, resulting in a 400 response with the errors array populated.
 
-You do not need to manually validate commands — the pipeline handles it before your handler is invoked.
+You do not need to manually validate commands - the pipeline handles it before your handler is invoked.

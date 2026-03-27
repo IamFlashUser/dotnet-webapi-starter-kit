@@ -9,9 +9,9 @@ import Aside from '../../components/Aside.astro';
 
 The Identity module implements **role-based access control (RBAC)** with fine-grained permissions. The authorization model is composed of three layers:
 
-- **Permissions** — atomic actions on specific resources (e.g., `Permissions.Users.Create`)
-- **Roles** — named collections of permissions assigned to users
-- **Groups** — organizational units that aggregate roles, making it easy to assign common permission sets to many users at once
+- **Permissions** - atomic actions on specific resources (e.g., `Permissions.Users.Create`)
+- **Roles** - named collections of permissions assigned to users
+- **Groups** - organizational units that aggregate roles, making it easy to assign common permission sets to many users at once
 
 A user's effective permissions are the **union** of all permissions from their directly assigned roles and the roles inherited through group membership.
 
@@ -32,8 +32,8 @@ public record FshPermission(string Description, string Action, string Resource, 
 
 Each permission has two flags that control which default roles receive it:
 
-- **IsBasic** — included in the `Basic` role (and by extension, `Admin`)
-- **IsRoot** — reserved for root-level operations (e.g., tenant management), excluded from both default roles
+- **IsBasic** - included in the `Basic` role (and by extension, `Admin`)
+- **IsRoot** - reserved for root-level operations (e.g., tenant management), excluded from both default roles
 
 Actions and resources are defined as constants in `ActionConstants` and `ResourceConstants` for type-safe, refactor-friendly references.
 

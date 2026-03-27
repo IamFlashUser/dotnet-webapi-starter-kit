@@ -206,10 +206,10 @@ location /api/v1/sse/ {
 
 ### Azure App Service / Application Gateway
 
-Azure Application Gateway and App Service support SSE out of the box. Ensure your timeout settings accommodate long-lived connections — the default idle timeout is 4 minutes, which you may want to increase.
+Azure Application Gateway and App Service support SSE out of the box. Ensure your timeout settings accommodate long-lived connections - the default idle timeout is 4 minutes, which you may want to increase.
 
 <Aside type="note" title="Connection Limits">
-Each SSE connection holds an open HTTP connection. Monitor `ActiveConnections` and plan your connection pool sizing accordingly. The bounded channel capacity of 100 events per connection ensures that slow consumers do not cause unbounded memory growth — the oldest events are dropped when the buffer is full.
+Each SSE connection holds an open HTTP connection. Monitor `ActiveConnections` and plan your connection pool sizing accordingly. The bounded channel capacity of 100 events per connection ensures that slow consumers do not cause unbounded memory growth - the oldest events are dropped when the buffer is full.
 </Aside>
 
 ## Channel Behavior

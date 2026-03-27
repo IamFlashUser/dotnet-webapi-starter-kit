@@ -10,21 +10,21 @@ import Steps from '../../components/Steps.astro';
 
 The fullstackhero .NET Starter Kit uses **JWT Bearer authentication** combined with **permission-based authorization**. Every HTTP request flows through the authentication middleware first, which validates the token and builds a `ClaimsPrincipal`. Then, authorization middleware checks whether the user has the required permissions for the requested endpoint.
 
-This approach keeps authorization fast — permissions are embedded in the JWT, so no database roundtrip is needed on each request.
+This approach keeps authorization fast - permissions are embedded in the JWT, so no database roundtrip is needed on each request.
 
 ## Authentication Flow
 
 <Steps>
 
-1. **Request arrives** — The client sends an HTTP request with an `Authorization: Bearer <token>` header.
+1. **Request arrives** - The client sends an HTTP request with an `Authorization: Bearer <token>` header.
 
-2. **JWT extracted** — The authentication middleware extracts the token from the `Authorization` header.
+2. **JWT extracted** - The authentication middleware extracts the token from the `Authorization` header.
 
-3. **Token validated** — The token is validated against the configured parameters: signature, issuer, audience, and expiry.
+3. **Token validated** - The token is validated against the configured parameters: signature, issuer, audience, and expiry.
 
-4. **ClaimsPrincipal created** — On successful validation, a `ClaimsPrincipal` is created from the token claims and attached to `HttpContext.User`.
+4. **ClaimsPrincipal created** - On successful validation, a `ClaimsPrincipal` is created from the token claims and attached to `HttpContext.User`.
 
-5. **CurrentUserMiddleware extracts user context** — The middleware reads the claims and populates `ICurrentUser` with `UserId`, `Email`, `Tenant`, and `Permissions`.
+5. **CurrentUserMiddleware extracts user context** - The middleware reads the claims and populates `ICurrentUser` with `UserId`, `Email`, `Tenant`, and `Permissions`.
 
 </Steps>
 
@@ -46,10 +46,10 @@ endpoints.MapPost("/register", handler)
 
 The `CurrentUserMiddleware` runs after authentication and extracts a strongly-typed `ICurrentUser` from the `ClaimsPrincipal`. This provides a clean API for accessing user context throughout the application:
 
-- **UserId** — The authenticated user's unique identifier.
-- **Email** — The user's email address.
-- **Tenant** — The tenant ID from the tenant claim.
-- **Permissions** — A collection of permission strings assigned to the user.
+- **UserId** - The authenticated user's unique identifier.
+- **Email** - The user's email address.
+- **Tenant** - The tenant ID from the tenant claim.
+- **Permissions** - A collection of permission strings assigned to the user.
 
 Any service can inject `ICurrentUser` to access the current request's user context without touching `HttpContext` directly.
 
@@ -69,9 +69,9 @@ Permission constants are defined in `Shared/Identity/IdentityPermissionConstants
 
 Not all paths require authentication. The `PathAwareAuthorizationHandler` allows unauthenticated access to specific paths that are needed for API documentation and static assets:
 
-- `/scalar` — API documentation UI
-- `/openapi` — OpenAPI specification endpoints
-- `/favicon.ico` — Browser favicon requests
+- `/scalar` - API documentation UI
+- `/openapi` - OpenAPI specification endpoints
+- `/favicon.ico` - Browser favicon requests
 
 Requests to these paths bypass the authorization requirement, even if a global authorization policy is applied.
 

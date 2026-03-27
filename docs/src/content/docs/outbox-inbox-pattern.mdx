@@ -37,7 +37,7 @@ A background job periodically queries the `OutboxMessages` table for unprocessed
 
 ### Messages are published to the event bus
 
-Each message is deserialized back into its original event type and published to the event bus — either InMemory or RabbitMQ depending on your configuration.
+Each message is deserialized back into its original event type and published to the event bus - either InMemory or RabbitMQ depending on your configuration.
 
 ### Successful messages are marked as processed
 
@@ -111,23 +111,23 @@ public async Task DispatchAsync(CancellationToken ct = default)
 
 The dispatcher follows a straightforward flow:
 
-- **Batch processing** — `GetPendingBatchAsync` fetches a configurable number of unprocessed messages, controlled by `EventingOptions.OutboxBatchSize`.
-- **Deserialization** — The `Type` field is used to resolve the .NET type, and `Payload` is deserialized back into the original event object.
-- **Publishing** — The event is published to the configured event bus (`InMemoryEventBus` or `RabbitMqEventBus`).
-- **Error handling** — On failure, the retry count is incremented and the error message is stored. When `RetryCount` reaches `EventingOptions.OutboxMaxRetries`, the message is dead-lettered to prevent infinite retries.
+- **Batch processing** - `GetPendingBatchAsync` fetches a configurable number of unprocessed messages, controlled by `EventingOptions.OutboxBatchSize`.
+- **Deserialization** - The `Type` field is used to resolve the .NET type, and `Payload` is deserialized back into the original event object.
+- **Publishing** - The event is published to the configured event bus (`InMemoryEventBus` or `RabbitMqEventBus`).
+- **Error handling** - On failure, the retry count is incremented and the error message is stored. When `RetryCount` reaches `EventingOptions.OutboxMaxRetries`, the message is dead-lettered to prevent infinite retries.
 
 ## Inbox Pattern
 
 The outbox guarantees that events are published. The **inbox pattern** guarantees that events are processed only once on the consumer side.
 
-Because the outbox provides at-least-once delivery, the same event may arrive more than once — for example, if the dispatcher crashes after publishing but before marking the message as processed. The inbox prevents duplicate handling.
+Because the outbox provides at-least-once delivery, the same event may arrive more than once - for example, if the dispatcher crashes after publishing but before marking the message as processed. The inbox prevents duplicate handling.
 
 ### How It Works
 
 Before processing an incoming integration event, the handler checks the `InboxMessages` table:
 
-1. **If the event ID already exists** — the event was already processed. Skip it.
-2. **If the event ID does not exist** — process the event and record its ID in the inbox.
+1. **If the event ID already exists** - the event was already processed. Skip it.
+2. **If the event ID does not exist** - process the event and record its ID in the inbox.
 
 This makes every handler idempotent by default, regardless of how many times the same event is delivered.
 
@@ -178,10 +178,10 @@ Configure eventing behavior in your `appsettings.json`:
 
 The outbox and inbox patterns together provide strong reliability guarantees for event-driven communication:
 
-- **At-least-once delivery** — The outbox persists events atomically with domain changes and retries failed publishes. No event is silently lost.
-- **Idempotent processing** — The inbox deduplicates incoming events by ID. Handlers can safely assume they will not process the same event twice.
-- **Dead-letter handling** — Poison messages that repeatedly fail are flagged as dead-lettered after exceeding the maximum retry count. This prevents a single bad message from blocking the entire outbox queue.
+- **At-least-once delivery** - The outbox persists events atomically with domain changes and retries failed publishes. No event is silently lost.
+- **Idempotent processing** - The inbox deduplicates incoming events by ID. Handlers can safely assume they will not process the same event twice.
+- **Dead-letter handling** - Poison messages that repeatedly fail are flagged as dead-lettered after exceeding the maximum retry count. This prevents a single bad message from blocking the entire outbox queue.
 
 <Aside type="warning" title="At-Least-Once, Not Exactly-Once">
-The outbox guarantees at-least-once delivery, not exactly-once. Your handlers MUST be idempotent — processing the same event twice should produce the same result. The inbox pattern handles this automatically for integration events, but if you bypass the inbox or handle events manually, ensure idempotency yourself.
+The outbox guarantees at-least-once delivery, not exactly-once. Your handlers MUST be idempotent - processing the same event twice should produce the same result. The inbox pattern handles this automatically for integration events, but if you bypass the inbox or handle events manually, ensure idempotency yourself.
 </Aside>

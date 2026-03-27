@@ -13,21 +13,21 @@ The starter kit includes a multi-stage Dockerfile and a docker-compose configura
 ## Dockerfile Walkthrough
 
 <Steps>
-  1. **Build stage** — Uses `mcr.microsoft.com/dotnet/sdk:10.0-preview` as the base image. Copies all `.csproj` files first to take advantage of Docker layer caching during `dotnet restore`, then copies the remaining source and runs `dotnet build`.
+  1. **Build stage** - Uses `mcr.microsoft.com/dotnet/sdk:10.0-preview` as the base image. Copies all `.csproj` files first to take advantage of Docker layer caching during `dotnet restore`, then copies the remaining source and runs `dotnet build`.
 
-  2. **Publish stage** — Runs `dotnet publish` with Release configuration, outputting to `/app/publish`. This produces a self-contained set of assemblies ready for deployment.
+  2. **Publish stage** - Runs `dotnet publish` with Release configuration, outputting to `/app/publish`. This produces a self-contained set of assemblies ready for deployment.
 
-  3. **Runtime stage** — Uses the lightweight `mcr.microsoft.com/dotnet/aspnet:10.0-preview` image. Copies the published output from the previous stage, exposes port 8080, sets `ASPNETCORE_ENVIRONMENT=Production`, and defines the entry point.
+  3. **Runtime stage** - Uses the lightweight `mcr.microsoft.com/dotnet/aspnet:10.0-preview` image. Copies the published output from the previous stage, exposes port 8080, sets `ASPNETCORE_ENVIRONMENT=Production`, and defines the entry point.
 </Steps>
 
 ## Docker Compose
 
 The `docker-compose.yml` defines four services that make up the full development stack:
 
-- **api** — The Playground.Api application, built from the Dockerfile
-- **postgres** — PostgreSQL 17 with a persistent volume for data
-- **redis** — Redis 7 Alpine for distributed caching
-- **otel-collector** — OpenTelemetry Collector for traces, metrics, and logs
+- **api** - The Playground.Api application, built from the Dockerfile
+- **postgres** - PostgreSQL 17 with a persistent volume for data
+- **redis** - Redis 7 Alpine for distributed caching
+- **otel-collector** - OpenTelemetry Collector for traces, metrics, and logs
 
 ```yaml
 services:

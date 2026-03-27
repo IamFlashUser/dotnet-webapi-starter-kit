@@ -7,13 +7,13 @@ import Aside from '../../components/Aside.astro';
 import Tabs from '../../components/Tabs.astro';
 import TabPanel from '../../components/TabPanel.astro';
 
-fullstackhero provides a complete **integration eventing infrastructure** for cross-module communication. The eventing system is split into two projects — **Eventing.Abstractions** (contracts and interfaces) and **Eventing** (implementations) — so that modules only depend on the abstractions while the concrete transport is configured at the host level.
+fullstackhero provides a complete **integration eventing infrastructure** for cross-module communication. The eventing system is split into two projects - **Eventing.Abstractions** (contracts and interfaces) and **Eventing** (implementations) - so that modules only depend on the abstractions while the concrete transport is configured at the host level.
 
 Modules publish integration events through `IEventBus`, and handler implementations receive them via `IIntegrationEventHandler<T>`. The framework includes two event bus implementations (InMemory and RabbitMQ), a transactional outbox for reliable publishing, and an inbox for idempotent consumption.
 
 ## Abstractions
 
-The `Eventing.Abstractions` project sits at Layer 0 of the dependency hierarchy — it has zero project references and defines the contracts that all modules program against.
+The `Eventing.Abstractions` project sits at Layer 0 of the dependency hierarchy - it has zero project references and defines the contracts that all modules program against.
 
 ### IIntegrationEvent
 
@@ -32,11 +32,11 @@ public interface IIntegrationEvent
 
 Every integration event carries five pieces of metadata:
 
-- **Id** — unique identifier for this specific event occurrence
-- **OccurredOnUtc** — timestamp when the event was created
-- **TenantId** — tenant context for multitenant scenarios (null for global events)
-- **CorrelationId** — tracing identifier to correlate related operations across modules
-- **Source** — logical origin of the event (module or service name)
+- **Id** - unique identifier for this specific event occurrence
+- **OccurredOnUtc** - timestamp when the event was created
+- **TenantId** - tenant context for multitenant scenarios (null for global events)
+- **CorrelationId** - tracing identifier to correlate related operations across modules
+- **Source** - logical origin of the event (module or service name)
 
 ### IEventBus
 
@@ -50,7 +50,7 @@ public interface IEventBus
 }
 ```
 
-The single-event overload is a convenience — internally it delegates to the batch overload. Both methods are asynchronous and accept a cancellation token.
+The single-event overload is a convenience - internally it delegates to the batch overload. Both methods are asynchronous and accept a cancellation token.
 
 ### `IIntegrationEventHandler<T>`
 
@@ -93,10 +93,10 @@ The default event bus for single-process deployments. It resolves `IIntegrationE
 
 **Key characteristics:**
 
-- **DI-based handler resolution** — creates a new scope per event and resolves all registered handlers for the event type
-- **Inbox integration** — if an `IInboxStore` is registered, the bus checks whether each event has already been processed by a given handler before invoking it, providing idempotent delivery
-- **Sequential execution** — handlers for the same event are invoked one at a time in registration order
-- **Structured logging** — uses source-generated `LoggerMessage` methods for high-performance logging of publish, skip, and no-handler scenarios
+- **DI-based handler resolution** - creates a new scope per event and resolves all registered handlers for the event type
+- **Inbox integration** - if an `IInboxStore` is registered, the bus checks whether each event has already been processed by a given handler before invoking it, providing idempotent delivery
+- **Sequential execution** - handlers for the same event are invoked one at a time in registration order
+- **Structured logging** - uses source-generated `LoggerMessage` methods for high-performance logging of publish, skip, and no-handler scenarios
 
 ```csharp
 // Registration happens automatically based on configuration
@@ -119,13 +119,13 @@ The distributed event bus for multi-process and multi-service deployments. It pu
 
 **Key characteristics:**
 
-- **Topic exchange** — events are published with the event type's full name as the routing key, enabling consumers to subscribe to specific event types using wildcard bindings
-- **Persistent delivery** — messages use `DeliveryModes.Persistent` so they survive broker restarts
-- **Connection pooling** — a single connection and channel are reused across publishes, with thread-safe lazy initialization via `SemaphoreSlim`
-- **Automatic reconnection** — if a publish fails, the bus disposes the current connection, creates a new one, and retries
-- **Retry logic** — configurable retry count and delay for transient publish failures
-- **SSL support** — optional TLS encryption for the broker connection
-- **Rich message metadata** — each message carries the event type, tenant ID, source, correlation ID, and timestamp in headers and properties
+- **Topic exchange** - events are published with the event type's full name as the routing key, enabling consumers to subscribe to specific event types using wildcard bindings
+- **Persistent delivery** - messages use `DeliveryModes.Persistent` so they survive broker restarts
+- **Connection pooling** - a single connection and channel are reused across publishes, with thread-safe lazy initialization via `SemaphoreSlim`
+- **Automatic reconnection** - if a publish fails, the bus disposes the current connection, creates a new one, and retries
+- **Retry logic** - configurable retry count and delay for transient publish failures
+- **SSL support** - optional TLS encryption for the broker connection
+- **Rich message metadata** - each message carries the event type, tenant ID, source, correlation ID, and timestamp in headers and properties
 
 ```json
 {
@@ -164,7 +164,7 @@ The distributed event bus for multi-process and multi-service deployments. It pu
 </Tabs>
 
 <Aside type="tip" title="Choosing a Provider">
-Use **InMemory** for local development and single-process deployments where all modules run in the same host. Switch to **RabbitMQ** when you need to distribute events across multiple services or require broker-level durability and routing. The switch is a single configuration change — no code modifications required.
+Use **InMemory** for local development and single-process deployments where all modules run in the same host. Switch to **RabbitMQ** when you need to distribute events across multiple services or require broker-level durability and routing. The switch is a single configuration change - no code modifications required.
 </Aside>
 
 ## Outbox Pattern
@@ -181,12 +181,12 @@ Entity Change + OutboxMessage  →  Same DB Transaction
 
 The `OutboxMessage` entity tracks each event's lifecycle:
 
-- **Id** — the integration event's unique identifier
-- **Type** — assembly-qualified type name for deserialization
-- **Payload** — JSON-serialized event data
-- **TenantId / CorrelationId** — metadata carried through from the event
-- **ProcessedOnUtc** — set when the dispatcher successfully publishes the event
-- **RetryCount / LastError / IsDead** — retry tracking and dead-letter support
+- **Id** - the integration event's unique identifier
+- **Type** - assembly-qualified type name for deserialization
+- **Payload** - JSON-serialized event data
+- **TenantId / CorrelationId** - metadata carried through from the event
+- **ProcessedOnUtc** - set when the dispatcher successfully publishes the event
+- **RetryCount / LastError / IsDead** - retry tracking and dead-letter support
 
 The `OutboxDispatcher` processes pending messages in configurable batches. Messages that fail repeatedly are marked as dead-lettered after exceeding the maximum retry count.
 
@@ -264,7 +264,7 @@ public sealed record UserRegisteredIntegrationEvent(
 ) : IIntegrationEvent;
 ```
 
-The first five properties satisfy the `IIntegrationEvent` contract. Add any additional domain-specific data as extra properties — these are serialized into the event payload and available to all handlers.
+The first five properties satisfy the `IIntegrationEvent` contract. Add any additional domain-specific data as extra properties - these are serialized into the event payload and available to all handlers.
 
 A common pattern is to publish integration events from within a domain event handler, bridging internal domain events with the external contract:
 
@@ -318,7 +318,7 @@ public sealed class UserRegisteredEmailHandler
 }
 ```
 
-Multiple handlers can subscribe to the same event type. Each handler runs independently — if one handler fails, the others still execute (in the InMemory bus, an exception from one handler will propagate after all handlers have been attempted).
+Multiple handlers can subscribe to the same event type. Each handler runs independently - if one handler fails, the others still execute (in the InMemory bus, an exception from one handler will propagate after all handlers have been attempted).
 
 ## Configuration
 
@@ -368,5 +368,5 @@ services.AddIntegrationEventHandlers(typeof(IdentityModule).Assembly);
 `AddIntegrationEventHandlers` scans the provided assemblies for classes implementing `IIntegrationEventHandler<T>` and registers them as scoped services in the DI container.
 
 <Aside type="warning" title="Idempotency is Critical">
-Integration events can be delivered more than once — the outbox dispatcher retries failed messages, and network issues can cause duplicate delivery with RabbitMQ. Always design your handlers to be idempotent. Enable the inbox pattern (`EnableInbox: true`) to get automatic duplicate detection, but also ensure your handler logic is safe to execute multiple times with the same input.
+Integration events can be delivered more than once - the outbox dispatcher retries failed messages, and network issues can cause duplicate delivery with RabbitMQ. Always design your handlers to be idempotent. Enable the inbox pattern (`EnableInbox: true`) to get automatic duplicate detection, but also ensure your handler logic is safe to execute multiple times with the same input.
 </Aside>

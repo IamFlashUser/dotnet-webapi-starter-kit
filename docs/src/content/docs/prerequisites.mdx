@@ -11,7 +11,7 @@ import Steps from '../../components/Steps.astro';
 The fullstackhero .NET Starter Kit requires a few tools to be installed on your machine before you can build and run the project. This guide walks you through each dependency and how to verify your setup.
 
 <Aside type="note">
-If you plan to use .NET Aspire (recommended for local development), Docker is the only infrastructure prerequisite — Aspire orchestrates PostgreSQL and Redis containers for you.
+If you plan to use .NET Aspire (recommended for local development), Docker is the only infrastructure prerequisite - Aspire orchestrates PostgreSQL and Redis containers for you.
 </Aside>
 
 ## Required
@@ -99,7 +99,7 @@ sudo apt-get install -y postgresql-16
 </Tabs>
 
 <Aside type="tip" title="Using Docker?">
-You can skip installing PostgreSQL directly — Aspire or docker-compose will handle it for you.
+You can skip installing PostgreSQL directly - Aspire or docker-compose will handle it for you.
 </Aside>
 
 ### Install Redis
@@ -111,7 +111,7 @@ Redis is used for distributed caching and is required at runtime.
 Redis does not officially support Windows. Use one of these alternatives:
 
 - **Docker** (recommended): `docker run -d -p 6379:6379 redis:latest`
-- **Memurai**: A Redis-compatible server for Windows — download from [memurai.com](https://www.memurai.com/)
+- **Memurai**: A Redis-compatible server for Windows - download from [memurai.com](https://www.memurai.com/)
 </TabPanel>
 <TabPanel>
 Install via **Homebrew**:
@@ -144,7 +144,7 @@ sudo systemctl start redis-server
 </Tabs>
 
 <Aside type="tip" title="Using Docker?">
-You can skip installing Redis directly — Aspire or docker-compose will handle it for you.
+You can skip installing Redis directly - Aspire or docker-compose will handle it for you.
 </Aside>
 
 </Steps>

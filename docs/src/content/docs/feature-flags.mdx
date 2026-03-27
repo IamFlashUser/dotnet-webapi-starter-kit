@@ -7,7 +7,7 @@ import Aside from '../../components/Aside.astro';
 import Tabs from '../../components/Tabs.astro';
 import TabPanel from '../../components/TabPanel.astro';
 
-fullstackhero integrates **Microsoft.FeatureManagement** to provide feature flags with per-tenant targeting. Feature flags let you toggle functionality without redeploying code — useful for gradual rollouts, A/B testing, and tenant-specific features in multitenant applications.
+fullstackhero integrates **Microsoft.FeatureManagement** to provide feature flags with per-tenant targeting. Feature flags let you toggle functionality without redeploying code - useful for gradual rollouts, A/B testing, and tenant-specific features in multitenant applications.
 
 ## Registration
 
@@ -104,7 +104,7 @@ public sealed class TenantFeatureFilter(
 
 ## Gating Endpoints with .RequireFeature()
 
-The `FeatureGateEndpointFilter` is an `IEndpointFilter` that checks whether a feature flag is enabled before allowing the request to proceed. If the flag is disabled, it returns **404 Not Found** — the endpoint behaves as if it does not exist.
+The `FeatureGateEndpointFilter` is an `IEndpointFilter` that checks whether a feature flag is enabled before allowing the request to proceed. If the flag is disabled, it returns **404 Not Found** - the endpoint behaves as if it does not exist.
 
 Apply it to any endpoint using the `.RequireFeature()` extension method:
 
@@ -195,5 +195,5 @@ As confidence grows, add more tenants to the `AllowedTenants` array. When the fe
 ```
 
 <Aside type="note" title="Configuration Sources">
-Since feature flags are read from `IConfiguration`, they work with any configuration provider — `appsettings.json`, environment variables, Azure App Configuration, AWS Systems Manager, or any custom provider. This makes it straightforward to manage flags externally without code changes.
+Since feature flags are read from `IConfiguration`, they work with any configuration provider - `appsettings.json`, environment variables, Azure App Configuration, AWS Systems Manager, or any custom provider. This makes it straightforward to manage flags externally without code changes.
 </Aside>

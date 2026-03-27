@@ -11,13 +11,13 @@ import TabPanel from '../../components/TabPanel.astro';
 
 The fullstackhero .NET Starter Kit implements all three pillars of observability:
 
-- **Logs** — Structured logging with Serilog
-- **Traces** — Distributed tracing with OpenTelemetry
-- **Metrics** — Application metrics with OpenTelemetry
+- **Logs** - Structured logging with Serilog
+- **Traces** - Distributed tracing with OpenTelemetry
+- **Metrics** - Application metrics with OpenTelemetry
 
 Together, these provide full visibility into application behavior across all modules and tenants.
 
-## Serilog — Structured Logging
+## Serilog - Structured Logging
 
 Serilog provides structured logging with contextual enrichment. Every log entry is enriched with request context automatically.
 
@@ -25,9 +25,9 @@ Serilog provides structured logging with contextual enrichment. Every log entry 
 
 The `HttpRequestContextEnricher` adds the following properties to every log entry within a request scope:
 
-- **CorrelationId** — Unique identifier for tracing a request across services.
-- **UserId** — The authenticated user's ID.
-- **TenantId** — The current tenant's identifier.
+- **CorrelationId** - Unique identifier for tracing a request across services.
+- **UserId** - The authenticated user's ID.
+- **TenantId** - The current tenant's identifier.
 
 This enrichment ensures that logs can be filtered and correlated by user, tenant, or request.
 
@@ -85,10 +85,10 @@ Log.Information("Starting application...");
 
 Distributed tracing captures the full lifecycle of requests across the application. The following instrumentations are configured:
 
-- **ASP.NET Core** — HTTP request spans with route, status code, and duration.
-- **Entity Framework Core** — Database query spans with command text and duration.
-- **Mediator** — Command/query spans via `MediatorTracingBehavior`.
-- **RabbitMQ** — Message publish/consume spans for integration events.
+- **ASP.NET Core** - HTTP request spans with route, status code, and duration.
+- **Entity Framework Core** - Database query spans with command text and duration.
+- **Mediator** - Command/query spans via `MediatorTracingBehavior`.
+- **RabbitMQ** - Message publish/consume spans for integration events.
 
 All trace data is exported via OTLP to a configurable endpoint.
 
@@ -116,7 +116,7 @@ When running the application with .NET Aspire (via `FSH.Playground.AppHost`), tr
 
 <Aside type="tip">
 
-Use the Aspire dashboard for local development — it provides a unified view of all telemetry without needing to set up Jaeger, Seq, or Prometheus separately.
+Use the Aspire dashboard for local development - it provides a unified view of all telemetry without needing to set up Jaeger, Seq, or Prometheus separately.
 
 </Aside>
 
