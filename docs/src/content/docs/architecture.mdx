@@ -41,7 +41,7 @@ The codebase is organized into three layers, each with a clear responsibility:
 ├─────────────────────────────────────────────────────────────┤
 │                         Modules                             │
 │            (Independent bounded contexts)                   │
-│        Identity  ·  Multitenancy  ·  Auditing               │
+│    Identity  ·  Multitenancy  ·  Auditing  ·  Webhooks       │
 ├─────────────────────────────────────────────────────────────┤
 │                      BuildingBlocks                         │
 │          (Shared framework libraries)                       │
@@ -73,7 +73,8 @@ The codebase is organized into three layers, each with a clear responsibility:
     { name: 'Modules/', type: 'folder', desc: 'Bounded context modules', children: [
       { name: 'Identity/', type: 'folder', desc: 'Users, roles, sessions, JWT auth' },
       { name: 'Multitenancy/', type: 'folder', desc: 'Tenant provisioning and resolution' },
-      { name: 'Auditing/', type: 'folder', desc: 'Audit trail capture and querying' }
+      { name: 'Auditing/', type: 'folder', desc: 'Audit trail capture and querying' },
+      { name: 'Webhooks/', type: 'folder', desc: 'Outbound webhook subscriptions and delivery' }
     ]},
     { name: 'Playground/', type: 'folder', desc: 'Host applications', children: [
       { name: 'Playground.Api/', type: 'folder', desc: 'Reference ASP.NET Core API host' },
@@ -118,6 +119,8 @@ public void Contracts_Should_Not_Depend_On_Module_Implementations()
         "FSH.Modules.Identity.Data",
         "FSH.Modules.Multitenancy.Features",
         "FSH.Modules.Multitenancy.Data",
+        "FSH.Modules.Webhooks.Features",
+        "FSH.Modules.Webhooks.Data",
     ];
 
     foreach (var assembly in ContractsAssemblies)
@@ -307,6 +310,11 @@ Modules are discovered and loaded automatically at startup through the `ModuleLo
 [assembly: FshModule(typeof(AuditingModule), 300)]
 ```
 
+```csharp
+// Modules.Webhooks/AssemblyInfo.cs
+[assembly: FshModule(typeof(WebhooksModule), 400)]
+```
+
 The `Order` parameter controls startup sequencing -- lower numbers load first. This matters when modules have initialization dependencies (for example, Identity must initialize before Auditing can record audit trails).
 
 Every module implements the `IModule` interface:
@@ -314,13 +322,13 @@ Every module implements the `IModule` interface:
 ```csharp
 public interface IModule
 {
-    // Register services, options, health checks — no ASP.NET types here
+    // Register services, options, health checks - no ASP.NET types here
     void ConfigureServices(IHostApplicationBuilder builder);
 
     // Wire up Minimal API endpoints
     void MapEndpoints(IEndpointRouteBuilder endpoints);
 
-    // Optional middleware registration — default is no-op
+    // Optional middleware registration - default is no-op
     void ConfigureMiddleware(IApplicationBuilder app) { }
 }
 ```
@@ -331,7 +339,8 @@ The `ModuleLoader` scans assemblies for `[FshModule]` attributes, instantiates e
 // In the host's Program.cs
 builder.AddModules(typeof(IdentityModule).Assembly,
                    typeof(MultitenancyModule).Assembly,
-                   typeof(AuditingModule).Assembly);
+                   typeof(AuditingModule).Assembly,
+                   typeof(WebhooksModule).Assembly);
 
 // Later in the pipeline
 app.UseModuleMiddlewares();
@@ -400,6 +409,7 @@ fullstackhero handles cross-cutting concerns at the BuildingBlocks level so that
 | **Authentication & Authorization** | Identity module + JWT Bearer | User registration, login, role-based and permission-based access control. See [Identity](/dotnet-starter-kit/modules/identity/). |
 | **Multitenancy** | Multitenancy module + Finbuckle | Tenant resolution via claims, headers, or query strings. Per-tenant database isolation. See [Multitenancy](/dotnet-starter-kit/modules/multitenancy/). |
 | **Auditing** | Auditing module | Automatic audit trail capture for all entity changes. See [Auditing](/dotnet-starter-kit/modules/auditing/). |
+| **Webhooks** | Webhooks module | Outbound webhook subscriptions with HMAC signing and resilient delivery. See [Webhooks](/dotnet-starter-kit/webhooks/). |
 | **Exception Handling** | Web BuildingBlock | Global exception handler converts exceptions to RFC 9457 ProblemDetails responses. Framework exception types include `CustomException`, `NotFoundException`, `ForbiddenException`, and `UnauthorizedException`. |
 | **Validation** | Mediator pipeline + FluentValidation | `ValidationBehavior` runs validators automatically before handlers execute. Validation failures return 400 Bad Request with structured error details. |
 | **Caching** | Caching BuildingBlock + Redis | Distributed caching with a clean abstraction layer backed by StackExchange.Redis. |
@@ -409,5 +419,5 @@ fullstackhero handles cross-cutting concerns at the BuildingBlocks level so that
 | **API Versioning** | Asp.Versioning | URL-based versioning (`v{version:apiVersion}`) with version sets per module. |
 
 <Aside type="note" title="Explore further">
-Each topic above has dedicated documentation. Start with [Project Structure](/dotnet-starter-kit/project-structure/) for a detailed layout, [CQRS](/dotnet-starter-kit/cqrs/) for the command/query pipeline, or jump into the module pages for [Identity](/dotnet-starter-kit/modules/identity/), [Multitenancy](/dotnet-starter-kit/modules/multitenancy/), and [Auditing](/dotnet-starter-kit/modules/auditing/).
+Each topic above has dedicated documentation. Start with [Project Structure](/dotnet-starter-kit/project-structure/) for a detailed layout, [CQRS](/dotnet-starter-kit/cqrs/) for the command/query pipeline, or jump into the module pages for [Identity](/dotnet-starter-kit/modules/identity/), [Multitenancy](/dotnet-starter-kit/modules/multitenancy/), [Auditing](/dotnet-starter-kit/modules/auditing/), and [Webhooks](/dotnet-starter-kit/webhooks/).
 </Aside>

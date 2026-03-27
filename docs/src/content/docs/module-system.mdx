@@ -7,7 +7,7 @@ import Aside from '../../components/Aside.astro';
 import Steps from '../../components/Steps.astro';
 import FileTree from '../../components/FileTree.astro';
 
-The module system is the foundation of fullstackhero's modular monolith architecture. It enables **plug-and-play bounded contexts** — each module is a self-contained unit with its own dependency injection, endpoints, middleware, and database context. The framework discovers and loads modules automatically at startup, so adding a new capability is as simple as dropping in a new module project.
+The module system is the foundation of fullstackhero's modular monolith architecture. It enables **plug-and-play bounded contexts** - each module is a self-contained unit with its own dependency injection, endpoints, middleware, and database context. The framework discovers and loads modules automatically at startup, so adding a new capability is as simple as dropping in a new module project.
 
 ## IModule Interface
 
@@ -24,13 +24,13 @@ public interface IModule
 }
 ```
 
-- **`ConfigureServices`** — Called during host startup. Register DI services, configuration options, health checks, DbContext, and anything else the module needs. This is where you wire up EF Core, add Hangfire jobs, or register module-specific services.
-- **`MapEndpoints`** — Called during endpoint mapping. Wire minimal API endpoints under versioned API groups (`api/v1/{module}/...`). Each module owns its own route namespace.
-- **`ConfigureMiddleware`** — Called during the middleware pipeline configuration. This method has a default no-op implementation, so modules only override it when they need to inject custom middleware into the pipeline.
+- **`ConfigureServices`** - Called during host startup. Register DI services, configuration options, health checks, DbContext, and anything else the module needs. This is where you wire up EF Core, add Hangfire jobs, or register module-specific services.
+- **`MapEndpoints`** - Called during endpoint mapping. Wire minimal API endpoints under versioned API groups (`api/v1/{module}/...`). Each module owns its own route namespace.
+- **`ConfigureMiddleware`** - Called during the middleware pipeline configuration. This method has a default no-op implementation, so modules only override it when they need to inject custom middleware into the pipeline.
 
 ## Module Registration
 
-Modules are registered using an **assembly-level attribute** — there is no manual wiring in `Program.cs`. Each module project declares itself with the `[FshModule]` attribute:
+Modules are registered using an **assembly-level attribute** - there is no manual wiring in `Program.cs`. Each module project declares itself with the `[FshModule]` attribute:
 
 ```csharp
 [assembly: FshModule(typeof(IdentityModule), Order = 1)]
@@ -55,7 +55,7 @@ public sealed class FshModuleAttribute : Attribute
 
 <Aside type="tip" title="Startup Sequencing">
 
-The `Order` parameter controls startup sequencing. Lower numbers load first — useful when modules depend on each other's services. For example, Identity (Order 1) loads before Multitenancy (Order 2), ensuring authentication services are available when the tenant module configures its pipeline.
+The `Order` parameter controls startup sequencing. Lower numbers load first - useful when modules depend on each other's services. For example, Identity (Order 1) loads before Multitenancy (Order 2), ensuring authentication services are available when the tenant module configures its pipeline.
 
 </Aside>
 
@@ -101,9 +101,9 @@ public static class ModuleLoader
 
 Key design decisions in the loader:
 
-- **Thread-safe initialization** — The `lock` and `_modulesLoaded` flag ensure modules are loaded exactly once, even if `AddModules` is called multiple times.
-- **Deterministic ordering** — Modules are sorted by `Order` first, then alphabetically by type name as a tiebreaker. This makes startup behavior predictable and reproducible.
-- **Automatic validator registration** — FluentValidation validators from all provided assemblies are discovered and registered in a single pass, so individual modules do not need to register their own validators.
+- **Thread-safe initialization** - The `lock` and `_modulesLoaded` flag ensure modules are loaded exactly once, even if `AddModules` is called multiple times.
+- **Deterministic ordering** - Modules are sorted by `Order` first, then alphabetically by type name as a tiebreaker. This makes startup behavior predictable and reproducible.
+- **Automatic validator registration** - FluentValidation validators from all provided assemblies are discovered and registered in a single pass, so individual modules do not need to register their own validators.
 
 Here is how the full startup sequence flows:
 
@@ -127,7 +127,7 @@ Each module is instantiated via `Activator.CreateInstance` and its `ConfigureSer
 
 ### Validators are auto-registered
 
-FluentValidation validators from all provided assemblies are discovered and registered automatically — no per-module registration needed.
+FluentValidation validators from all provided assemblies are discovered and registered automatically - no per-module registration needed.
 
 ### Middleware is configured
 
@@ -181,21 +181,22 @@ When Module A needs to communicate with Module B, it sends a command or query de
 
 <Aside type="warning" title="Architecture Tests Enforce This">
 
-Architecture tests in `Architecture.Tests/ModuleArchitectureTests.cs` enforce this boundary at build time using NetArchTest. Any direct module-to-module runtime reference will fail the test suite. Do not bypass these tests — they exist to prevent the kind of tight coupling that turns a modular monolith into a big ball of mud.
+Architecture tests in `Architecture.Tests/ModuleArchitectureTests.cs` enforce this boundary at build time using NetArchTest. Any direct module-to-module runtime reference will fail the test suite. Do not bypass these tests - they exist to prevent the kind of tight coupling that turns a modular monolith into a big ball of mud.
 
 </Aside>
 
 ## Existing Modules
 
-fullstackhero ships with three core modules:
+fullstackhero ships with four core modules:
 
 | Module | Order | Purpose |
 |---|---|---|
 | **Identity** | 1 | Users, roles, JWT authentication, sessions, user groups |
 | **Multitenancy** | 2 | Tenant management, provisioning, theme configuration |
 | **Auditing** | 3 | Audit trails, security auditing, exception tracking |
+| **Webhooks** | 400 | Outbound webhook subscriptions with HMAC signing and resilient delivery |
 
-These modules demonstrate the patterns and conventions you should follow when building your own modules. Identity loads first because other modules depend on authentication and user services. Multitenancy loads second to establish tenant context. Auditing loads last since it observes operations from other modules.
+These modules demonstrate the patterns and conventions you should follow when building your own modules. Identity loads first because other modules depend on authentication and user services. Multitenancy loads second to establish tenant context. Auditing loads third since it observes operations from other modules. Webhooks loads last as it is an independent module that pushes event notifications to external systems.
 
 ## Adding a New Module
 

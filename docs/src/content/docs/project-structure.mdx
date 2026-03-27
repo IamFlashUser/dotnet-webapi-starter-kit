@@ -10,12 +10,12 @@ The fullstackhero .NET Starter Kit is organized as a **modular monolith**. The c
 
 ## Solution Overview
 
-The solution file `FSH.Framework.slnx` uses the modern XML-based `.slnx` format introduced in .NET 9. It contains **27 projects** organized into five logical groups:
+The solution file `FSH.Framework.slnx` uses the modern XML-based `.slnx` format introduced in .NET 9. It contains **29 projects** organized into five logical groups:
 
 | Group | Projects | Purpose |
 |-------|----------|---------|
 | **BuildingBlocks** | 11 | Shared framework libraries consumed by all modules |
-| **Modules** | 6 | Bounded context modules (runtime + contracts pairs) |
+| **Modules** | 8 | Bounded context modules (runtime + contracts pairs) |
 | **Playground** | 3 | Sample host applications (API, Blazor, Aspire) |
 | **Tests** | 5 | Unit tests, integration tests, and architecture tests |
 | **Tools** | 2 | CLI tooling and EF Core migrations |
@@ -43,16 +43,20 @@ The `.slnx` format is a cleaner, XML-based replacement for the legacy `.sln` for
     ]},
     { name: 'Modules/', type: 'folder', desc: 'Bounded context modules', children: [
       { name: 'Identity/', type: 'folder', desc: 'Authentication, users, roles, sessions', children: [
-        { name: 'Modules.Identity/', type: 'folder', desc: 'Runtime — internal implementation' },
-        { name: 'Modules.Identity.Contracts/', type: 'folder', desc: 'Public API — commands, queries, DTOs' }
+        { name: 'Modules.Identity/', type: 'folder', desc: 'Runtime - internal implementation' },
+        { name: 'Modules.Identity.Contracts/', type: 'folder', desc: 'Public API - commands, queries, DTOs' }
       ]},
       { name: 'Multitenancy/', type: 'folder', desc: 'Tenant management and provisioning', children: [
-        { name: 'Modules.Multitenancy/', type: 'folder', desc: 'Runtime — internal implementation' },
-        { name: 'Modules.Multitenancy.Contracts/', type: 'folder', desc: 'Public API — commands, queries, DTOs' }
+        { name: 'Modules.Multitenancy/', type: 'folder', desc: 'Runtime - internal implementation' },
+        { name: 'Modules.Multitenancy.Contracts/', type: 'folder', desc: 'Public API - commands, queries, DTOs' }
       ]},
       { name: 'Auditing/', type: 'folder', desc: 'Audit trails and security auditing', children: [
-        { name: 'Modules.Auditing/', type: 'folder', desc: 'Runtime — internal implementation' },
-        { name: 'Modules.Auditing.Contracts/', type: 'folder', desc: 'Public API — commands, queries, DTOs' }
+        { name: 'Modules.Auditing/', type: 'folder', desc: 'Runtime - internal implementation' },
+        { name: 'Modules.Auditing.Contracts/', type: 'folder', desc: 'Public API - commands, queries, DTOs' }
+      ]},
+      { name: 'Webhooks/', type: 'folder', desc: 'Outbound webhook subscriptions and delivery', children: [
+        { name: 'Modules.Webhooks/', type: 'folder', desc: 'Runtime - internal implementation' },
+        { name: 'Modules.Webhooks.Contracts/', type: 'folder', desc: 'Public API - commands, queries, DTOs' }
       ]}
     ]},
     { name: 'Playground/', type: 'folder', desc: 'Sample host applications', children: [
@@ -76,7 +80,7 @@ The `.slnx` format is a cleaner, XML-based replacement for the legacy `.sln` for
     { name: 'Directory.Packages.props', desc: 'Central NuGet package versions' },
     { name: '.editorconfig', desc: 'Coding style rules' }
   ]},
-  { name: 'terraform/', type: 'folder', desc: 'AWS infrastructure-as-code' },
+  { name: 'deploy/', type: 'folder', desc: 'Deployment configs (Terraform, Docker, Dokploy)' },
   { name: 'docs/', type: 'folder', desc: 'Documentation site (Astro + Starlight)' },
   { name: '.github/workflows/', type: 'folder', desc: 'CI/CD pipelines' },
   { name: 'docker-compose.yml', desc: 'Local development containers' }
@@ -105,12 +109,12 @@ Every module in the starter kit is split into exactly two projects: a **runtime*
 **Contracts project** (`Modules.{Name}.Contracts/`) is the public API surface. It defines the commands, queries, response DTOs, integration events, and service interfaces that other modules are allowed to consume.
 
 <Aside type="note" title="Module Boundary Rule">
-A module **must not** reference another module's runtime project — only its Contracts project. This ensures modules remain loosely coupled and can evolve independently. This rule is automatically enforced by architecture tests in `Architecture.Tests/`.
+A module **must not** reference another module's runtime project - only its Contracts project. This ensures modules remain loosely coupled and can evolve independently. This rule is automatically enforced by architecture tests in `Architecture.Tests/`.
 </Aside>
 
 ## Feature Folder Layout
 
-Inside every runtime module, features follow the **Vertical Slice Architecture** pattern. Each feature is a self-contained folder that groups its endpoint, handler, and validator together — no scattering code across layers.
+Inside every runtime module, features follow the **Vertical Slice Architecture** pattern. Each feature is a self-contained folder that groups its endpoint, handler, and validator together - no scattering code across layers.
 
 The convention is:
 
@@ -151,10 +155,10 @@ This pattern keeps every file related to a feature co-located. When you need to 
 
 ## Dependency Hierarchy
 
-The projects follow a strict dependency hierarchy that flows in one direction — from foundational libraries up through modules to host applications.
+The projects follow a strict dependency hierarchy that flows in one direction - from foundational libraries up through modules to host applications.
 
 <FileTree items={[
-  { name: 'Core', type: 'folder', desc: 'No dependencies — DDD primitives, exceptions, CQRS interfaces', children: [
+  { name: 'Core', type: 'folder', desc: 'No dependencies - DDD primitives, exceptions, CQRS interfaces', children: [
     { name: 'Shared', type: 'folder', desc: 'Constants, DTOs, permission contracts', children: [
       { name: 'Persistence', type: 'folder', desc: 'EF Core abstractions, specifications, outbox/inbox' },
       { name: 'Eventing.Abstractions', type: 'folder', desc: 'Event contracts and interfaces', children: [
@@ -167,7 +171,7 @@ The projects follow a strict dependency hierarchy that flows in one direction �
       { name: 'Web', type: 'folder', desc: 'Host infrastructure, middleware, module system', children: [
         { name: 'Module Contracts', type: 'folder', desc: 'Public API surface for each module', children: [
           { name: 'Module Runtimes', type: 'folder', desc: 'Internal implementation per module', children: [
-            { name: 'Playground (host apps)', type: 'folder', desc: 'API, Blazor, Aspire — compose modules into runnable hosts' }
+            { name: 'Playground (host apps)', type: 'folder', desc: 'API, Blazor, Aspire - compose modules into runnable hosts' }
           ]}
         ]}
       ]}
@@ -179,11 +183,11 @@ The projects follow a strict dependency hierarchy that flows in one direction �
 - **Shared** adds cross-cutting constants, DTOs, and permission contracts.
 - **Infrastructure libraries** (Persistence, Caching, Eventing, Jobs, Mailing, Storage) each depend on Core and/or Shared but not on each other.
 - **Web** ties the infrastructure together and provides the module loading system.
-- **Modules** consume BuildingBlocks and other modules' Contracts projects — never their runtime projects.
+- **Modules** consume BuildingBlocks and other modules' Contracts projects - never their runtime projects.
 - **Playground** applications sit at the top, composing modules into runnable hosts.
 
 <Aside type="tip" title="Enforced by Architecture Tests">
-The dependency hierarchy is enforced by architecture tests in `Architecture.Tests/`. Any violation — such as a module referencing another module's runtime project or a BuildingBlock depending on a module — will fail the build.
+The dependency hierarchy is enforced by architecture tests in `Architecture.Tests/`. Any violation - such as a module referencing another module's runtime project or a BuildingBlock depending on a module - will fail the build.
 </Aside>
 
 ## Configuration Files
@@ -192,10 +196,10 @@ The `src/` directory contains several configuration files that govern how the en
 
 | File | Purpose |
 |------|---------|
-| `Directory.Build.props` | Shared MSBuild properties applied to every project — target framework (`net10.0`), nullable reference types, implicit usings, analyzers, and common metadata. |
+| `Directory.Build.props` | Shared MSBuild properties applied to every project - target framework (`net10.0`), nullable reference types, implicit usings, analyzers, and common metadata. |
 | `Directory.Packages.props` | Central package management. Every NuGet package version is declared here in a single place, so individual `.csproj` files reference packages without specifying versions. |
-| `.editorconfig` | Coding style rules enforced by the IDE and analyzers — indentation, namespace style, naming conventions, and severity levels. |
-| `FSH.Framework.slnx` | The solution file that ties all 27 projects together into the logical groups shown above. |
+| `.editorconfig` | Coding style rules enforced by the IDE and analyzers - indentation, namespace style, naming conventions, and severity levels. |
+| `FSH.Framework.slnx` | The solution file that ties all 29 projects together into the logical groups shown above. |
 
 <Aside type="warning" title="BuildingBlocks Are Protected">
 The `BuildingBlocks/` directory contains shared framework libraries consumed by every module in the solution. Changes here have a **wide blast radius** and can break multiple modules simultaneously. Do not modify BuildingBlocks without explicit approval and thorough testing across all dependent modules.
