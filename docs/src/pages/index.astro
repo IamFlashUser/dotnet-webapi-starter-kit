@@ -1708,7 +1708,7 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 	.author { padding: 6rem 0; border-top: 1px solid var(--border); }
 
 	.au-outer {
-		display: grid; grid-template-columns: auto 1fr; gap: 0;
+		display: grid; grid-template-columns: 340px 1fr; gap: 0;
 		border: 1px solid var(--border); border-radius: 16px;
 		overflow: hidden; background: var(--bg-card);
 		max-width: 56rem; margin: 0 auto;
@@ -1716,15 +1716,16 @@ import mukeshPhoto from '../assets/mukesh_murugan.png';
 
 	/* image column */
 	.au-img-col {
-		position: relative; width: 340px; min-height: 380px;
+		position: relative;
 		background: linear-gradient(180deg, rgba(74,222,128,0.04), var(--bg-card));
 		overflow: hidden;
 	}
 	.au-img {
+		position: absolute !important; inset: 0 !important;
 		width: 100% !important; height: 100% !important;
 		max-width: none !important; max-height: none !important;
-		object-fit: cover; object-position: center top;
-		display: block; position: absolute; inset: 0;
+		object-fit: cover !important; object-position: center top !important;
+		display: block !important;
 	}
 
 	/* body */
