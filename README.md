@@ -1,6 +1,35 @@
 # FullStackHero .NET 10 Starter Kit
 
+[![NuGet](https://img.shields.io/nuget/v/FullStackHero.CLI?label=fsh%20cli)](https://www.nuget.org/packages/FullStackHero.CLI)
+[![NuGet](https://img.shields.io/nuget/v/FullStackHero.Framework.Web?label=framework)](https://www.nuget.org/packages/FullStackHero.Framework.Web)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 An opinionated, production-first starter for building multi-tenant SaaS and enterprise APIs on .NET 10. You get ready-to-ship Identity, Multitenancy, Auditing, caching, mailing, jobs, storage, health, OpenAPI, and OpenTelemetry—wired through Minimal APIs, Mediator, and EF Core.
+
+## Quick Start
+
+You get the complete source code — BuildingBlocks, Modules, and Playground — with full project references. No black-box NuGet packages; you own and can modify everything.
+
+### Option 1: dotnet new template (recommended)
+
+```bash
+dotnet new install FullStackHero.NET.StarterKit
+dotnet new fsh -n MyApp
+cd MyApp
+dotnet restore src/FSH.Framework.slnx
+dotnet run --project src/Playground/FSH.Playground.AppHost
+```
+
+### Option 2: Clone the repository
+
+```bash
+git clone https://github.com/fullstackhero/dotnet-starter-kit.git MyApp
+cd MyApp
+dotnet restore src/FSH.Framework.slnx
+dotnet run --project src/Playground/FSH.Playground.AppHost
+```
+
+> Prerequisites: [.NET 10 SDK](https://dotnet.microsoft.com/download), [Docker](https://www.docker.com/) (for Postgres/Redis via Aspire)
 
 ## Why teams pick this
 - Modular vertical slices: drop `Modules.Identity`, `Modules.Multitenancy`, `Modules.Auditing` into any API and let the module loader wire endpoints.
