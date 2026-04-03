@@ -10,6 +10,7 @@ namespace FSH.Framework.Jobs;
 /// Best-effort cleanup of stale Hangfire locks from crashed instances.
 /// Runs as a BackgroundService so it never blocks application startup.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Instantiated by DI via AddHostedService")]
 internal sealed class HangfireStaleLockCleanupService : BackgroundService
 {
     private readonly IConfiguration _configuration;
