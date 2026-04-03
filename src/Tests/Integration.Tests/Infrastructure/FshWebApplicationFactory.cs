@@ -2,6 +2,8 @@ using System.Reflection;
 using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Jobs.Services;
+using FSH.Framework.Mailing;
+using FSH.Framework.Mailing.Services;
 using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Web.Modules;
@@ -100,6 +102,10 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
             services.PostConfigure<JwtBearerOptions>(
                 JwtBearerDefaults.AuthenticationScheme,
                 options => options.RequireHttpsMetadata = false);
+
+            // Replace real mail service with a no-op to avoid SMTP errors and Hangfire retries
+            services.RemoveAll<IMailService>();
+            services.AddSingleton<IMailService, NoOpMailService>();
 
             // Detailed errors in tests instead of generic "An unexpected error occurred"
             var existingHandlers = services.Where(d =>

@@ -27,6 +27,16 @@ public sealed class EfCoreInboxStore<TDbContext> : IInboxStore
 
     public async Task MarkProcessedAsync(Guid eventId, string handlerName, string? tenantId, string eventType, CancellationToken ct = default)
     {
+        // Idempotent: skip if already marked (race between direct publish and outbox retry)
+        bool alreadyProcessed = await _dbContext.Set<InboxMessage>()
+            .AnyAsync(i => i.Id == eventId && i.HandlerName == handlerName, ct)
+            .ConfigureAwait(false);
+
+        if (alreadyProcessed)
+        {
+            return;
+        }
+
         var message = new InboxMessage
         {
             Id = eventId,
@@ -36,7 +46,16 @@ public sealed class EfCoreInboxStore<TDbContext> : IInboxStore
             ProcessedOnUtc = _timeProvider.GetUtcNow().UtcDateTime
         };
 
-        await _dbContext.Set<InboxMessage>().AddAsync(message, ct).ConfigureAwait(false);
-        await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+        _dbContext.Set<InboxMessage>().Add(message);
+
+        try
+        {
+            await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+        }
+        catch (DbUpdateException) when (!ct.IsCancellationRequested)
+        {
+            // Concurrent insert won the race — treat as already processed.
+            _dbContext.ChangeTracker.Clear();
+        }
     }
 }
