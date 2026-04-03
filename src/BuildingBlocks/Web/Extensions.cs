@@ -18,12 +18,14 @@ using FSH.Framework.Web.Origin;
 using FSH.Framework.Web.RateLimiting;
 using FSH.Framework.Web.Security;
 using FSH.Framework.Web.Versioning;
-using Mediator;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Mediator;
 
 namespace FSH.Framework.Web;
 
@@ -37,6 +39,17 @@ public static class Extensions
         configure?.Invoke(options);
 
         builder.Services.AddScoped<CurrentUserMiddleware>();
+
+        builder.Services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+            options.Providers.Add<BrotliCompressionProvider>();
+            options.Providers.Add<GzipCompressionProvider>();
+        });
+        builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+        {
+            options.Level = System.IO.Compression.CompressionLevel.Fastest;
+        });
 
         builder.AddHeroLogging();
         if (options.EnableOpenTelemetry)
@@ -68,6 +81,7 @@ public static class Extensions
         if (options.EnableJobs)
         {
             builder.Services.AddHeroJobs();
+            builder.Services.AddHealthChecks().AddCheck<HangfireHealthCheck>("hangfire");
         }
 
         if (options.EnableMailing)
@@ -78,6 +92,11 @@ public static class Extensions
         if (options.EnableCaching)
         {
             builder.Services.AddHeroCaching(builder.Configuration);
+            var cacheConfig = builder.Configuration.GetSection(nameof(CachingOptions)).Get<CachingOptions>();
+            if (cacheConfig is not null && !string.IsNullOrEmpty(cacheConfig.Redis))
+            {
+                builder.Services.AddHealthChecks().AddCheck<RedisHealthCheck>("redis");
+            }
         }
 
         if (options.EnableFeatureFlags)
@@ -116,6 +135,7 @@ public static class Extensions
         var openApiEnabled = options.UseOpenApi && IsOpenApiEnabled(app.Configuration);
 
         app.UseExceptionHandler();
+        app.UseResponseCompression();
         app.UseHttpsRedirection();
 
         app.UseHeroSecurityHeaders();

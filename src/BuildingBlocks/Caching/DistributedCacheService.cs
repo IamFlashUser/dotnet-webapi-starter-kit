@@ -47,6 +47,7 @@ public sealed partial class DistributedCacheService : ICacheService
             if (bytes is null || bytes.Length == 0) return default;
             return JsonSerializer.Deserialize<T>(Utf8.GetString(bytes), JsonOpts);
         }
+        // Graceful degradation: cache failures must not crash the caller — return default and log
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(ex, "Cache get failed for key (length={KeyLength})", key.Length);
@@ -64,6 +65,7 @@ public sealed partial class DistributedCacheService : ICacheService
             await _cache.SetAsync(key, bytes, BuildEntryOptions(sliding), ct).ConfigureAwait(false);
             LogCached(key);
         }
+        // Graceful degradation: cache failures must not crash the caller
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(ex, "Cache set failed for key (length={KeyLength})", key.Length);
@@ -71,9 +73,26 @@ public sealed partial class DistributedCacheService : ICacheService
     }
 
     /// <inheritdoc />
+    public async Task SetItemAsync<T>(string key, T value, IReadOnlyList<string> tags, TimeSpan? sliding = default, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(tags);
+        await SetItemAsync(key, value, sliding, ct).ConfigureAwait(false);
+
+        // Store the key in each tag's set so we can invalidate by tag later
+        foreach (var tag in tags)
+        {
+            var tagKey = NormalizeTagKey(tag);
+            var existing = await GetItemAsync<HashSet<string>>(tagKey, ct).ConfigureAwait(false) ?? [];
+            existing.Add(Normalize(key));
+            await SetItemAsync(tagKey, existing, sliding, ct).ConfigureAwait(false);
+        }
+    }
+
+    /// <inheritdoc />
     public async Task RemoveItemAsync(string key, CancellationToken ct = default)
     {
         key = Normalize(key);
+        // Graceful degradation: cache failures must not crash the caller
         try { await _cache.RemoveAsync(key, ct).ConfigureAwait(false); }
         catch (Exception ex) when (ex is not OperationCanceledException)
         { _logger.LogWarning(ex, "Cache remove failed for {Key}", key); }
@@ -88,9 +107,35 @@ public sealed partial class DistributedCacheService : ICacheService
             await _cache.RefreshAsync(key, ct).ConfigureAwait(false);
             LogRefreshed(key);
         }
+        // Graceful degradation: cache operations must not crash the caller
         catch (Exception ex) when (ex is not OperationCanceledException)
         { _logger.LogWarning(ex, "Cache refresh failed for {Key}", key); }
     }
+
+    /// <inheritdoc />
+    public async Task RemoveByTagAsync(string tag, CancellationToken ct = default)
+    {
+        var tagKey = NormalizeTagKey(tag);
+        var keys = await GetItemAsync<HashSet<string>>(tagKey, ct).ConfigureAwait(false);
+        if (keys is null || keys.Count == 0) return;
+
+        foreach (var key in keys)
+        {
+            try
+            {
+                await _cache.RemoveAsync(key, ct).ConfigureAwait(false);
+            }
+            // Graceful degradation: best-effort removal per key
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogWarning(ex, "Cache remove by tag failed for {Key}", key);
+            }
+        }
+
+        await RemoveItemAsync(tagKey, ct).ConfigureAwait(false);
+    }
+
+    private string NormalizeTagKey(string tag) => Normalize($"__tag:{tag}");
 
     /// <summary>
     /// Builds cache entry options with configured expiration settings.

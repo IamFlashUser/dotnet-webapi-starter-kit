@@ -50,6 +50,7 @@ internal sealed class HangfireStaleLockCleanupService : BackgroundService
                 _logger.LogWarning("Cleaned up {Count} stale Hangfire locks", deleted);
             }
         }
+        // Best-effort cleanup: table may not exist yet on first startup, or DB may be temporarily unreachable
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogDebug(ex, "Could not cleanup stale Hangfire locks (table may not exist yet)");

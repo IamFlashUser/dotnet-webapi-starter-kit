@@ -98,6 +98,7 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
     private async Task<GroupDto> BuildResponseAsync(Group group, HashSet<string> roleIds, CancellationToken cancellationToken)
     {
         var memberCount = await _dbContext.UserGroups
+            .AsNoTracking()
             .CountAsync(ug => ug.GroupId == group.Id, cancellationToken);
 
         var roleNames = roleIds.Count > 0

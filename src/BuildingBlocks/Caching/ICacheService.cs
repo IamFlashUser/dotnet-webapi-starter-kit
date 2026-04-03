@@ -26,6 +26,17 @@ public interface ICacheService
     Task SetItemAsync<T>(string key, T value, TimeSpan? sliding = default, CancellationToken ct = default);
 
     /// <summary>
+    /// Asynchronously stores an item in the cache with associated tags for group invalidation.
+    /// </summary>
+    /// <typeparam name="T">The type of the item to cache.</typeparam>
+    /// <param name="key">The unique cache key.</param>
+    /// <param name="value">The value to cache.</param>
+    /// <param name="tags">Tags to associate with this cache entry for group invalidation.</param>
+    /// <param name="sliding">Optional sliding expiration. Uses default if not specified.</param>
+    /// <param name="ct">Cancellation token for the operation.</param>
+    Task SetItemAsync<T>(string key, T value, IReadOnlyList<string> tags, TimeSpan? sliding = default, CancellationToken ct = default);
+
+    /// <summary>
     /// Asynchronously removes an item from the cache.
     /// </summary>
     /// <param name="key">The unique cache key to remove.</param>
@@ -39,4 +50,10 @@ public interface ICacheService
     /// <param name="ct">Cancellation token for the operation.</param>
     Task RefreshItemAsync(string key, CancellationToken ct = default);
 
+    /// <summary>
+    /// Asynchronously removes all cache entries associated with the specified tag.
+    /// </summary>
+    /// <param name="tag">The tag whose associated entries should be removed.</param>
+    /// <param name="ct">Cancellation token for the operation.</param>
+    Task RemoveByTagAsync(string tag, CancellationToken ct = default);
 }

@@ -1,4 +1,5 @@
-﻿using FSH.Framework.Core.Exceptions;
+﻿using System.Diagnostics;
+using FSH.Framework.Core.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,14 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         }
 
         httpContext.Response.StatusCode = statusCode;
+
+        // Surface trace and correlation IDs so clients/support can correlate errors to traces
+        var traceId = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier;
+        problemDetails.Extensions["traceId"] = traceId;
+
+        var correlationId = httpContext.Request.Headers["X-Correlation-ID"].FirstOrDefault()
+            ?? httpContext.TraceIdentifier;
+        problemDetails.Extensions["correlationId"] = correlationId;
 
         LogContext.PushProperty("exception_title", problemDetails.Title);
         LogContext.PushProperty("exception_detail", problemDetails.Detail);

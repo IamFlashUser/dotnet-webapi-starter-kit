@@ -44,6 +44,8 @@ public sealed class SessionCleanupHostedService : BackgroundService
                 // Expected during shutdown
                 break;
             }
+            // Broad catch is intentional: the cleanup loop must not crash the host;
+            // individual cycle failures are logged and retried on the next interval.
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during session cleanup");
@@ -60,18 +62,13 @@ public sealed class SessionCleanupHostedService : BackgroundService
 
         var now = _timeProvider.GetUtcNow().UtcDateTime;
         var cutoffDate = now.AddDays(-_retentionDays);
-        var expiredSessions = await db.UserSessions
+        var deleted = await db.UserSessions
             .Where(s => s.ExpiresAt < now && s.ExpiresAt < cutoffDate)
-            .ToListAsync(cancellationToken);
+            .ExecuteDeleteAsync(cancellationToken);
 
-        if (expiredSessions.Count > 0)
+        if (deleted > 0 && _logger.IsEnabled(LogLevel.Information))
         {
-            db.UserSessions.RemoveRange(expiredSessions);
-            await db.SaveChangesAsync(cancellationToken);
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogInformation("Cleaned up {Count} expired sessions", expiredSessions.Count);
-            }
+            _logger.LogInformation("Cleaned up {Count} expired sessions", deleted);
         }
     }
 }

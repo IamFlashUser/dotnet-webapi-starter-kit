@@ -6,6 +6,12 @@ public sealed class OpenApiOptions
     public string Version { get; init; } = "v1";
     public required string Description { get; init; }
 
+    /// <summary>
+    /// API versions to generate OpenAPI documents for (e.g., ["v1", "v2"]).
+    /// Defaults to ["v1"] if not specified.
+    /// </summary>
+    public string[]? Versions { get; init; }
+
     public ContactOptions? Contact { get; init; }
     public LicenseOptions? License { get; init; }
 

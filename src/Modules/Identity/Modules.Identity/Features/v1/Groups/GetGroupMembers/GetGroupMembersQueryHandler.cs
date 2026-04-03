@@ -20,6 +20,7 @@ public sealed class GetGroupMembersQueryHandler : IQueryHandler<GetGroupMembersQ
     {
         // Validate group exists
         var groupExists = await _dbContext.Groups
+            .AsNoTracking()
             .AnyAsync(g => g.Id == query.GroupId, cancellationToken);
 
         if (!groupExists)

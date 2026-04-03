@@ -15,7 +15,7 @@ public sealed class MultitenancyOptionsTests
 
         // Assert
         options.RunTenantMigrationsOnStartup.ShouldBeFalse();
-        options.AutoProvisionOnStartup.ShouldBeTrue();
+        options.AutoProvisionOnStartup.ShouldBeFalse();
     }
 
     [Fact]

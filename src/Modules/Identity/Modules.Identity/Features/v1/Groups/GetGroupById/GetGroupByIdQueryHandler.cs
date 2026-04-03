@@ -25,6 +25,7 @@ public sealed class GetGroupByIdQueryHandler : IQueryHandler<GetGroupByIdQuery, 
             ?? throw new NotFoundException($"Group with ID '{query.Id}' not found.");
 
         var memberCount = await _dbContext.UserGroups
+            .AsNoTracking()
             .CountAsync(ug => ug.GroupId == group.Id, cancellationToken);
 
         var roleIds = group.GroupRoles.Select(gr => gr.RoleId).ToList();

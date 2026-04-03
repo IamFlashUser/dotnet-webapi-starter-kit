@@ -52,6 +52,7 @@ public sealed class TenantMigrationsHealthCheck : IHealthCheck
                     PendingMigrations = pendingMigrations.ToArray()
                 };
             }
+            // Health checks must report errors, not throw — capture per-tenant failures as degraded details
             catch (Exception ex)
             {
                 details[tenant.Id] = new

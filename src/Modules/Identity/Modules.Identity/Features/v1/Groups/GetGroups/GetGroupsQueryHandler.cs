@@ -38,6 +38,7 @@ public sealed class GetGroupsQueryHandler : IQueryHandler<GetGroupsQuery, IEnume
         // Get member counts in one query
         var groupIds = groups.Select(g => g.Id).ToList();
         var memberCounts = await _dbContext.UserGroups
+            .AsNoTracking()
             .Where(ug => groupIds.Contains(ug.GroupId))
             .GroupBy(ug => ug.GroupId)
             .Select(g => new { GroupId = g.Key, Count = g.Count() })

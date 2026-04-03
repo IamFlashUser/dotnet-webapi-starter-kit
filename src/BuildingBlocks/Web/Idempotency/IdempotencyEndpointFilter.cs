@@ -85,6 +85,7 @@ public sealed class IdempotencyEndpointFilter : IEndpointFilter
 
             await cache.SetItemAsync(cacheKey, responseToCache, options.DefaultTtl, httpContext.RequestAborted).ConfigureAwait(false);
         }
+        // Best-effort caching: idempotency replay is a convenience, not a correctness requirement
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             logger.LogWarning(ex, "Failed to cache idempotent response for key {KeyHash}", HashKey(idempotencyKey));

@@ -9,6 +9,12 @@ namespace FSH.Framework.Web.OpenApi;
 
 public static class Extensions
 {
+    /// <summary>
+    /// Registers OpenAPI documents per API version. Each version gets a separate document
+    /// (e.g., /openapi/v1.json) with endpoints filtered to that version group.
+    /// To add a new version, add another entry to the <c>OpenApiOptions:Versions</c> array
+    /// or call <c>AddOpenApi("v2", ...)</c> after this method.
+    /// </summary>
     public static IServiceCollection AddHeroOpenApi(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -21,36 +27,43 @@ public static class Extensions
             .Validate(o => !string.IsNullOrWhiteSpace(o.Description), "OpenApi:Description is required.")
             .ValidateOnStart();
 
-        // Minimal OpenAPI generator (ASP.NET Core 8)
-        services.AddOpenApi(options =>
-        {
-            options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-            options.AddDocumentTransformer(async (document, context, ct) =>
-            {
-                var provider = context.ApplicationServices;
-                var openApi = provider.GetRequiredService<IOptions<OpenApiOptions>>().Value;
+        var fshOptions = configuration.GetSection(nameof(OpenApiOptions)).Get<OpenApiOptions>();
 
-                // Title/metadata
-                document.Info = new OpenApiInfo
+        // Register a separate OpenAPI document per API version.
+        // The GroupNameFormat "'v'VVV" in Asp.Versioning causes endpoints to be grouped as "v1", "v2", etc.
+        // Each AddOpenApi(groupName) call creates a document that only includes endpoints from that group.
+        var versions = fshOptions?.Versions is { Length: > 0 } ? fshOptions.Versions : ["v1"];
+        foreach (var version in versions)
+        {
+            services.AddOpenApi(version, options =>
+            {
+                options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+                options.AddDocumentTransformer((document, context, _) =>
                 {
-                    Title = openApi.Title,
-                    Version = openApi.Version,
-                    Description = openApi.Description,
-                    Contact = openApi.Contact is null ? null : new OpenApiContact
+                    var provider = context.ApplicationServices;
+                    var openApi = provider.GetRequiredService<IOptions<OpenApiOptions>>().Value;
+
+                    document.Info = new OpenApiInfo
                     {
-                        Name = openApi.Contact.Name,
-                        Url = openApi.Contact.Url,
-                        Email = openApi.Contact.Email
-                    },
-                    License = openApi.License is null ? null : new OpenApiLicense
-                    {
-                        Name = openApi.License.Name,
-                        Url = openApi.License.Url
-                    }
-                };
-                await Task.CompletedTask;
+                        Title = openApi.Title,
+                        Version = version,
+                        Description = openApi.Description,
+                        Contact = openApi.Contact is null ? null : new OpenApiContact
+                        {
+                            Name = openApi.Contact.Name,
+                            Url = openApi.Contact.Url,
+                            Email = openApi.Contact.Email
+                        },
+                        License = openApi.License is null ? null : new OpenApiLicense
+                        {
+                            Name = openApi.License.Name,
+                            Url = openApi.License.Url
+                        }
+                    };
+                    return Task.CompletedTask;
+                });
             });
-        });
+        }
 
         return services;
     }

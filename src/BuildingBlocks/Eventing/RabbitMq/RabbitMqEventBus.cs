@@ -198,6 +198,7 @@ public sealed partial class RabbitMqEventBus : IEventBus, IAsyncDisposable
                 await _channel.CloseAsync().ConfigureAwait(false);
                 _channel.Dispose();
             }
+            // Cleanup must not throw: connection may already be closed or faulted
             catch (Exception ex)
             {
                 _logger.LogDebug(ex, "Error closing RabbitMQ channel during cleanup");
@@ -213,6 +214,7 @@ public sealed partial class RabbitMqEventBus : IEventBus, IAsyncDisposable
                 await _connection.CloseAsync().ConfigureAwait(false);
                 _connection.Dispose();
             }
+            // Cleanup must not throw: connection may already be closed or faulted
             catch (Exception ex)
             {
                 _logger.LogDebug(ex, "Error closing RabbitMQ connection during cleanup");

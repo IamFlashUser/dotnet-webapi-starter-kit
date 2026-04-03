@@ -340,18 +340,13 @@ public sealed class SessionService : ISessionService
     {
         var now = _timeProvider.GetUtcNow().UtcDateTime;
         var cutoffDate = now.AddDays(-30); // Keep revoked sessions for 30 days for audit
-        var expiredSessions = await _db.UserSessions
+        var deleted = await _db.UserSessions
             .Where(s => s.ExpiresAt < now && s.ExpiresAt < cutoffDate)
-            .ToListAsync(cancellationToken);
+            .ExecuteDeleteAsync(cancellationToken);
 
-        if (expiredSessions.Count > 0)
+        if (deleted > 0 && _logger.IsEnabled(LogLevel.Information))
         {
-            _db.UserSessions.RemoveRange(expiredSessions);
-            await _db.SaveChangesAsync(cancellationToken);
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogInformation("Cleaned up {Count} expired sessions", expiredSessions.Count);
-            }
+            _logger.LogInformation("Cleaned up {Count} expired sessions", deleted);
         }
     }
 

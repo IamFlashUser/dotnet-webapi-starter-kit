@@ -78,6 +78,8 @@ public sealed class TenantProvisioningJob
                 _logger.LogInformation("Provisioned tenant {TenantId} correlation {CorrelationId}", tenantId, correlationId);
             }
         }
+        // Broad catch is intentional: any provisioning failure must be recorded in the provisioning
+        // log before re-throwing so the job framework can handle retry/dead-letter.
         catch (Exception ex)
         {
             _logger.LogError(ex, "Provisioning failed for tenant {TenantId}", tenantId);
