@@ -20,6 +20,7 @@ public sealed class GetUserGroupsQueryHandler : IQueryHandler<GetUserGroupsQuery
     {
         // Validate user exists
         var userExists = await _dbContext.Users
+            .AsNoTracking()
             .AnyAsync(u => u.Id == query.UserId, cancellationToken);
 
         if (!userExists)
@@ -47,6 +48,7 @@ public sealed class GetUserGroupsQueryHandler : IQueryHandler<GetUserGroupsQuery
 
         // Get member counts
         var memberCounts = await _dbContext.UserGroups
+            .AsNoTracking()
             .Where(ug => groupIds.Contains(ug.GroupId))
             .GroupBy(ug => ug.GroupId)
             .Select(g => new { GroupId = g.Key, Count = g.Count() })

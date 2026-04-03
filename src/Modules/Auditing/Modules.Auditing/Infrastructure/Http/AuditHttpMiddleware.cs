@@ -20,7 +20,7 @@ public sealed class AuditHttpMiddleware
 
         if (ShouldSkip(ctx))
         {
-            await _next(ctx);
+            await _next(ctx).ConfigureAwait(false);
             return;
         }
 
@@ -33,7 +33,7 @@ public sealed class AuditHttpMiddleware
 
         try
         {
-            await _next(ctx);
+            await _next(ctx).ConfigureAwait(false);
             sw.Stop();
 
             await WriteSuccessAuditAsync(ctx, requestContext, responseBuffer, originalBody, sw);

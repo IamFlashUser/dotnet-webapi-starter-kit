@@ -63,6 +63,7 @@ public sealed class GetTenantMigrationsQueryHandler
                 tenantStatus.PendingMigrations = pendingMigrations.ToArray();
                 tenantStatus.HasPendingMigrations = tenantStatus.PendingMigrations.Count > 0;
             }
+            // Per-tenant failure must not stop reporting on other tenants
             catch (Exception ex)
             {
                 tenantStatus.Error = ex.Message;

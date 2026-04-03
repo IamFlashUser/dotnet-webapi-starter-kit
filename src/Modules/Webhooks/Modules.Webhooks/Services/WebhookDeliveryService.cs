@@ -45,6 +45,8 @@ public sealed class WebhookDeliveryService(
                     delivery.Id, url, (int)response.StatusCode);
             }
         }
+        // Broad catch is intentional: delivery failures (DNS, timeout, HTTP errors) must be
+        // recorded in the delivery log rather than crashing the caller.
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             delivery.RecordResult(0, false, ex.Message);
