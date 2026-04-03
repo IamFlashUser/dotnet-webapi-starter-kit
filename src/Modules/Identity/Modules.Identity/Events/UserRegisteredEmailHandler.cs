@@ -2,6 +2,7 @@ using FSH.Framework.Eventing.Abstractions;
 using FSH.Framework.Mailing;
 using FSH.Framework.Mailing.Services;
 using FSH.Modules.Identity.Contracts.Events;
+using Microsoft.Extensions.Logging;
 
 namespace FSH.Modules.Identity.Events;
 
@@ -12,10 +13,14 @@ public sealed class UserRegisteredEmailHandler
     : IIntegrationEventHandler<UserRegisteredIntegrationEvent>
 {
     private readonly IMailService _mailService;
+    private readonly ILogger<UserRegisteredEmailHandler> _logger;
 
-    public UserRegisteredEmailHandler(IMailService mailService)
+    public UserRegisteredEmailHandler(
+        IMailService mailService,
+        ILogger<UserRegisteredEmailHandler> logger)
     {
         _mailService = mailService;
+        _logger = logger;
     }
 
     public async Task HandleAsync(UserRegisteredIntegrationEvent @event, CancellationToken ct = default)
@@ -27,11 +32,20 @@ public sealed class UserRegisteredEmailHandler
             return;
         }
 
-        var mail = new MailRequest(
-            to: new System.Collections.ObjectModel.Collection<string> { @event.Email },
-            subject: "Welcome!",
-            body: $"Hi {@event.FirstName}, thanks for registering.");
+        try
+        {
+            var mail = new MailRequest(
+                to: new System.Collections.ObjectModel.Collection<string> { @event.Email },
+                subject: "Welcome!",
+                body: $"Hi {@event.FirstName}, thanks for registering.");
 
-        await _mailService.SendAsync(mail, ct).ConfigureAwait(false);
+            await _mailService.SendAsync(mail, ct).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // Email failures must not break user registration.
+            // The email can be retried via the outbox/dead-letter mechanism.
+            _logger.LogWarning(ex, "Failed to send welcome email to {Email}", @event.Email);
+        }
     }
 }

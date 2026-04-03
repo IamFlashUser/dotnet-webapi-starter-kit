@@ -76,7 +76,19 @@ public sealed class DomainEventsInterceptor : SaveChangesInterceptor
         }
 
         foreach (var domainEvent in domainEvents)
-            await _publisher.Publish(domainEvent, cancellationToken).ConfigureAwait(false);
+        {
+            try
+            {
+                await _publisher.Publish(domainEvent, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // Domain event handler failures must not roll back or fail the already-committed save.
+                // The event was collected after SaveChanges completed — the data is persisted.
+                // Handlers that need guaranteed delivery should use the outbox pattern.
+                _logger.LogError(ex, "Failed to publish domain event {EventType}", domainEvent.GetType().Name);
+            }
+        }
 
         return await base.SavedChangesAsync(eventData, result, cancellationToken);
     }
