@@ -51,10 +51,9 @@ public sealed class TenantStoreInitializerHostedService : BackgroundService
                 _logger.LogInformation("Seeded root tenant.");
             }
         }
-        // Broad catch is intentional: tenant store initialization is critical but must not crash the host;
-        // errors are logged and operations will fail with clear errors until resolved.
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
+            // Must not crash the host — errors are logged and tenant operations will fail with clear errors until resolved
             _logger.LogError(ex, "Failed to initialize tenant catalog database. Tenant operations may fail until resolved.");
         }
     }

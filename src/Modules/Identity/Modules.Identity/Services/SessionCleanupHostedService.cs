@@ -44,10 +44,9 @@ public sealed class SessionCleanupHostedService : BackgroundService
                 // Expected during shutdown
                 break;
             }
-            // Broad catch is intentional: the cleanup loop must not crash the host;
-            // individual cycle failures are logged and retried on the next interval.
             catch (Exception ex)
             {
+                // Cleanup loop must not crash the host — failures are retried on the next interval
                 _logger.LogError(ex, "Error during session cleanup");
             }
         }

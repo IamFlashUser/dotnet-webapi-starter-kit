@@ -54,10 +54,9 @@ public sealed class AuditBackgroundWorker : BackgroundService
         {
             // Expected during graceful shutdown
         }
-        // Broad catch is intentional: the background worker must not crash the host;
-        // transient failures are logged and the final flush attempts to save remaining items.
         catch (Exception ex)
         {
+            // Background worker must not crash the host — log and let final flush attempt to save remaining items
             _logger.LogError(ex, "Audit background worker crashed.");
         }
 
@@ -129,10 +128,9 @@ public sealed class AuditBackgroundWorker : BackgroundService
         {
             // Expected during shutdown — don't log as error
         }
-        // Broad catch is intentional: individual flush failures should not stop the worker loop;
-        // a brief delay avoids tight retry loops on persistent errors.
         catch (Exception ex)
         {
+            // Individual flush failures must not stop the worker loop — delay avoids tight retry loops
             _logger.LogError(ex, "Audit background flush failed.");
             try { await Task.Delay(250, ct); }
             catch (OperationCanceledException) { /* shutting down */ }

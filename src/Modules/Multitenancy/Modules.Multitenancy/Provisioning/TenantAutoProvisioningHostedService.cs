@@ -51,10 +51,9 @@ public sealed class TenantAutoProvisioningHostedService : BackgroundService
         {
             await ProvisionTenantsAsync(stoppingToken).ConfigureAwait(false);
         }
-        // Broad catch is intentional: auto-provisioning is best-effort on startup;
-        // tenants can be provisioned manually if this fails.
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
+            // Auto-provisioning is best-effort on startup — tenants can be provisioned manually
             _logger.LogError(ex, "Auto-provisioning failed. Tenants may need manual provisioning.");
         }
     }
