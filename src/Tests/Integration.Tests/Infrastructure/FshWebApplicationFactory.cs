@@ -75,6 +75,8 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
                 ["OpenTelemetryOptions:Enabled"] = "false",
                 ["EventingOptions:UseHostedServiceDispatcher"] = "false",
                 ["Serilog:MinimumLevel:Default"] = "Warning",
+                ["Serilog:MinimumLevel:Override:Microsoft.EntityFrameworkCore"] = "Fatal",
+                ["Serilog:MinimumLevel:Override:Npgsql"] = "Fatal",
                 ["Serilog:WriteTo:0:Name"] = "Console",
                 ["Serilog:WriteTo:0:Args:restrictedToMinimumLevel"] = "Warning",
                 ["Serilog:WriteTo:1:Name"] = "",
