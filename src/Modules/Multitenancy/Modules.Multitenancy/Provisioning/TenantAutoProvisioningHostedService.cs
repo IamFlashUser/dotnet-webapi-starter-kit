@@ -9,7 +9,12 @@ using Microsoft.Extensions.Options;
 
 namespace FSH.Modules.Multitenancy.Provisioning;
 
-public sealed class TenantAutoProvisioningHostedService : IHostedService
+/// <summary>
+/// Auto-provisions tenants that haven't completed provisioning.
+/// Runs as a BackgroundService so it does NOT block the host from accepting requests.
+/// Includes a brief delay to allow the tenant store initializer and Hangfire to start first.
+/// </summary>
+public sealed class TenantAutoProvisioningHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<TenantAutoProvisioningHostedService> _logger;
@@ -26,20 +31,30 @@ public sealed class TenantAutoProvisioningHostedService : IHostedService
         _options = options.Value;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         if (!ShouldRunProvisioning())
         {
             return;
         }
 
-        if (!JobStorageAvailable())
+        // Wait briefly for the tenant store initializer to complete first
+        await Task.Delay(TimeSpan.FromSeconds(3), stoppingToken).ConfigureAwait(false);
+
+        if (!WaitForJobStorage(stoppingToken))
         {
             _logger.LogWarning("Hangfire storage not initialized; skipping auto-provisioning enqueue.");
             return;
         }
 
-        await ProvisionTenantsAsync(cancellationToken);
+        try
+        {
+            await ProvisionTenantsAsync(stoppingToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogError(ex, "Auto-provisioning failed. Tenants may need manual provisioning.");
+        }
     }
 
     private bool ShouldRunProvisioning() =>
@@ -60,7 +75,7 @@ public sealed class TenantAutoProvisioningHostedService : IHostedService
                 break;
             }
 
-            await TryProvisionTenantAsync(provisioning, tenant, cancellationToken);
+            await TryProvisionTenantAsync(provisioning, tenant, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -68,7 +83,7 @@ public sealed class TenantAutoProvisioningHostedService : IHostedService
     {
         try
         {
-            if (await ShouldProvisionTenantAsync(provisioning, tenant.Id, cancellationToken))
+            if (await ShouldProvisionTenantAsync(provisioning, tenant.Id, cancellationToken).ConfigureAwait(false))
             {
                 await provisioning.StartAsync(tenant.Id, cancellationToken).ConfigureAwait(false);
                 if (_logger.IsEnabled(LogLevel.Information))
@@ -101,18 +116,23 @@ public sealed class TenantAutoProvisioningHostedService : IHostedService
         return latest is null || latest.Status != TenantProvisioningStatus.Completed;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
-    private static bool JobStorageAvailable()
+    private static bool WaitForJobStorage(CancellationToken cancellationToken)
     {
-        try
+        // Retry a few times since Hangfire may still be initializing
+        for (int i = 0; i < 5; i++)
         {
-            _ = JobStorage.Current;
-            return true;
+            if (cancellationToken.IsCancellationRequested) return false;
+            try
+            {
+                _ = JobStorage.Current;
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                Thread.Sleep(500);
+            }
         }
-        catch (InvalidOperationException)
-        {
-            return false;
-        }
+
+        return false;
     }
 }

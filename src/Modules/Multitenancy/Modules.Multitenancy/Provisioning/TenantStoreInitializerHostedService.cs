@@ -8,9 +8,10 @@ using Microsoft.Extensions.Logging;
 namespace FSH.Modules.Multitenancy.Provisioning;
 
 /// <summary>
-/// Initializes the tenant catalog database and seeds the root tenant on startup.
+/// Initializes the tenant catalog database and seeds the root tenant.
+/// Runs as a BackgroundService so it does NOT block the host from accepting requests.
 /// </summary>
-public sealed class TenantStoreInitializerHostedService : IHostedService
+public sealed class TenantStoreInitializerHostedService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<TenantStoreInitializerHostedService> _logger;
@@ -23,31 +24,36 @@ public sealed class TenantStoreInitializerHostedService : IHostedService
         _logger = logger;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
-
-        var tenantDbContext = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
-        await tenantDbContext.Database.MigrateAsync(cancellationToken).ConfigureAwait(false);
-        _logger.LogInformation("Applied tenant catalog migrations.");
-
-        if (await tenantDbContext.TenantInfo.FindAsync([MultitenancyConstants.Root.Id], cancellationToken).ConfigureAwait(false) is null)
+        try
         {
-            var rootTenant = new AppTenantInfo(
-                MultitenancyConstants.Root.Id,
-                MultitenancyConstants.Root.Name,
-                string.Empty,
-                MultitenancyConstants.Root.EmailAddress,
-                issuer: MultitenancyConstants.Root.Issuer);
+            using var scope = _serviceProvider.CreateScope();
 
-            var validUpto = TimeProvider.System.GetUtcNow().UtcDateTime.AddYears(1);
-            rootTenant.SetValidity(validUpto);
-            await tenantDbContext.TenantInfo.AddAsync(rootTenant, cancellationToken).ConfigureAwait(false);
-            await tenantDbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            var tenantDbContext = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
+            await tenantDbContext.Database.MigrateAsync(stoppingToken).ConfigureAwait(false);
+            _logger.LogInformation("Applied tenant catalog migrations.");
 
-            _logger.LogInformation("Seeded root tenant.");
+            if (await tenantDbContext.TenantInfo.FindAsync([MultitenancyConstants.Root.Id], stoppingToken).ConfigureAwait(false) is null)
+            {
+                var rootTenant = new AppTenantInfo(
+                    MultitenancyConstants.Root.Id,
+                    MultitenancyConstants.Root.Name,
+                    string.Empty,
+                    MultitenancyConstants.Root.EmailAddress,
+                    issuer: MultitenancyConstants.Root.Issuer);
+
+                var validUpto = TimeProvider.System.GetUtcNow().UtcDateTime.AddYears(1);
+                rootTenant.SetValidity(validUpto);
+                await tenantDbContext.TenantInfo.AddAsync(rootTenant, stoppingToken).ConfigureAwait(false);
+                await tenantDbContext.SaveChangesAsync(stoppingToken).ConfigureAwait(false);
+
+                _logger.LogInformation("Seeded root tenant.");
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogError(ex, "Failed to initialize tenant catalog database. Tenant operations may fail until resolved.");
         }
     }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

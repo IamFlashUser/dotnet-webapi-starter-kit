@@ -16,5 +16,5 @@ public sealed class MultitenancyOptions
     /// When true, enqueues tenant provisioning (migrate/seed) jobs on startup for tenants that have not completed provisioning.
     /// Useful to ensure the root tenant is provisioned automatically on first run when startup migrations are disabled.
     /// </summary>
-    public bool AutoProvisionOnStartup { get; set; } = true;
+    public bool AutoProvisionOnStartup { get; set; }
 }

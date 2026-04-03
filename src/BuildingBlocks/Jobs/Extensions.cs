@@ -6,8 +6,6 @@ using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Npgsql;
 
 namespace FSH.Framework.Jobs;
 
@@ -37,9 +35,6 @@ public static class Extensions
             switch (dbOptions.Provider.ToUpperInvariant())
             {
                 case DbProviders.PostgreSQL:
-                    // Clean up stale locks before configuring Hangfire
-                    CleanupStaleLocks(dbOptions.ConnectionString, provider);
-
                     config.UsePostgreSqlStorage(o =>
                     {
                         o.UseNpgsqlConnection(dbOptions.ConnectionString);
@@ -60,37 +55,12 @@ public static class Extensions
             config.UseFilter(new HangfireTelemetryFilter());
         });
 
+        // Deferred stale lock cleanup — runs after app starts accepting requests
+        services.AddHostedService<HangfireStaleLockCleanupService>();
+
         services.AddTransient<IJobService, HangfireService>();
 
         return services;
-    }
-
-    private static void CleanupStaleLocks(string connectionString, IServiceProvider provider)
-    {
-        var logger = provider.GetService<ILoggerFactory>()?.CreateLogger("Hangfire");
-
-        try
-        {
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-
-            // Delete locks older than 5 minutes (stale from crashed instances)
-            using var cmd = new NpgsqlCommand(
-                "DELETE FROM hangfire.lock WHERE acquired < NOW() - INTERVAL '5 minutes'",
-                connection);
-
-            var deleted = cmd.ExecuteNonQuery();
-            if (deleted > 0)
-            {
-                logger?.LogWarning("Cleaned up {Count} stale Hangfire locks", deleted);
-            }
-        }
-        // Broad catch is intentional: cleanup is best-effort and must not prevent application startup.
-        // The hangfire schema/table may not exist yet on first run.
-        catch (Exception ex)
-        {
-            logger?.LogDebug(ex, "Could not cleanup stale Hangfire locks (table may not exist yet)");
-        }
     }
 
 
