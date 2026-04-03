@@ -24,8 +24,8 @@ public sealed class TenantIsolationTests
         await CreateTenantAsync(rootClient, tenantId, tenantAdminEmail);
         await WaitForProvisioningAsync(rootClient, tenantId);
 
-        // Login as new tenant admin and register a tenant-specific user
-        using var tenantClient = await _auth.CreateAuthenticatedClientAsync(
+        // Login as new tenant admin — retry because provisioning may still be finalizing
+        using var tenantClient = await CreateTenantAdminClientWithRetryAsync(
             tenantAdminEmail, TestConstants.DefaultPassword, tenantId);
 
         var registerResponse = await tenantClient.PostAsJsonAsync(
@@ -68,7 +68,7 @@ public sealed class TenantIsolationTests
         await WaitForProvisioningAsync(rootClient, tenant2Id);
 
         // Register same email in tenant 1
-        using var client1 = await _auth.CreateAuthenticatedClientAsync(
+        using var client1 = await CreateTenantAdminClientWithRetryAsync(
             t1AdminEmail, TestConstants.DefaultPassword, tenant1Id);
         var register1 = await client1.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
@@ -78,7 +78,7 @@ public sealed class TenantIsolationTests
         register1.StatusCode.ShouldBe(HttpStatusCode.Created);
 
         // Register same email in tenant 2 — should succeed
-        using var client2 = await _auth.CreateAuthenticatedClientAsync(
+        using var client2 = await CreateTenantAdminClientWithRetryAsync(
             t2AdminEmail, TestConstants.DefaultPassword, tenant2Id);
         var register2 = await client2.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
@@ -87,6 +87,24 @@ public sealed class TenantIsolationTests
         });
 
         register2.StatusCode.ShouldBe(HttpStatusCode.Created);
+    }
+
+    private async Task<HttpClient> CreateTenantAdminClientWithRetryAsync(
+        string email, string password, string tenant, int maxRetries = 30)
+    {
+        for (int i = 0; i < maxRetries; i++)
+        {
+            try
+            {
+                return await _auth.CreateAuthenticatedClientAsync(email, password, tenant);
+            }
+            catch (HttpRequestException) when (i < maxRetries - 1)
+            {
+                await Task.Delay(1000);
+            }
+        }
+
+        return await _auth.CreateAuthenticatedClientAsync(email, password, tenant);
     }
 
     private static async Task CreateTenantAsync(HttpClient rootClient, string tenantId, string adminEmail)
@@ -99,7 +117,8 @@ public sealed class TenantIsolationTests
             adminEmail,
             issuer = $"{tenantId}.issuer"
         });
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        var body = await response.Content.ReadAsStringAsync();
+        response.StatusCode.ShouldBe(HttpStatusCode.Created, $"Create tenant failed: {body}");
     }
 
     private static async Task WaitForProvisioningAsync(HttpClient client, string tenantId, int maxRetries = 60)
@@ -107,7 +126,7 @@ public sealed class TenantIsolationTests
         for (int i = 0; i < maxRetries; i++)
         {
             var statusResponse = await client.GetAsync(
-                $"{TestConstants.TenantsBasePath}/{tenantId}/provisioning/status");
+                $"{TestConstants.TenantsBasePath}/{tenantId}/provisioning");
 
             if (statusResponse.IsSuccessStatusCode)
             {
@@ -127,7 +146,14 @@ public sealed class TenantIsolationTests
             await Task.Delay(1000);
         }
 
+        // Get final status for the error message
+        var finalResponse = await client.GetAsync(
+            $"{TestConstants.TenantsBasePath}/{tenantId}/provisioning");
+        var finalContent = finalResponse.IsSuccessStatusCode
+            ? await finalResponse.Content.ReadAsStringAsync()
+            : $"HTTP {finalResponse.StatusCode}";
+
         throw new TimeoutException(
-            $"Tenant {tenantId} provisioning did not complete within {maxRetries} seconds.");
+            $"Tenant {tenantId} provisioning did not complete within {maxRetries} seconds. Last status: {finalContent}");
     }
 }

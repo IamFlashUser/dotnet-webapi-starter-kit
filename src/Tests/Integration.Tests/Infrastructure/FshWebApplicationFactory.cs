@@ -93,12 +93,16 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
             // Replace Hangfire: use InMemory storage and a single fast-polling server.
             // Remove ALL existing Hangfire hosted services (production registers a 30s-polling
             // server + stale lock cleanup that tries to hit PostgreSQL Hangfire schema).
-            var hangfireHostedServices = services
+            // Remove hosted services that depend on infrastructure not available in tests:
+            // - Hangfire server + stale lock cleanup (we register our own InMemory server below)
+            // - OutboxDispatcherHostedService (queries OutboxMessages table before migrations run)
+            var hostedServicesToRemove = services
                 .Where(d => d.ServiceType == typeof(IHostedService)
                     && (d.ImplementationType?.FullName?.Contains("Hangfire", StringComparison.Ordinal) == true
-                        || d.ImplementationType?.Name == "HangfireStaleLockCleanupService"))
+                        || d.ImplementationType?.Name == "HangfireStaleLockCleanupService"
+                        || d.ImplementationType?.Name == "OutboxDispatcherHostedService"))
                 .ToList();
-            foreach (var svc in hangfireHostedServices) services.Remove(svc);
+            foreach (var svc in hostedServicesToRemove) services.Remove(svc);
 
             services.AddHangfire(config => config.UseInMemoryStorage());
             services.AddHangfireServer(options =>
