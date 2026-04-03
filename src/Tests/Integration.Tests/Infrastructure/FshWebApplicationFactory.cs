@@ -73,6 +73,7 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
                 ["MultitenancyOptions:RunTenantMigrationsOnStartup"] = "false",
                 ["MultitenancyOptions:AutoProvisionOnStartup"] = "false",
                 ["OpenTelemetryOptions:Enabled"] = "false",
+                ["EventingOptions:UseHostedServiceDispatcher"] = "false",
                 ["Serilog:MinimumLevel:Default"] = "Warning",
                 ["Serilog:WriteTo:0:Name"] = "Console",
                 ["Serilog:WriteTo:0:Args:restrictedToMinimumLevel"] = "Warning",
@@ -89,11 +90,20 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
 
         builder.ConfigureServices(services =>
         {
+            // Replace Hangfire: use InMemory storage and a single fast-polling server.
+            // Remove ALL existing Hangfire hosted services (production registers a 30s-polling
+            // server + stale lock cleanup that tries to hit PostgreSQL Hangfire schema).
+            var hangfireHostedServices = services
+                .Where(d => d.ServiceType == typeof(IHostedService)
+                    && (d.ImplementationType?.FullName?.Contains("Hangfire", StringComparison.Ordinal) == true
+                        || d.ImplementationType?.Name == "HangfireStaleLockCleanupService"))
+                .ToList();
+            foreach (var svc in hangfireHostedServices) services.Remove(svc);
+
             services.AddHangfire(config => config.UseInMemoryStorage());
             services.AddHangfireServer(options =>
             {
                 options.SchedulePollingInterval = TimeSpan.FromSeconds(1);
-                options.HeartbeatInterval = TimeSpan.FromSeconds(5);
                 options.Queues = ["default", "email"];
                 options.WorkerCount = 2;
             });
