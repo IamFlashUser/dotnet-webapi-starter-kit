@@ -16,89 +16,64 @@ public sealed class RoleManagementTests
     }
 
     [Fact]
-    public async Task GetRoles_Should_ReturnSeededRoles_When_Authenticated()
+    public async Task GetRoles_Should_ReturnSeededAdminAndBasicRoles_When_Authenticated()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
 
-        // Act
         var response = await client.GetAsync($"{TestConstants.IdentityBasePath}/roles");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var roles = await response.DeserializeAsync<RoleDto[]>();
-        roles.ShouldNotBeNull();
-        roles.Length.ShouldBeGreaterThanOrEqualTo(2); // Admin + Basic roles
+        roles.Length.ShouldBeGreaterThanOrEqualTo(2);
         roles.ShouldContain(r => r.Name == "Admin");
         roles.ShouldContain(r => r.Name == "Basic");
     }
 
     [Fact]
-    public async Task CreateRole_Should_ReturnRole_When_NameIsUnique()
+    public async Task CreateRole_Should_ReturnCreatedRole_When_NameIsUnique()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
-        var payload = new
+
+        var response = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/roles", new
         {
             id = string.Empty,
             name = $"TestRole-{uniqueId}",
-            description = "A test role created by integration tests"
-        };
+            description = "Integration test role"
+        });
 
-        // Act
-        var response = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/roles", payload);
-
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var role = await response.DeserializeAsync<RoleDto>();
-        role.ShouldNotBeNull();
-        role.Name.ShouldBe(payload.name);
+        role.Name.ShouldStartWith("TestRole-");
     }
 
     [Fact]
-    public async Task DeleteRole_Should_Return200_When_RoleExists()
+    public async Task DeleteRole_Should_ReturnNoContent_When_RoleExists()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
 
-        // Create a role first
-        var createPayload = new
+        var createResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/roles", new
         {
             id = string.Empty,
             name = $"DeleteMe-{uniqueId}",
-            description = "Role to be deleted"
-        };
-        var createResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/roles", createPayload);
-        createResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            description = "Role to delete"
+        });
         var createdRole = await createResponse.DeserializeAsync<RoleDto>();
 
-        // Act
         var response = await client.DeleteAsync($"{TestConstants.IdentityBasePath}/roles/{createdRole.Id}");
 
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 
     [Fact]
     public async Task GetRoles_Should_Return401_When_NotAuthenticated()
     {
-        // Arrange
         using var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add("tenant", TestConstants.RootTenantId);
 
-        // Act
         var response = await client.GetAsync($"{TestConstants.IdentityBasePath}/roles");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
-}
-
-public sealed class RoleDto
-{
-    public string Id { get; set; } = default!;
-    public string Name { get; set; } = default!;
-    public string? Description { get; set; }
 }

@@ -16,12 +16,12 @@ public sealed class UserRegistrationTests
     }
 
     [Fact]
-    public async Task RegisterUser_Should_Return201_When_DataIsValid()
+    public async Task RegisterUser_Should_Return201WithUserId_When_DataIsValid()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
-        var payload = new
+
+        var response = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
             firstName = "Test",
             lastName = "User",
@@ -29,18 +29,7 @@ public sealed class UserRegistrationTests
             userName = $"testuser-{uniqueId}",
             password = "Test@1234!",
             confirmPassword = "Test@1234!"
-        };
-
-        // Act
-        var response = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", payload);
-
-        // Assert
-        if (!response.IsSuccessStatusCode)
-        {
-            var errorBody = await response.Content.ReadAsStringAsync();
-            throw new InvalidOperationException(
-                $"Register failed with {response.StatusCode}: {errorBody}");
-        }
+        });
 
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
         var result = await response.DeserializeAsync<RegisterResult>();
@@ -48,10 +37,9 @@ public sealed class UserRegistrationTests
     }
 
     [Fact]
-    public async Task RegisterUser_Should_Return400_When_EmailIsDuplicate()
+    public async Task RegisterUser_Should_RejectDuplicate_When_EmailAlreadyExists()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
         var payload = new
         {
@@ -63,25 +51,23 @@ public sealed class UserRegistrationTests
             confirmPassword = "Test@1234!"
         };
 
-        // Register first time
         var firstResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", payload);
         firstResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        // Act - register with same email again
-        payload = payload with { userName = $"dupuser2-{uniqueId}" };
-        var secondResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", payload);
+        var secondResponse = await client.PostAsJsonAsync(
+            $"{TestConstants.IdentityBasePath}/register",
+            payload with { userName = $"dupuser2-{uniqueId}" });
 
-        // Assert
         secondResponse.IsSuccessStatusCode.ShouldBeFalse();
     }
 
     [Fact]
-    public async Task RegisterUser_Should_ReturnError_When_PasswordTooWeak()
+    public async Task RegisterUser_Should_Reject_When_PasswordTooWeak()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
-        var payload = new
+
+        var response = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
             firstName = "Weak",
             lastName = "Pass",
@@ -89,22 +75,18 @@ public sealed class UserRegistrationTests
             userName = $"weakuser-{uniqueId}",
             password = "123",
             confirmPassword = "123"
-        };
+        });
 
-        // Act
-        var response = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", payload);
-
-        // Assert
         response.IsSuccessStatusCode.ShouldBeFalse();
     }
 
     [Fact]
     public async Task RegisterUser_Should_Return401_When_NotAuthenticated()
     {
-        // Arrange
         using var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add("tenant", TestConstants.RootTenantId);
-        var payload = new
+
+        var response = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
             firstName = "NoAuth",
             lastName = "User",
@@ -112,46 +94,38 @@ public sealed class UserRegistrationTests
             userName = "noauthuser",
             password = "Test@1234!",
             confirmPassword = "Test@1234!"
-        };
+        });
 
-        // Act
-        var response = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", payload);
-
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task RegisterUser_Should_AllowLoginAfterRegistration()
+    public async Task RegisterUser_Should_RequireEmailConfirmation_When_RegisteredByAdmin()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        // Admin-registered users have EmailConfirmed = false and cannot login immediately
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
         string email = $"login-{uniqueId}@example.com";
-        string password = "Test@1234!";
-        var payload = new
+
+        var registerResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
             firstName = "Login",
             lastName = "Test",
             email,
             userName = $"loginuser-{uniqueId}",
-            password,
-            confirmPassword = password
-        };
-
-        var registerResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", payload);
+            password = "Test@1234!",
+            confirmPassword = "Test@1234!"
+        });
         registerResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        // Act - login with newly created user
-        var token = await _auth.GetTokenAsync(email, password);
+        // Attempt login — should fail because email is not confirmed
+        using var loginClient = _factory.CreateClient();
+        var loginRequest = new HttpRequestMessage(HttpMethod.Post, $"{TestConstants.IdentityBasePath}/token/issue");
+        loginRequest.Headers.Add("tenant", TestConstants.RootTenantId);
+        loginRequest.Content = JsonContent.Create(new { email, password = "Test@1234!" });
 
-        // Assert
-        token.ShouldNotBeNull();
-        token.AccessToken.ShouldNotBeNullOrWhiteSpace();
+        var loginResponse = await loginClient.SendAsync(loginRequest);
+
+        loginResponse.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
-}
-
-public sealed class RegisterResult
-{
-    public string UserId { get; set; } = default!;
 }

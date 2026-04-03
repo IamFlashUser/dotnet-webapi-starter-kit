@@ -40,7 +40,7 @@ public sealed class TokenRefreshTests
     }
 
     [Fact]
-    public async Task RefreshToken_Should_ReturnError_When_RefreshTokenIsInvalid()
+    public async Task RefreshToken_Should_ReturnUnauthorized_When_RefreshTokenIsInvalid()
     {
         // Arrange
         var originalToken = await _auth.GetRootAdminTokenAsync();
@@ -57,13 +57,6 @@ public sealed class TokenRefreshTests
         var response = await client.SendAsync(request);
 
         // Assert
-        response.IsSuccessStatusCode.ShouldBeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
-}
-
-public sealed class TokenRefreshResult
-{
-    public string Token { get; set; } = default!;
-    public string RefreshToken { get; set; } = default!;
-    public DateTime RefreshTokenExpiryTime { get; set; }
 }

@@ -16,93 +16,76 @@ public sealed class WebhookSubscriptionTests
     }
 
     [Fact]
-    public async Task CreateWebhookSubscription_Should_ReturnId_When_DataIsValid()
+    public async Task CreateWebhookSubscription_Should_ReturnCreated_When_DataIsValid()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
-        var payload = new
-        {
-            url = "https://example.com/webhook",
-            events = new[] { "user.created", "user.updated" },
-            secret = "test-webhook-secret-123"
-        };
+        using var client = await _auth.CreateRootAdminClientAsync();
 
-        // Act
         var response = await client.PostAsJsonAsync(
-            $"{TestConstants.WebhooksBasePath}/subscriptions", payload);
+            $"{TestConstants.WebhooksBasePath}/subscriptions", new
+            {
+                url = "https://example.com/webhook",
+                events = new[] { "user.created", "user.updated" },
+                secret = "test-webhook-secret-123"
+            });
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
     }
 
     [Fact]
-    public async Task GetWebhookSubscriptions_Should_ReturnList_When_Authenticated()
+    public async Task GetWebhookSubscriptions_Should_ReturnOk_When_SubscriptionsExist()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
 
         // Create a subscription first
-        var createPayload = new
+        await client.PostAsJsonAsync($"{TestConstants.WebhooksBasePath}/subscriptions", new
         {
             url = "https://example.com/webhook-list",
             events = new[] { "tenant.created" },
             secret = "list-secret-123"
-        };
-        await client.PostAsJsonAsync($"{TestConstants.WebhooksBasePath}/subscriptions", createPayload);
+        });
 
-        // Act
         var response = await client.GetAsync(
             $"{TestConstants.WebhooksBasePath}/subscriptions?pageNumber=1&pageSize=10");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task DeleteWebhookSubscription_Should_Return200_When_SubscriptionExists()
+    public async Task DeleteWebhookSubscription_Should_ReturnNoContent_When_SubscriptionExists()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
-        var createPayload = new
-        {
-            url = "https://example.com/webhook-delete",
-            events = new[] { "user.deleted" },
-            secret = "delete-secret-123"
-        };
+        using var client = await _auth.CreateRootAdminClientAsync();
+
         var createResponse = await client.PostAsJsonAsync(
-            $"{TestConstants.WebhooksBasePath}/subscriptions", createPayload);
+            $"{TestConstants.WebhooksBasePath}/subscriptions", new
+            {
+                url = "https://example.com/webhook-delete",
+                events = new[] { "user.deleted" },
+                secret = "delete-secret-123"
+            });
         createResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
-        var subscriptionId = await createResponse.Content.ReadAsStringAsync();
 
-        // Clean up the quotes from JSON string
-        subscriptionId = subscriptionId.Trim('"');
+        var subscriptionId = await createResponse.Content.ReadFromJsonAsync<Guid>();
 
-        // Act
         var response = await client.DeleteAsync(
             $"{TestConstants.WebhooksBasePath}/subscriptions/{subscriptionId}");
 
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 
     [Fact]
     public async Task CreateWebhookSubscription_Should_Return401_When_NotAuthenticated()
     {
-        // Arrange
         using var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add("tenant", TestConstants.RootTenantId);
-        var payload = new
-        {
-            url = "https://example.com/noauth-webhook",
-            events = new[] { "user.created" },
-            secret = "noauth-secret"
-        };
 
-        // Act
         var response = await client.PostAsJsonAsync(
-            $"{TestConstants.WebhooksBasePath}/subscriptions", payload);
+            $"{TestConstants.WebhooksBasePath}/subscriptions", new
+            {
+                url = "https://example.com/noauth-webhook",
+                events = new[] { "user.created" },
+                secret = "noauth-secret"
+            });
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 }

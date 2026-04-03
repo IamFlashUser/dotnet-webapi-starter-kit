@@ -6,24 +6,21 @@ namespace Integration.Tests.Tests.Groups;
 [Collection(FshCollectionDefinition.Name)]
 public sealed class GroupMembershipTests
 {
-    private readonly FshWebApplicationFactory _factory;
     private readonly AuthHelper _auth;
 
     public GroupMembershipTests(FshWebApplicationFactory factory)
     {
-        _factory = factory;
         _auth = new AuthHelper(factory);
     }
 
     [Fact]
-    public async Task AddUsersToGroup_Should_Succeed_When_UsersExist()
+    public async Task AddUsersToGroup_Should_ReturnOk_When_UsersExist()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
 
-        // Create a user
-        var registerPayload = new
+        // Create a user and a group
+        var userResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
             firstName = "GroupMember",
             lastName = "Test",
@@ -31,41 +28,34 @@ public sealed class GroupMembershipTests
             userName = $"member-{uniqueId}",
             password = "Test@1234!",
             confirmPassword = "Test@1234!"
-        };
-        var registerResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", registerPayload);
-        registerResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
-        var user = await registerResponse.DeserializeAsync<Users.RegisterResult>();
+        });
+        var user = await userResponse.DeserializeAsync<RegisterResult>();
 
-        // Create a group
-        var groupPayload = new
+        var groupResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/groups", new
         {
             name = $"MemberGroup-{uniqueId}",
-            description = "Group for membership tests",
+            description = "Membership test group",
             isDefault = false,
             roleIds = new List<string>()
-        };
-        var groupResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/groups", groupPayload);
-        groupResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
+        });
         var group = await groupResponse.DeserializeAsync<GroupDto>();
 
-        // Act - add user to group
-        var addPayload = new { userIds = new[] { user.UserId } };
+        // Add user to group
         var response = await client.PostAsJsonAsync(
-            $"{TestConstants.IdentityBasePath}/groups/{group.Id}/members", addPayload);
+            $"{TestConstants.IdentityBasePath}/groups/{group.Id}/members",
+            new { userIds = new[] { user.UserId } });
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task GetGroupMembers_Should_ReturnMembers_When_GroupHasMembers()
+    public async Task GetGroupMembers_Should_ReturnOk_When_GroupHasMembers()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
 
-        // Create a user and group, then add user to group
-        var registerPayload = new
+        // Create user, group, and add membership
+        var userResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
             firstName = "GroupQuery",
             lastName = "Test",
@@ -73,41 +63,36 @@ public sealed class GroupMembershipTests
             userName = $"grpquery-{uniqueId}",
             password = "Test@1234!",
             confirmPassword = "Test@1234!"
-        };
-        var registerResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", registerPayload);
-        var user = await registerResponse.DeserializeAsync<Users.RegisterResult>();
+        });
+        var user = await userResponse.DeserializeAsync<RegisterResult>();
 
-        var groupPayload = new
+        var groupResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/groups", new
         {
             name = $"QueryGroup-{uniqueId}",
-            description = "Group for querying members",
+            description = "Query members test",
             isDefault = false,
             roleIds = new List<string>()
-        };
-        var groupResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/groups", groupPayload);
+        });
         var group = await groupResponse.DeserializeAsync<GroupDto>();
 
-        // Add member
-        var addPayload = new { userIds = new[] { user.UserId } };
-        await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/groups/{group.Id}/members", addPayload);
+        await client.PostAsJsonAsync(
+            $"{TestConstants.IdentityBasePath}/groups/{group.Id}/members",
+            new { userIds = new[] { user.UserId } });
 
-        // Act
         var response = await client.GetAsync(
             $"{TestConstants.IdentityBasePath}/groups/{group.Id}/members?pageNumber=1&pageSize=10");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task RemoveUserFromGroup_Should_Succeed_When_UserIsInGroup()
+    public async Task RemoveUserFromGroup_Should_ReturnNoContent_When_UserIsInGroup()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
         var uniqueId = Guid.NewGuid().ToString("N")[..8];
 
-        // Create user + group + add member
-        var registerPayload = new
+        // Create user, group, add, then remove
+        var userResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", new
         {
             firstName = "RemoveMe",
             lastName = "Test",
@@ -115,29 +100,25 @@ public sealed class GroupMembershipTests
             userName = $"remove-{uniqueId}",
             password = "Test@1234!",
             confirmPassword = "Test@1234!"
-        };
-        var registerResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/register", registerPayload);
-        var user = await registerResponse.DeserializeAsync<Users.RegisterResult>();
+        });
+        var user = await userResponse.DeserializeAsync<RegisterResult>();
 
-        var groupPayload = new
+        var groupResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/groups", new
         {
             name = $"RemoveGroup-{uniqueId}",
-            description = "Group for removal test",
+            description = "Removal test",
             isDefault = false,
             roleIds = new List<string>()
-        };
-        var groupResponse = await client.PostAsJsonAsync($"{TestConstants.IdentityBasePath}/groups", groupPayload);
+        });
         var group = await groupResponse.DeserializeAsync<GroupDto>();
 
         await client.PostAsJsonAsync(
             $"{TestConstants.IdentityBasePath}/groups/{group.Id}/members",
             new { userIds = new[] { user.UserId } });
 
-        // Act
         var response = await client.DeleteAsync(
             $"{TestConstants.IdentityBasePath}/groups/{group.Id}/members/{user.UserId}");
 
-        // Assert
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 }

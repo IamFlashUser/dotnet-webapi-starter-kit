@@ -1,6 +1,9 @@
 using System.Reflection;
+using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Jobs.Services;
-using FSH.Framework.Shared.Persistence;
+using FSH.Framework.Persistence;
+using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Web.Modules;
 using Hangfire;
 using Hangfire.InMemory;
@@ -22,27 +25,21 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
         .WithDatabase("fsh_integration_tests")
         .WithUsername("postgres")
         .WithPassword("integration_test_pwd")
+        .WithAutoRemove(true)
+        .WithCleanUp(true)
         .Build();
 
     public async Task InitializeAsync()
     {
         await _postgres.StartAsync();
-        ResetModuleLoader();
 
-        // Trigger host creation by creating a client.
-        // The host starts, running all hosted services including
-        // TenantStoreInitializerHostedService and TenantAutoProvisioningHostedService.
-        using var client = CreateClient();
+        // Force host creation via the Server property (no leaked HttpClient)
+        _ = Server;
 
-        // Manually run all IDbInitializer instances to ensure migrations and seeding
-        // are complete. Hangfire InMemory may process jobs slowly in tests.
-        using var scope = Services.CreateScope();
-        var initializers = scope.ServiceProvider.GetServices<IDbInitializer>();
-        foreach (var init in initializers)
-        {
-            await init.MigrateAsync(CancellationToken.None);
-            await init.SeedAsync(CancellationToken.None);
-        }
+        // Run migrations and seed data for the root tenant.
+        // We do this explicitly rather than relying on Hangfire background jobs
+        // to guarantee deterministic ordering: migrate ALL schemas first, then seed.
+        await ProvisionRootTenantAsync();
     }
 
     public new async Task DisposeAsync()
@@ -71,8 +68,8 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
                 ["JwtOptions:AccessTokenMinutes"] = "30",
                 ["JwtOptions:RefreshTokenDays"] = "7",
                 ["OriginOptions:OriginUrl"] = "http://localhost",
-                ["MultitenancyOptions:RunTenantMigrationsOnStartup"] = "true",
-                ["MultitenancyOptions:AutoProvisionOnStartup"] = "true",
+                ["MultitenancyOptions:RunTenantMigrationsOnStartup"] = "false",
+                ["MultitenancyOptions:AutoProvisionOnStartup"] = "false",
                 ["OpenTelemetryOptions:Enabled"] = "false",
                 ["Serilog:MinimumLevel:Default"] = "Warning",
                 ["Serilog:WriteTo:0:Name"] = "Console",
@@ -90,21 +87,24 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
 
         builder.ConfigureServices(services =>
         {
-            // Replace Hangfire PostgreSQL storage with InMemory
             services.AddHangfire(config => config.UseInMemoryStorage());
-
-            // Ensure IJobService is registered
             services.TryAddTransient<IJobService, HangfireService>();
 
-            // Override JWT bearer to not require HTTPS (TestServer uses HTTP)
             services.PostConfigure<JwtBearerOptions>(
                 JwtBearerDefaults.AuthenticationScheme,
                 options => options.RequireHttpsMetadata = false);
+
+            // Detailed errors in tests instead of generic "An unexpected error occurred"
+            var existingHandlers = services.Where(d =>
+                d.ServiceType == typeof(Microsoft.AspNetCore.Diagnostics.IExceptionHandler)).ToList();
+            foreach (var h in existingHandlers) services.Remove(h);
+            services.AddExceptionHandler<DetailedTestExceptionHandler>();
         });
     }
 
     protected override IHost CreateHost(IHostBuilder builder)
     {
+        // Disable ValidateOnBuild for .NET 10 minimal API dual-host model
         builder.UseServiceProviderFactory(new DefaultServiceProviderFactory(new ServiceProviderOptions
         {
             ValidateOnBuild = false,
@@ -113,6 +113,58 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
 
         ResetModuleLoader();
         return base.CreateHost(builder);
+    }
+
+    private async Task ProvisionRootTenantAsync()
+    {
+        // Wait for TenantStoreInitializerHostedService (BackgroundService) to
+        // migrate the tenant catalog and seed the root tenant.
+        AppTenantInfo? rootTenant = null;
+        for (int i = 0; i < 60; i++)
+        {
+            try
+            {
+                using var scope = Services.CreateScope();
+                var store = scope.ServiceProvider.GetRequiredService<IMultiTenantStore<AppTenantInfo>>();
+                rootTenant = await store.GetAsync(MultitenancyConstants.Root.Id);
+                if (rootTenant is not null) break;
+            }
+            catch (Exception) when (i < 59)
+            {
+                // Tenant catalog DB not yet migrated — retry
+            }
+
+            await Task.Delay(500);
+        }
+
+        if (rootTenant is null)
+        {
+            throw new TimeoutException("Root tenant was not seeded within 30 seconds.");
+        }
+
+        // Run all module migrations (identity, audit, webhook schemas)
+        using (var scope = Services.CreateScope())
+        {
+            var setter = scope.ServiceProvider.GetRequiredService<IMultiTenantContextSetter>();
+            setter.MultiTenantContext = new MultiTenantContext<AppTenantInfo>(rootTenant);
+
+            foreach (var init in scope.ServiceProvider.GetServices<IDbInitializer>())
+            {
+                await init.MigrateAsync(CancellationToken.None);
+            }
+        }
+
+        // Seed all modules (admin user, roles, permissions, groups)
+        using (var scope = Services.CreateScope())
+        {
+            var setter = scope.ServiceProvider.GetRequiredService<IMultiTenantContextSetter>();
+            setter.MultiTenantContext = new MultiTenantContext<AppTenantInfo>(rootTenant);
+
+            foreach (var init in scope.ServiceProvider.GetServices<IDbInitializer>())
+            {
+                await init.SeedAsync(CancellationToken.None);
+            }
+        }
     }
 
     private static void ResetModuleLoader()

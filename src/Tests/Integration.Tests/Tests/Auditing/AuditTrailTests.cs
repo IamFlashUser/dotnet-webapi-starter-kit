@@ -15,59 +15,46 @@ public sealed class AuditTrailTests
     }
 
     [Fact]
-    public async Task GetAudits_Should_ReturnAuditEntries_When_Authenticated()
+    public async Task GetAudits_Should_ReturnOk_When_Authenticated()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
 
-        // Act
         var response = await client.GetAsync($"{TestConstants.AuditsBasePath}?pageNumber=1&pageSize=10");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task GetSecurityAudits_Should_ReturnEntries_When_LoginEventsExist()
+    public async Task GetSecurityAudits_Should_ReturnOk_When_LoginEventsExist()
     {
-        // Arrange
-        // Perform a login to generate security audit entries
+        // Generate a login event
         await _auth.GetRootAdminTokenAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
 
-        using var client = await _auth.CreateAuthenticatedClientAsync();
-
-        // Act
         var response = await client.GetAsync(
             $"{TestConstants.AuditsBasePath}/security?pageNumber=1&pageSize=10");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task GetAuditSummary_Should_ReturnSummary_When_Authenticated()
+    public async Task GetAuditSummary_Should_ReturnOk_When_Authenticated()
     {
-        // Arrange
-        using var client = await _auth.CreateAuthenticatedClientAsync();
+        using var client = await _auth.CreateRootAdminClientAsync();
 
-        // Act
         var response = await client.GetAsync($"{TestConstants.AuditsBasePath}/summary");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
     public async Task GetAudits_Should_Return401_When_NotAuthenticated()
     {
-        // Arrange
         using var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add("tenant", TestConstants.RootTenantId);
 
-        // Act
         var response = await client.GetAsync($"{TestConstants.AuditsBasePath}?pageNumber=1&pageSize=10");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 }
