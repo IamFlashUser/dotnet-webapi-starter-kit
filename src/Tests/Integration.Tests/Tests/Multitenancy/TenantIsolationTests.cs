@@ -102,7 +102,7 @@ public sealed class TenantIsolationTests
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
     }
 
-    private static async Task WaitForProvisioningAsync(HttpClient client, string tenantId, int maxRetries = 30)
+    private static async Task WaitForProvisioningAsync(HttpClient client, string tenantId, int maxRetries = 60)
     {
         for (int i = 0; i < maxRetries; i++)
         {
@@ -112,14 +112,22 @@ public sealed class TenantIsolationTests
             if (statusResponse.IsSuccessStatusCode)
             {
                 var content = await statusResponse.Content.ReadAsStringAsync();
-                if (content.Contains("Success", StringComparison.OrdinalIgnoreCase)
-                    || content.Contains("Completed", StringComparison.OrdinalIgnoreCase))
+                if (content.Contains("Completed", StringComparison.OrdinalIgnoreCase))
                 {
                     return;
+                }
+
+                if (content.Contains("Failed", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException(
+                        $"Tenant {tenantId} provisioning failed: {content}");
                 }
             }
 
             await Task.Delay(1000);
         }
+
+        throw new TimeoutException(
+            $"Tenant {tenantId} provisioning did not complete within {maxRetries} seconds.");
     }
 }

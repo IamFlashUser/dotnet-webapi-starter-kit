@@ -88,6 +88,13 @@ public sealed class FshWebApplicationFactory : WebApplicationFactory<Program>, I
         builder.ConfigureServices(services =>
         {
             services.AddHangfire(config => config.UseInMemoryStorage());
+            services.AddHangfireServer(options =>
+            {
+                options.SchedulePollingInterval = TimeSpan.FromSeconds(1);
+                options.HeartbeatInterval = TimeSpan.FromSeconds(5);
+                options.Queues = ["default", "email"];
+                options.WorkerCount = 2;
+            });
             services.TryAddTransient<IJobService, HangfireService>();
 
             services.PostConfigure<JwtBearerOptions>(
