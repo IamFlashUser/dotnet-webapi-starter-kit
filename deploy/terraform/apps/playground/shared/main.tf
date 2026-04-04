@@ -98,7 +98,6 @@ module "app" {
   container_registry  = var.container_registry
   container_image_tag = var.container_image_tag
   api_image_name      = var.api_image_name
-  blazor_image_name   = var.blazor_image_name
 
   # API Service
   api_container_port           = var.api_container_port
@@ -112,15 +111,4 @@ module "app" {
   api_autoscaling_max_capacity = var.api_autoscaling_max_capacity
   api_autoscaling_cpu_target   = var.api_autoscaling_cpu_target
 
-  # Blazor Service
-  blazor_container_port           = var.blazor_container_port
-  blazor_cpu                      = var.blazor_cpu
-  blazor_memory                   = var.blazor_memory
-  blazor_desired_count            = var.blazor_desired_count
-  blazor_enable_circuit_breaker   = var.blazor_enable_circuit_breaker
-  blazor_use_fargate_spot         = var.blazor_use_fargate_spot
-  blazor_enable_autoscaling       = var.blazor_enable_autoscaling
-  blazor_autoscaling_min_capacity = var.blazor_autoscaling_min_capacity
-  blazor_autoscaling_max_capacity = var.blazor_autoscaling_max_capacity
-  blazor_autoscaling_cpu_target   = var.blazor_autoscaling_cpu_target
 }

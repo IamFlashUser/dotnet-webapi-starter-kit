@@ -3,7 +3,8 @@
     "author": "Mukesh Murugan",
     "classifications": [
         "WebAPI",
-        "Clean Architecture",
+        "Modular Monolith",
+        "Vertical Slice",
         "Boilerplate",
         "ASP.NET Core",
         "Starter Kit",
@@ -12,14 +13,44 @@
     ],
     "tags": {
         "language": "C#",
-        "type": "project"
+        "type": "solution"
     },
     "identity": "FullStackHero.NET.StarterKit",
     "name": "FullStackHero .NET Starter Kit",
-    "description": "The best way to start a full-stack .NET 10 Web App.",
+    "description": "A production-ready modular .NET 10 framework — Vertical Slice Architecture, CQRS, Multitenancy, Identity, Aspire.",
     "shortName": "fsh",
     "sourceName": "FSH.Starter",
     "preferNameDirectory": true,
+    "symbols": {
+        "db": {
+            "type": "parameter",
+            "datatype": "choice",
+            "description": "Database provider for migrations and persistence.",
+            "defaultValue": "postgresql",
+            "choices": [
+                {
+                    "choice": "postgresql",
+                    "description": "PostgreSQL (default)"
+                },
+                {
+                    "choice": "sqlserver",
+                    "description": "SQL Server"
+                }
+            ]
+        },
+        "aspire": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Include the .NET Aspire AppHost project for orchestration.",
+            "defaultValue": "true"
+        },
+        "skipRestore": {
+            "type": "parameter",
+            "datatype": "bool",
+            "description": "Skip dotnet restore after project creation.",
+            "defaultValue": "false"
+        }
+    },
     "sources": [
         {
             "source": "./",
@@ -30,16 +61,42 @@
                 ".vscode/**",
                 ".vs/**",
                 ".github/**",
+                ".agents/**",
+                ".claude/**",
+                ".devcontainer/**",
+                ".git/**",
                 "templates/**/*",
+                "clients/**",
+                "demo/**",
+                "docs/**",
+                "nupkgs/**",
+                "scripts/**",
+                "src/Tools/**",
                 "**/*.filelist",
                 "**/*.user",
                 "**/images",
                 "**/*.lock.json",
-                "*.nuspec"
+                "*.nuspec",
+                "**/bin/**",
+                "**/obj/**",
+                ".mcp.json",
+                ".gitignore",
+                "CLAUDE.md",
+                "GEMINI.md",
+                "README.md",
+                "LICENSE"
             ],
             "rename": {
                 "README-template.md": "README.md"
-            }
+            },
+            "modifiers": [
+                {
+                    "condition": "(!aspire)",
+                    "exclude": [
+                        "src/Playground/FSH.Starter.AppHost/**"
+                    ]
+                }
+            ]
         }
     ],
     "primaryOutputs": [
@@ -49,7 +106,8 @@
     ],
     "postActions": [
         {
-            "description": "restore webapi project dependencies",
+            "condition": "(!skipRestore)",
+            "description": "Restore NuGet packages",
             "manualInstructions": [
                 {
                     "text": "Run 'dotnet restore'"

@@ -192,13 +192,13 @@ public class {Entity}Tests
 
 ```bash
 # Run all tests
-dotnet test src/FSH.Framework.slnx
+dotnet test src/FSH.Starter.slnx
 
 # Run specific test project
 dotnet test src/Tests/Architecture.Tests
 
 # Run with coverage
-dotnet test src/FSH.Framework.slnx --collect:"XPlat Code Coverage"
+dotnet test src/FSH.Starter.slnx --collect:"XPlat Code Coverage"
 
 # Run specific test
 dotnet test --filter "FullyQualifiedName~Create{Entity}HandlerTests"

@@ -50,11 +50,6 @@ output "api_url" {
   value       = var.enable_https && var.domain_name != null ? "https://${var.domain_name}/api" : "http://${module.alb.dns_name}/api"
 }
 
-output "blazor_url" {
-  description = "Blazor UI URL."
-  value       = var.enable_https && var.domain_name != null ? "https://${var.domain_name}" : "http://${module.alb.dns_name}"
-}
-
 ################################################################################
 # ECS Outputs
 ################################################################################
@@ -72,11 +67,6 @@ output "ecs_cluster_arn" {
 output "api_service_name" {
   description = "API ECS service name."
   value       = module.api_service.service_name
-}
-
-output "blazor_service_name" {
-  description = "Blazor ECS service name."
-  value       = module.blazor_service.service_name
 }
 
 ################################################################################

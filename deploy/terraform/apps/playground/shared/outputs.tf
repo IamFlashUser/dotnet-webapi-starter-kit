@@ -26,11 +26,6 @@ output "api_url" {
   value       = module.app.api_url
 }
 
-output "blazor_url" {
-  description = "Blazor URL."
-  value       = module.app.blazor_url
-}
-
 ################################################################################
 # Database
 ################################################################################

@@ -325,11 +325,6 @@ variable "api_image_name" {
   default = "fsh-api"
 }
 
-variable "blazor_image_name" {
-  type    = string
-  default = "fsh-playground-blazor"
-}
-
 ################################################################################
 # API Service
 ################################################################################
@@ -384,56 +379,3 @@ variable "api_autoscaling_cpu_target" {
   default = 70
 }
 
-################################################################################
-# Blazor Service
-################################################################################
-
-variable "blazor_container_port" {
-  type    = number
-  default = 8080
-}
-
-variable "blazor_cpu" {
-  type    = string
-  default = "256"
-}
-
-variable "blazor_memory" {
-  type    = string
-  default = "512"
-}
-
-variable "blazor_desired_count" {
-  type    = number
-  default = 1
-}
-
-variable "blazor_enable_circuit_breaker" {
-  type    = bool
-  default = true
-}
-
-variable "blazor_use_fargate_spot" {
-  type    = bool
-  default = false
-}
-
-variable "blazor_enable_autoscaling" {
-  type    = bool
-  default = false
-}
-
-variable "blazor_autoscaling_min_capacity" {
-  type    = number
-  default = 1
-}
-
-variable "blazor_autoscaling_max_capacity" {
-  type    = number
-  default = 10
-}
-
-variable "blazor_autoscaling_cpu_target" {
-  type    = number
-  default = 70
-}

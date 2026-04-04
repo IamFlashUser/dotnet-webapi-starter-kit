@@ -1,217 +1,302 @@
-using FSH.CLI.Models;
-using FSH.CLI.Prompts;
-using FSH.CLI.Scaffolding;
-using FSH.CLI.UI;
-using FSH.CLI.Validation;
-using Spectre.Console.Cli;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+using FSH.CLI.Infrastructure;
+using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace FSH.CLI.Commands;
 
-[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated by Spectre.Console.Cli via reflection")]
-internal sealed class NewCommand : AsyncCommand<NewCommand.Settings>
+public sealed class NewCommand : AsyncCommand<NewCommand.Settings>
 {
-    [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated by Spectre.Console.Cli via reflection")]
-    internal sealed class Settings : CommandSettings
+    public sealed class Settings : CommandSettings
     {
+        [Description("Project name (e.g., MyApp). Used for solution, namespaces, and folder names.")]
         [CommandArgument(0, "[name]")]
-        [Description("The name of the project")]
-        public string? Name { get; set; }
+        public string? Name { get; init; }
 
-        [CommandOption("-t|--type")]
-        [Description("Project type: api, api-blazor")]
-        [DefaultValue(null)]
-        public string? Type { get; set; }
-
-        [CommandOption("-a|--arch")]
-        [Description("Architecture style: monolith, microservices, serverless")]
-        [DefaultValue(null)]
-        public string? Architecture { get; set; }
-
-        [CommandOption("-d|--db")]
-        [Description("Database provider: postgres, sqlserver, sqlite")]
-        [DefaultValue(null)]
-        public string? Database { get; set; }
-
-        [CommandOption("-p|--preset")]
-        [Description("Use a preset: quickstart, production, microservices, serverless")]
-        [DefaultValue(null)]
-        public string? Preset { get; set; }
-
+        [Description("Output directory. Defaults to ./<name>.")]
         [CommandOption("-o|--output")]
-        [Description("Output directory")]
-        [DefaultValue(".")]
-        public string Output { get; set; } = ".";
+        public string? Output { get; init; }
 
-        [CommandOption("--docker")]
-        [Description("Include Docker Compose")]
-        [DefaultValue(null)]
-        public bool? Docker { get; set; }
+        [Description("Database provider: postgresql (default) or sqlserver.")]
+        [CommandOption("--db")]
+        public string? Database { get; init; }
 
-        [CommandOption("--aspire")]
-        [Description("Include Aspire AppHost")]
-        [DefaultValue(null)]
-        public bool? Aspire { get; set; }
-
-        [CommandOption("--sample")]
-        [Description("Include sample module")]
-        [DefaultValue(null)]
-        public bool? Sample { get; set; }
-
-        [CommandOption("--terraform")]
-        [Description("Include Terraform (AWS)")]
-        [DefaultValue(null)]
-        public bool? Terraform { get; set; }
-
-        [CommandOption("--ci")]
-        [Description("Include GitHub Actions CI")]
-        [DefaultValue(null)]
-        public bool? CI { get; set; }
-
-        [CommandOption("--git")]
-        [Description("Initialize git repository")]
-        [DefaultValue(null)]
-        public bool? Git { get; set; }
-
-        [CommandOption("-v|--fsh-version")]
-        [Description("FullStackHero package version (e.g., 10.0.0 or 10.0.0-rc.1)")]
-        [DefaultValue(null)]
-        public string? FshVersion { get; set; }
-
-        [CommandOption("--no-interactive")]
-        [Description("Disable interactive mode")]
+        [Description("Exclude the .NET Aspire AppHost project.")]
+        [CommandOption("--no-aspire")]
         [DefaultValue(false)]
-        public bool NoInteractive { get; set; }
+        public bool NoAspire { get; init; }
+
+        [Description("Skip interactive prompts and use defaults.")]
+        [CommandOption("--non-interactive")]
+        [DefaultValue(false)]
+        public bool NonInteractive { get; init; }
+
+        [Description("Initialize a git repository in the output directory.")]
+        [CommandOption("--git")]
+        [DefaultValue(true)]
+        public bool InitGit { get; init; }
+
+        [Description("Show what would be created without actually creating anything.")]
+        [CommandOption("--dry-run")]
+        [DefaultValue(false)]
+        public bool DryRun { get; init; }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
+    protected override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        PrintBanner();
+
+        // 1. Gather inputs (interactive or from arguments)
+        string name = await ResolveNameAsync(settings, cancellationToken).ConfigureAwait(false);
+
+        string? validationError = ProjectNameValidator.Validate(name);
+        if (validationError is not null)
+        {
+            AnsiConsole.MarkupLine($"[{FshConstants.ErrorColor}]{validationError.EscapeMarkup()}[/]");
+            return 1;
+        }
+
+        string db = await ResolveDatabaseAsync(settings, cancellationToken).ConfigureAwait(false);
+
+        bool aspire = await ResolveAspireAsync(settings, cancellationToken).ConfigureAwait(false);
+
+        string output = settings.Output ?? Path.GetFullPath(name);
+
+        // 2. Check for existing directory
+        if (Directory.Exists(output) && Directory.EnumerateFileSystemEntries(output).Any())
+        {
+            AnsiConsole.MarkupLine($"[{FshConstants.WarningColor}]Directory '{output}' already exists and is not empty.[/]");
+
+            if (settings.NonInteractive)
+            {
+                AnsiConsole.MarkupLine($"[{FshConstants.ErrorColor}]Use --output to specify a different directory, or delete the existing one.[/]");
+                return 1;
+            }
+
+            bool overwrite = await new ConfirmationPrompt("Overwrite existing directory?") { DefaultValue = false }
+                .ShowAsync(AnsiConsole.Console, cancellationToken).ConfigureAwait(false);
+
+            if (!overwrite) return 1;
+        }
+
+        // 3. Print summary
+        PrintSummary(name, db, aspire, output, settings.DryRun);
+
+        if (settings.DryRun)
+        {
+            AnsiConsole.MarkupLine($"[{FshConstants.DimColor}]Dry run — no files were created.[/]");
+            return 0;
+        }
+
+        // 4. Ensure template is installed
+        if (!await EnsureTemplateInstalledAsync(cancellationToken).ConfigureAwait(false))
+            return 1;
+
+        // 5. Scaffold project
+        int result = await ScaffoldProjectAsync(name, db, aspire, output, cancellationToken).ConfigureAwait(false);
+        if (result != 0)
+        {
+            AnsiConsole.MarkupLine($"[{FshConstants.ErrorColor}]Scaffolding failed. Check the output above for errors.[/]");
+            return 1;
+        }
+
+        // 6. Initialize git
+        if (settings.InitGit)
+        {
+            await InitGitRepoAsync(output, cancellationToken).ConfigureAwait(false);
+        }
+
+        // 7. Check for CLI updates (non-blocking, best-effort)
+        await CheckForUpdatesAsync(cancellationToken).ConfigureAwait(false);
+
+        // 8. Print next steps
+        PrintNextSteps(name, aspire);
+
+        return 0;
+    }
+
+    private static void PrintBanner()
+    {
+        AnsiConsole.Write(new FigletText("fsh").Color(Color.DodgerBlue1));
+        AnsiConsole.MarkupLine("[bold]FullStackHero .NET Starter Kit[/]");
+        AnsiConsole.WriteLine();
+    }
+
+    private static async Task<string> ResolveNameAsync(Settings settings, CancellationToken cancellationToken)
+    {
+        if (settings.Name is not null) return settings.Name;
+
+        if (settings.NonInteractive)
+            throw new InvalidOperationException("Project name is required in non-interactive mode. Pass it as: fsh new <name>");
+
+        return await new TextPrompt<string>($"[{FshConstants.AccentColor}]Project name:[/]")
+            .Validate(input =>
+            {
+                string? error = ProjectNameValidator.Validate(input);
+                return error is null
+                    ? ValidationResult.Success()
+                    : ValidationResult.Error(error);
+            })
+            .ShowAsync(AnsiConsole.Console, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<string> ResolveDatabaseAsync(Settings settings, CancellationToken cancellationToken)
+    {
+        if (settings.Database is not null) return settings.Database;
+        if (settings.NonInteractive) return "postgresql";
+
+        return await new SelectionPrompt<string>()
+            .Title($"[{FshConstants.AccentColor}]Database provider:[/]")
+            .AddChoices("postgresql", "sqlserver")
+            .ShowAsync(AnsiConsole.Console, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<bool> ResolveAspireAsync(Settings settings, CancellationToken cancellationToken)
+    {
+        if (settings.NoAspire) return false;
+        if (settings.NonInteractive) return true;
+
+        return await new ConfirmationPrompt($"[{FshConstants.AccentColor}]Include .NET Aspire AppHost?[/]")
+            { DefaultValue = true }
+            .ShowAsync(AnsiConsole.Console, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static void PrintSummary(string name, string db, bool aspire, string output, bool dryRun)
+    {
+        AnsiConsole.WriteLine();
+
+        string mode = dryRun ? " [yellow](dry run)[/]" : "";
+        AnsiConsole.MarkupLine($"[bold]Creating project:[/] {name.EscapeMarkup()}{mode}");
+        AnsiConsole.MarkupLine($"  [{FshConstants.DimColor}]Database:[/]  {db}");
+        AnsiConsole.MarkupLine($"  [{FshConstants.DimColor}]Aspire:[/]    {(aspire ? "yes" : "no")}");
+        AnsiConsole.MarkupLine($"  [{FshConstants.DimColor}]Output:[/]    {output.EscapeMarkup()}");
+        AnsiConsole.WriteLine();
+    }
+
+    private static async Task<bool> EnsureTemplateInstalledAsync(CancellationToken cancellationToken)
+    {
+        // Check if the template is already available. dotnet new list may return
+        // non-zero due to workload warnings, so check stdout content regardless.
+        (_, string listOutput) = await ProcessRunner.CaptureAsync(
+            "dotnet", $"new list {FshConstants.TemplateShortName}",
+            cancellationToken).ConfigureAwait(false);
+
+        bool installed = listOutput.Contains(FshConstants.TemplateShortName, StringComparison.OrdinalIgnoreCase)
+            && listOutput.Contains("FullStackHero", StringComparison.OrdinalIgnoreCase);
+
+        if (installed) return true;
+
+        AnsiConsole.MarkupLine($"[{FshConstants.WarningColor}]FSH template not found. Installing...[/]");
+        await ProcessRunner.RunAsync(
+            "dotnet", $"new install {FshConstants.TemplatePackageId}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+
+        // Verify it actually installed (ignore exit code — workload warnings cause non-zero)
+        (_, string verifyOutput) = await ProcessRunner.CaptureAsync(
+            "dotnet", $"new list {FshConstants.TemplateShortName}",
+            cancellationToken).ConfigureAwait(false);
+
+        bool nowInstalled = verifyOutput.Contains("FullStackHero", StringComparison.OrdinalIgnoreCase);
+        if (!nowInstalled)
+        {
+            AnsiConsole.MarkupLine($"[{FshConstants.ErrorColor}]Failed to install template. Run manually:[/] dotnet new install {FshConstants.TemplatePackageId}");
+        }
+
+        return nowInstalled;
+    }
+
+    private static async Task<int> ScaffoldProjectAsync(
+        string name, string db, bool aspire, string output, CancellationToken cancellationToken)
+    {
+        return await AnsiConsole.Status()
+            .Spinner(Spinner.Known.Dots)
+            .SpinnerStyle(Style.Parse(FshConstants.AccentColor))
+            .StartAsync("Scaffolding project...", async _ =>
+            {
+                string aspireFlag = aspire ? "true" : "false";
+                string args = $"new {FshConstants.TemplateShortName} -n {name} -o \"{output}\" --db {db} --aspire {aspireFlag} --force";
+                await ProcessRunner.RunAsync("dotnet", args, showOutput: false, cancellationToken: cancellationToken)
+                    .ConfigureAwait(false);
+
+                // dotnet new may return non-zero due to workload warnings even on success.
+                // Verify by checking if the output directory was populated.
+                string slnxPath = Path.Combine(output, "src", $"{name}.slnx");
+                if (File.Exists(slnxPath))
+                    return 0;
+
+                // Fallback: check if any .slnx exists (template may have different naming)
+                bool anySolution = Directory.Exists(Path.Combine(output, "src"))
+                    && Directory.GetFiles(Path.Combine(output, "src"), "*.slnx").Length > 0;
+
+                return anySolution ? 0 : 1;
+            }).ConfigureAwait(false);
+    }
+
+    private static async Task InitGitRepoAsync(string output, CancellationToken cancellationToken)
+    {
+        if (Directory.Exists(Path.Combine(output, ".git")))
+            return;
+
+        await AnsiConsole.Status()
+            .Spinner(Spinner.Known.Dots)
+            .SpinnerStyle(Style.Parse(FshConstants.AccentColor))
+            .StartAsync("Initializing git repository...", async _ =>
+            {
+                await ProcessRunner.RunAsync("git", "init", output, showOutput: false, cancellationToken: cancellationToken)
+                    .ConfigureAwait(false);
+                await ProcessRunner.RunAsync("git", "add -A", output, showOutput: false, cancellationToken: cancellationToken)
+                    .ConfigureAwait(false);
+                await ProcessRunner.RunAsync("git", "commit -m \"Initial project from FullStackHero .NET Starter Kit\"", output, showOutput: false, cancellationToken: cancellationToken)
+                    .ConfigureAwait(false);
+            }).ConfigureAwait(false);
+    }
+
+    private static async Task CheckForUpdatesAsync(CancellationToken cancellationToken)
     {
         try
         {
-            ProjectOptions options;
+            string? latest = await NuGetClient.GetLatestVersionAsync(
+                FshConstants.CliPackageId, cancellationToken).ConfigureAwait(false);
 
-            if (settings.NoInteractive || HasExplicitOptions(settings))
+            string currentVersion = typeof(NewCommand).Assembly.GetName().Version?.ToString(3) ?? "0.0.0";
+
+            if (latest is not null && latest != currentVersion)
             {
-                options = BuildOptionsFromSettings(settings);
-
-                var validation = OptionValidator.Validate(options);
-                if (!validation.IsValid)
-                {
-                    foreach (var error in validation.Errors)
-                    {
-                        ConsoleTheme.WriteError(error);
-                    }
-                    return 1;
-                }
+                AnsiConsole.WriteLine();
+                AnsiConsole.MarkupLine($"[{FshConstants.WarningColor}]A newer version of FSH CLI is available: {latest} (current: {currentVersion})[/]");
+                AnsiConsole.MarkupLine($"[{FshConstants.DimColor}]Run 'fsh update' to upgrade.[/]");
             }
-            else
-            {
-                options = ProjectWizard.Run(settings.Name, settings.FshVersion);
-            }
-
-            await SolutionGenerator.GenerateAsync(options, cancellationToken);
-
-            return 0;
         }
-        catch (ArgumentException ex)
+        catch
         {
-            ConsoleTheme.WriteError(ex.Message);
-            return 1;
-        }
-        catch (InvalidOperationException ex)
-        {
-            ConsoleTheme.WriteError(ex.Message);
-            return 1;
-        }
-        catch (IOException ex)
-        {
-            ConsoleTheme.WriteError($"File operation failed: {ex.Message}");
-            return 1;
+            // Update check is best-effort — never block project creation
         }
     }
 
-    private static bool HasExplicitOptions(Settings settings) =>
-        !string.IsNullOrEmpty(settings.Preset) ||
-        !string.IsNullOrEmpty(settings.Type) ||
-        !string.IsNullOrEmpty(settings.Architecture) ||
-        !string.IsNullOrEmpty(settings.Database);
-
-    private static ProjectOptions BuildOptionsFromSettings(Settings settings)
+    private static void PrintNextSteps(string name, bool aspire)
     {
-        // If preset is specified, use it as base
-        if (!string.IsNullOrEmpty(settings.Preset))
-        {
-            var preset = settings.Preset.ToUpperInvariant() switch
-            {
-                "QUICKSTART" or "QUICK" => Presets.QuickStart,
-                "PRODUCTION" or "PROD" => Presets.ProductionReady,
-                "MICROSERVICES" or "MICRO" => Presets.MicroservicesStarter,
-                "SERVERLESS" or "LAMBDA" => Presets.ServerlessApi,
-                _ => throw new ArgumentException($"Unknown preset: {settings.Preset}")
-            };
+        AnsiConsole.WriteLine();
+        AnsiConsole.Write(new Rule($"[{FshConstants.SuccessColor}]Project created successfully![/]").RuleStyle(FshConstants.SuccessColor));
+        AnsiConsole.WriteLine();
 
-            var name = settings.Name ?? throw new ArgumentException("Project name is required");
-            var options = preset.ToProjectOptions(name, settings.Output);
+        string runProject = aspire
+            ? $"src/Playground/{name}.AppHost"
+            : $"src/Playground/{name}.Api";
 
-            // Allow overrides
-            if (settings.Docker.HasValue) options.IncludeDocker = settings.Docker.Value;
-            if (settings.Aspire.HasValue) options.IncludeAspire = settings.Aspire.Value;
-            if (settings.Sample.HasValue) options.IncludeSampleModule = settings.Sample.Value;
-            if (settings.Terraform.HasValue) options.IncludeTerraform = settings.Terraform.Value;
-            if (settings.CI.HasValue) options.IncludeGitHubActions = settings.CI.Value;
-            if (settings.Git.HasValue) options.InitializeGit = settings.Git.Value;
-            if (!string.IsNullOrEmpty(settings.FshVersion)) options.FrameworkVersion = settings.FshVersion;
+        var tree = new Tree($"[bold {FshConstants.AccentColor}]Next Steps[/]");
+        tree.AddNode($"[bold]cd[/] {name.EscapeMarkup()}");
+        tree.AddNode($"[bold]dotnet run[/] --project {runProject.EscapeMarkup()}");
 
-            return options;
-        }
+        if (aspire)
+            tree.AddNode($"[{FshConstants.DimColor}]Aspire dashboard:[/] https://localhost:{FshConstants.AspireDashboardPort}");
 
-        // Build from individual options
-        var projectName = settings.Name ?? throw new ArgumentException("Project name is required in non-interactive mode");
+        tree.AddNode($"[{FshConstants.DimColor}]API docs:[/]         https://localhost:{FshConstants.ApiHttpsPort}/scalar");
+        tree.AddNode($"[{FshConstants.DimColor}]Health check:[/]     https://localhost:{FshConstants.ApiHttpsPort}/health");
+        tree.AddNode($"[{FshConstants.DimColor}]Documentation:[/]    {FshConstants.DocsUrl}");
 
-        return new ProjectOptions
-        {
-            Name = projectName,
-            OutputPath = settings.Output,
-            Type = ParseProjectType(settings.Type),
-            Architecture = ParseArchitecture(settings.Architecture),
-            Database = ParseDatabase(settings.Database),
-            InitializeGit = settings.Git ?? true,
-            IncludeDocker = settings.Docker ?? true,
-            IncludeAspire = settings.Aspire ?? true,
-            IncludeSampleModule = settings.Sample ?? false,
-            IncludeTerraform = settings.Terraform ?? false,
-            IncludeGitHubActions = settings.CI ?? false,
-            FrameworkVersion = settings.FshVersion
-        };
+        AnsiConsole.Write(tree);
+        AnsiConsole.WriteLine();
     }
-
-    private static ProjectType ParseProjectType(string? type) =>
-        type?.ToUpperInvariant() switch
-        {
-            "API" => ProjectType.Api,
-            "API-BLAZOR" or "APIBLAZOR" or "BLAZOR" or "FULLSTACK" => ProjectType.ApiBlazor,
-            null => ProjectType.Api,
-            _ => throw new ArgumentException($"Unknown project type: {type}")
-        };
-
-    private static ArchitectureStyle ParseArchitecture(string? arch) =>
-        arch?.ToUpperInvariant() switch
-        {
-            "MONOLITH" or "MONO" => ArchitectureStyle.Monolith,
-            "MICROSERVICES" or "MICRO" => ArchitectureStyle.Microservices,
-            "SERVERLESS" or "LAMBDA" => ArchitectureStyle.Serverless,
-            null => ArchitectureStyle.Monolith,
-            _ => throw new ArgumentException($"Unknown architecture: {arch}")
-        };
-
-    private static DatabaseProvider ParseDatabase(string? db) =>
-        db?.ToUpperInvariant() switch
-        {
-            "POSTGRES" or "POSTGRESQL" or "PG" => DatabaseProvider.PostgreSQL,
-            "SQLSERVER" or "MSSQL" or "SQL" => DatabaseProvider.SqlServer,
-            "SQLITE" => DatabaseProvider.SQLite,
-            null => DatabaseProvider.PostgreSQL,
-            _ => throw new ArgumentException($"Unknown database provider: {db}")
-        };
 }

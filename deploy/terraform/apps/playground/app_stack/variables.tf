@@ -482,12 +482,6 @@ variable "api_image_name" {
   default     = "fsh-api"
 }
 
-variable "blazor_image_name" {
-  type        = string
-  description = "Blazor container image name (without registry or tag)."
-  default     = "fsh-playground-blazor"
-}
-
 ################################################################################
 # API Service Variables
 ################################################################################
@@ -570,84 +564,3 @@ variable "api_extra_environment_variables" {
   default     = {}
 }
 
-################################################################################
-# Blazor Service Variables
-################################################################################
-
-variable "blazor_container_port" {
-  type        = number
-  description = "Blazor container port."
-  default     = 8080
-}
-
-variable "blazor_cpu" {
-  type        = string
-  description = "Blazor CPU units."
-  default     = "256"
-}
-
-variable "blazor_memory" {
-  type        = string
-  description = "Blazor memory."
-  default     = "512"
-}
-
-variable "blazor_desired_count" {
-  type        = number
-  description = "Desired Blazor task count."
-  default     = 1
-}
-
-variable "blazor_health_check_healthy_threshold" {
-  type        = number
-  description = "Number of consecutive health checks required for healthy status."
-  default     = 2
-}
-
-variable "blazor_deregistration_delay" {
-  type        = number
-  description = "Target group deregistration delay in seconds."
-  default     = 30
-}
-
-variable "blazor_enable_circuit_breaker" {
-  type        = bool
-  description = "Enable deployment circuit breaker."
-  default     = true
-}
-
-variable "blazor_use_fargate_spot" {
-  type        = bool
-  description = "Use Fargate Spot capacity."
-  default     = false
-}
-
-variable "blazor_enable_autoscaling" {
-  type        = bool
-  description = "Enable auto-scaling for the Blazor service."
-  default     = false
-}
-
-variable "blazor_autoscaling_min_capacity" {
-  type        = number
-  description = "Minimum number of Blazor tasks when auto-scaling."
-  default     = 1
-}
-
-variable "blazor_autoscaling_max_capacity" {
-  type        = number
-  description = "Maximum number of Blazor tasks when auto-scaling."
-  default     = 10
-}
-
-variable "blazor_autoscaling_cpu_target" {
-  type        = number
-  description = "Target CPU utilization percentage for Blazor auto-scaling."
-  default     = 70
-}
-
-variable "blazor_extra_environment_variables" {
-  type        = map(string)
-  description = "Additional environment variables for Blazor."
-  default     = {}
-}

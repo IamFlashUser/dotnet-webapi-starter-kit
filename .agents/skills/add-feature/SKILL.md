@@ -101,8 +101,8 @@ entities.Map{Action}{Entity}Endpoint();
 ## Step 7: Verify
 
 ```bash
-dotnet build src/FSH.Framework.slnx  # Must be 0 warnings
-dotnet test src/FSH.Framework.slnx
+dotnet build src/FSH.Starter.slnx  # Must be 0 warnings
+dotnet test src/FSH.Starter.slnx
 ```
 
 ## Checklist

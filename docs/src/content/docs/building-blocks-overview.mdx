@@ -23,7 +23,6 @@ Each Building Block is a standalone project with a clear, single responsibility.
 | **Mailing** | `Mailing.csproj` | Email abstraction layer with SMTP and SendGrid provider implementations |
 | **Storage** | `Storage.csproj` | File storage abstraction with local filesystem and AWS S3 provider implementations |
 | **Shared** | `Shared.csproj` | Permission constants, claim helpers, multitenancy constants, shared DTOs used across modules |
-| **Blazor.UI** | `Blazor.UI.csproj` | MudBlazor component library, theming, and shared UI infrastructure for the Blazor admin dashboard |
 
 <FileTree items={[
   { name: 'src/BuildingBlocks/', type: 'folder', children: [
@@ -36,8 +35,7 @@ Each Building Block is a standalone project with a clear, single responsibility.
     { name: 'Jobs/', type: 'folder', desc: 'Hangfire background job infrastructure' },
     { name: 'Mailing/', type: 'folder', desc: 'Email abstraction (SMTP, SendGrid)' },
     { name: 'Storage/', type: 'folder', desc: 'File storage (local, AWS S3)' },
-    { name: 'Shared/', type: 'folder', desc: 'Constants, permissions, shared DTOs' },
-    { name: 'Blazor.UI/', type: 'folder', desc: 'MudBlazor component library and theming' }
+    { name: 'Shared/', type: 'folder', desc: 'Constants, permissions, shared DTOs' }
   ]}
 ]} />
 
@@ -63,9 +61,6 @@ Layer 2 -- Depends on Core + Shared
 
 Layer 3 -- Depends on lower layers
   Web (orchestrates module loading, middleware, and API infrastructure)
-
-Layer 4 -- Depends on Web + Shared
-  Blazor.UI (consumes shared components and theming)
 ```
 
 In diagram form:
@@ -117,7 +112,6 @@ Use this quick-reference guide to find the right Building Block for your task:
 | Send transactional emails | **Mailing** |
 | Upload or retrieve files | **Storage** |
 | Reference permission constants or shared DTOs | **Shared** |
-| Build Blazor UI components with MudBlazor theming | **Blazor.UI** |
 
 <Aside type="warning" title="Do not modify BuildingBlocks without understanding the impact">
 Building Blocks are consumed by **all** modules in the codebase. Changes here have a wide blast radius -- a breaking change in Core, for example, will ripple through Persistence, Web, and every module. Always consider backward compatibility, run the full test suite, and get explicit approval before modifying any Building Block.
@@ -136,4 +130,3 @@ Dive deeper into each Building Block:
 - [Mailing](/dotnet-starter-kit/mailing/) -- Email abstraction layer
 - [Storage](/dotnet-starter-kit/file-storage/) -- File storage abstraction
 - [Shared](/dotnet-starter-kit/shared-library/) -- Permission constants and shared DTOs
-- [Blazor.UI](/dotnet-starter-kit/building-blocks-overview/) -- MudBlazor component library

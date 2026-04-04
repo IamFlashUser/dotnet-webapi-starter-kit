@@ -6,8 +6,8 @@ public sealed class CachingOptions
     public string Redis { get; set; } = string.Empty;
 
     /// <summary>
-    /// Enable SSL for Redis connection. If null, uses connection string default.
-    /// Set to true when using Aspire or cloud Redis that requires SSL.
+    /// Enable SSL/TLS for Redis connection. If null, uses connection string default.
+    /// Aspire 13.x configures Redis with TLS on the primary port, so set to true when using Aspire.
     /// </summary>
     public bool? EnableSsl { get; set; }
 

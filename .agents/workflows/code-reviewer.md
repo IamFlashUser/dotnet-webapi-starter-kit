@@ -60,7 +60,7 @@ git diff HEAD
 grep -r "MediatR\|IRequest<\|IRequestHandler<" src/Modules/ --include="*.cs"
 
 # Check build
-dotnet build src/FSH.Framework.slnx 2>&1 | grep -E "warning|error"
+dotnet build src/FSH.Starter.slnx 2>&1 | grep -E "warning|error"
 ```
 
 ## Output Format
@@ -80,7 +80,7 @@ dotnet build src/FSH.Framework.slnx 2>&1 | grep -E "warning|error"
 - [Optional suggestions]
 
 ### Build Verification
-Run: `dotnet build src/FSH.Framework.slnx`
+Run: `dotnet build src/FSH.Starter.slnx`
 Expected: 0 warnings
 ```
 
@@ -88,6 +88,6 @@ Expected: 0 warnings
 
 Always suggest running:
 ```bash
-dotnet build src/FSH.Framework.slnx  # Verify 0 warnings
-dotnet test src/FSH.Framework.slnx   # Run tests
+dotnet build src/FSH.Starter.slnx  # Verify 0 warnings
+dotnet test src/FSH.Starter.slnx   # Run tests
 ```

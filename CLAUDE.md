@@ -8,7 +8,7 @@
 
 - **BuildingBlocks** (`src/BuildingBlocks/`) — shared framework libraries (Core, Persistence, Web, Caching, Eventing, etc.)
 - **Modules** (`src/Modules/`) — bounded contexts (Identity, Multitenancy, Auditing)
-- **Playground** (`src/Playground/`) — sample host applications (API, Blazor, AppHost)
+- **Playground** (`src/Playground/`) — sample host applications (API, AppHost)
 - **Tests** (`src/Tests/`) — per-module test projects + architecture tests
 
 ### Module Boundaries
@@ -58,23 +58,22 @@ Additional module folders: `Domain/`, `Data/`, `Services/`, `Events/`, `Authoriz
 | API docs | OpenAPI + Scalar |
 | API versioning | Asp.Versioning |
 | Hosting | .NET Aspire (AppHost) |
-| Blazor UI | MudBlazor |
 | Testing | xUnit, Shouldly, NSubstitute, AutoFixture, NetArchTest |
 
 ## Build & Run
 
 ```bash
 # Build
-dotnet build src/FSH.Framework.slnx
+dotnet build src/FSH.Starter.slnx
 
 # Run API (from repo root)
-dotnet run --project src/Playground/FSH.Api
+dotnet run --project src/Playground/FSH.Starter.Api
 
 # Run with Aspire
-dotnet run --project src/Playground/FSH.Playground.AppHost
+dotnet run --project src/Playground/FSH.Starter.AppHost
 
 # Run tests
-dotnet test src/FSH.Framework.slnx
+dotnet test src/FSH.Starter.slnx
 ```
 
 ## Key Conventions

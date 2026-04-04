@@ -13,7 +13,7 @@ public sealed class SecurityHeadersOptions
     public string[] ExcludedPaths { get; set; } = ["/scalar", "/openapi"];
 
     /// <summary>
-    /// Whether to allow inline styles in CSP (default true for MudBlazor/Scalar compatibility).
+    /// Whether to allow inline styles in CSP (default true for Scalar compatibility).
     /// </summary>
     public bool AllowInlineStyles { get; set; } = true;
 

@@ -6,34 +6,21 @@ var app = new CommandApp();
 app.Configure(config =>
 {
     config.SetApplicationName("fsh");
-    config.SetApplicationVersion(GetVersion());
 
     config.AddCommand<NewCommand>("new")
-        .WithDescription("Create a new FullStackHero project")
-        .WithExample("new")
+        .WithDescription("Create a new FullStackHero .NET project.")
         .WithExample("new", "MyApp")
-        .WithExample("new", "MyApp", "--preset", "quickstart")
-        .WithExample("new", "MyApp", "--type", "api-blazor", "--arch", "monolith", "--db", "postgres");
+        .WithExample("new", "MyApp", "--db", "sqlserver")
+        .WithExample("new", "MyApp", "--no-aspire", "--no-git");
 
-    config.AddCommand<VersionCommand>("version")
-        .WithDescription("Display CLI and project version information")
-        .WithExample("version")
-        .WithExample("version", "--path", "./MyApp")
-        .WithExample("version", "--json");
+    config.AddCommand<DoctorCommand>("doctor")
+        .WithDescription("Check your development environment for required tools.");
 
-    config.AddCommand<UpgradeCommand>("upgrade")
-        .WithDescription("Check for and apply FSH framework upgrades")
-        .WithExample("upgrade", "--check")
-        .WithExample("upgrade", "--apply")
-        .WithExample("upgrade", "--apply", "--skip-breaking")
-        .WithExample("upgrade", "--apply", "--dry-run");
+    config.AddCommand<InfoCommand>("info")
+        .WithDescription("Show CLI and template version information.");
+
+    config.AddCommand<UpdateCommand>("update")
+        .WithDescription("Update the FSH CLI tool and dotnet new template to the latest version.");
 });
 
-return await app.RunAsync(args);
-
-static string GetVersion()
-{
-    var assembly = typeof(Program).Assembly;
-    var version = assembly.GetName().Version;
-    return version?.ToString(3) ?? "1.0.0";
-}
+return await app.RunAsync(args).ConfigureAwait(false);

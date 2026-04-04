@@ -108,18 +108,9 @@ api_memory           = "2048"
 api_desired_count    = 3
 api_use_fargate_spot = false
 
-blazor_cpu              = "1024"
-blazor_memory           = "2048"
-blazor_desired_count    = 3
-blazor_use_fargate_spot = false
-
 api_enable_autoscaling       = true
 api_autoscaling_min_capacity = 3
 api_autoscaling_max_capacity = 20
-
-blazor_enable_autoscaling       = true
-blazor_autoscaling_min_capacity = 3
-blazor_autoscaling_max_capacity = 15
 
 enable_container_insights = true
 

@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Playground\FSH.Api\FSH.Api.csproj" />
+        <ProjectReference Include="..\..\Playground\FSH.Starter.Api\FSH.Starter.Api.csproj" />
     </ItemGroup>
 
 </Project>

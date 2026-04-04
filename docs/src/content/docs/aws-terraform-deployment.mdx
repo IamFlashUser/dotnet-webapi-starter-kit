@@ -28,18 +28,16 @@ The starter kit includes a complete **Infrastructure as Code** setup for deployi
         ┌────────▼───────────────────────────────▼────────┐
         │                     ALB                          │
         │              (Public Subnets)                    │
-        │    /api/* → API    │    /* → Blazor              │
+        │    /api/* → API                               │
         └────────────────────┬─────────────────────────────┘
                              │
-              ┌──────────────┼──────────────┐
-              │                             │
-     ┌────────▼────────┐          ┌────────▼────────┐
-     │   ECS Fargate   │          │   ECS Fargate   │
-     │   (API Service) │          │ (Blazor Service) │
-     │  Private Subnet │          │  Private Subnet  │
-     └────────┬────────┘          └────────┬─────────┘
-              │                            │
-     ┌────────▼────────────────────────────▼─────────┐
+     ┌───────────────────────▼───────────────────────┐
+     │   ECS Fargate   │
+     │   (API Service) │
+     │  Private Subnet │
+     └────────┬────────┘
+              │
+     ┌────────▼──────────────────────────────────────┐
      │               Private Subnets                  │
      │                                                │
      │   ┌──────────┐  ┌──────────┐  ┌──────────┐   │
@@ -268,15 +266,10 @@ The Terraform configuration expects container images to be available in a regist
 ```bash
 # Build the API image
 docker build -t ghcr.io/fullstackhero/fsh-api:v1.0.0 \
-  -f src/Playground/FSH.Api/Dockerfile .
-
-# Build the Blazor image
-docker build -t ghcr.io/fullstackhero/fsh-playground-blazor:v1.0.0 \
-  -f src/Playground/Playground.Blazor/Dockerfile .
+  -f src/Playground/FSH.Starter.Api/Dockerfile .
 
 # Push to registry
 docker push ghcr.io/fullstackhero/fsh-api:v1.0.0
-docker push ghcr.io/fullstackhero/fsh-playground-blazor:v1.0.0
 ```
 
 <Aside type="warning" title="Image Tags Must Be Immutable">
@@ -318,8 +311,6 @@ db_manage_master_user_password = true
 # Services - single instance, Spot pricing
 api_desired_count    = 1
 api_use_fargate_spot = true
-blazor_desired_count    = 1
-blazor_use_fargate_spot = true
 
 # Cost savings - disable extras
 enable_waf    = false
@@ -378,12 +369,6 @@ api_use_fargate_spot       = true
 api_enable_autoscaling     = true
 api_autoscaling_min_capacity = 2
 api_autoscaling_max_capacity = 6
-
-blazor_desired_count          = 2
-blazor_use_fargate_spot       = true
-blazor_enable_autoscaling     = true
-blazor_autoscaling_min_capacity = 2
-blazor_autoscaling_max_capacity = 6
 
 enable_container_insights = true
 enable_alarms             = true
@@ -463,14 +448,6 @@ api_enable_autoscaling       = true
 api_autoscaling_min_capacity = 3
 api_autoscaling_max_capacity = 20
 
-blazor_cpu            = "1024"
-blazor_memory         = "2048"
-blazor_desired_count  = 3
-blazor_use_fargate_spot = false
-blazor_enable_autoscaling       = true
-blazor_autoscaling_min_capacity = 3
-blazor_autoscaling_max_capacity = 15
-
 enable_container_insights      = true
 alb_enable_deletion_protection = true
 enable_alarms                  = true
@@ -519,7 +496,6 @@ terraform apply -var-file=../envs/dev/us-east-1/terraform.tfvars
 ```bash
 terraform output alb_dns_name
 terraform output api_url
-terraform output blazor_url
 ```
 
 </Steps>
@@ -576,10 +552,6 @@ app_stack/main.tf
 │   ├── task_role_arn → IAM role with S3 + Secrets Manager access
 │   └── path_patterns = ["/api/*", "/scalar/*", "/openapi/*", "/health*"]
 │
-├── module.blazor_service  → ECS Fargate service
-│   ├── environment_variables = { Api__BaseUrl = api_url }
-│   └── path_patterns = ["/*"]
-│
 └── module.alarms          → CloudWatch alarms → SNS notifications
 ```
 
@@ -597,8 +569,6 @@ The app stack automatically injects the following environment variables into the
 | `Storage__S3__PublicBaseUrl` | CloudFront domain | `https://d1234.cloudfront.net` |
 | `OriginOptions__OriginUrl` | ALB DNS or custom domain | `https://app.example.com` |
 | `CorsOptions__AllowedOrigins__0` | ALB DNS or custom domain | `https://app.example.com` |
-
-The Blazor container receives `Api__BaseUrl` pointing to the API service URL so it can make backend calls.
 
 <Aside type="note" title="Secrets Manager Integration">
 When `db_manage_master_user_password = true`, the database password is stored in AWS Secrets Manager. The app stack creates a separate secret containing the full connection string and injects it into the container as an ECS secret reference -- the password never appears in environment variables or Terraform state.
@@ -655,10 +625,9 @@ Secrets Manager Permissions (if managed password):
 | Setting | Dev | Staging | Production |
 |---------|-----|---------|------------|
 | **API replicas** | 1 | 2 | 3 |
-| **Blazor replicas** | 1 | 2 | 3 |
 | **CPU / Memory** | 256 / 512 | 256 / 512 | 1024 / 2048 |
 | **Fargate Spot** | Yes | Yes | No (on-demand) |
-| **Auto-scaling** | No | 2-6 | 3-20 (API), 3-15 (Blazor) |
+| **Auto-scaling** | No | 2-6 | 3-20 |
 | **Container Insights** | No | Yes | Yes |
 
 ### Security & Monitoring
@@ -795,7 +764,6 @@ In `app_stack/variables.tf` and your `terraform.tfvars`:
 ```hcl
 container_registry = "ghcr.io/your-org"
 api_image_name     = "your-api"
-blazor_image_name  = "your-blazor"
 container_image_tag = "v1.0.0"
 ```
 
@@ -871,10 +839,8 @@ After a successful deployment, these outputs are available:
 | `vpc_id` | VPC identifier |
 | `alb_dns_name` | ALB public DNS name |
 | `api_url` | Full API URL |
-| `blazor_url` | Full Blazor UI URL |
 | `ecs_cluster_arn` | ECS cluster ARN |
 | `api_service_name` | API ECS service name |
-| `blazor_service_name` | Blazor ECS service name |
 | `rds_endpoint` | Database endpoint address |
 | `rds_port` | Database port (5432) |
 | `rds_secret_arn` | Secrets Manager ARN for DB credentials |

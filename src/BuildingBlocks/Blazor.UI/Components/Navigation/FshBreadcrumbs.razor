@@ -1,8 +1,0 @@
-<MudBreadcrumbs Items="@GetItemsList()" MaxItems="@((byte?)MaxItems)" />
-
-@code {
-    [Parameter] public IEnumerable<BreadcrumbItem> Items { get; set; } = Array.Empty<BreadcrumbItem>();
-    [Parameter] public int MaxItems { get; set; } = 4;
-
-    private IReadOnlyList<BreadcrumbItem> GetItemsList() => Items?.ToList() ?? [];
-}

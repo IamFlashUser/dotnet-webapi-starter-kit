@@ -16,7 +16,6 @@ locals {
 
   # Container images constructed from registry, name, and tag
   api_container_image    = "${var.container_registry}/${var.api_image_name}:${var.container_image_tag}"
-  blazor_container_image = "${var.container_registry}/${var.blazor_image_name}:${var.container_image_tag}"
 }
 
 ################################################################################
@@ -438,10 +437,6 @@ module "alarms" {
       cluster_name = module.ecs_cluster.name
       service_name = module.api_service.service_name
     }
-    blazor = {
-      cluster_name = module.ecs_cluster.name
-      service_name = module.blazor_service.service_name
-    }
   }
 
   rds_instance_identifier    = module.rds.identifier
@@ -452,63 +447,8 @@ module "alarms" {
     api = {
       target_group_arn_suffix = module.api_service.target_group_arn_suffix
     }
-    blazor = {
-      target_group_arn_suffix = module.blazor_service.target_group_arn_suffix
-    }
   }
 
   tags = local.common_tags
 }
 
-################################################################################
-# Blazor ECS Service
-################################################################################
-
-module "blazor_service" {
-  source = "../../../modules/ecs_service"
-
-  name            = "${var.environment}-blazor"
-  region          = var.region
-  cluster_arn     = module.ecs_cluster.arn
-  container_image = local.blazor_container_image
-  container_port  = var.blazor_container_port
-  cpu             = var.blazor_cpu
-  memory          = var.blazor_memory
-  desired_count   = var.blazor_desired_count
-
-  vpc_id           = module.network.vpc_id
-  vpc_cidr_block   = module.network.vpc_cidr_block
-  subnet_ids       = module.network.private_subnet_ids
-  assign_public_ip = false
-
-  listener_arn           = var.enable_https ? module.alb.https_listener_arn : module.alb.http_listener_arn
-  listener_rule_priority = 20
-  path_patterns          = ["/*"]
-
-  health_check_path              = "/health/live"
-  health_check_healthy_threshold = var.blazor_health_check_healthy_threshold
-  deregistration_delay           = var.blazor_deregistration_delay
-
-  enable_circuit_breaker = var.blazor_enable_circuit_breaker
-  use_fargate_spot       = var.blazor_use_fargate_spot
-
-  # Auto-scaling
-  enable_autoscaling       = var.blazor_enable_autoscaling
-  autoscaling_min_capacity = var.blazor_autoscaling_min_capacity
-  autoscaling_max_capacity = var.blazor_autoscaling_max_capacity
-  autoscaling_cpu_target   = var.blazor_autoscaling_cpu_target
-
-  environment_variables = merge(
-    {
-      ASPNETCORE_ENVIRONMENT = local.aspnetcore_environment
-    },
-    var.enable_https && var.domain_name != null ? {
-      Api__BaseUrl = "https://${var.domain_name}"
-    } : {
-      Api__BaseUrl = "http://${module.alb.dns_name}"
-    },
-    var.blazor_extra_environment_variables
-  )
-
-  tags = local.common_tags
-}

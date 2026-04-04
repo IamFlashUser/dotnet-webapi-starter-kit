@@ -6,8 +6,8 @@ You are a migration helper for FullStackHero .NET Starter Kit. Your job is to sa
 
 ## Project Paths
 
-- **Migrations project:** `src/Playground/Migrations.PostgreSQL`
-- **Startup project:** `src/Playground/FSH.Api`
+- **Migrations project:** `src/Playground/FSH.Starter.Migrations.PostgreSQL`
+- **Startup project:** `src/Playground/FSH.Starter.Api`
 - **DbContexts:** Each module has its own DbContext
 
 ## Common Operations
@@ -16,8 +16,8 @@ You are a migration helper for FullStackHero .NET Starter Kit. Your job is to sa
 
 ```bash
 dotnet ef migrations add {MigrationName} \
-  --project src/Playground/Migrations.PostgreSQL \
-  --startup-project src/Playground/FSH.Api \
+  --project src/Playground/FSH.Starter.Migrations.PostgreSQL \
+  --startup-project src/Playground/FSH.Starter.Api \
   --context {DbContextName}
 ```
 
@@ -31,8 +31,8 @@ dotnet ef migrations add {MigrationName} \
 
 ```bash
 dotnet ef database update \
-  --project src/Playground/Migrations.PostgreSQL \
-  --startup-project src/Playground/FSH.Api \
+  --project src/Playground/FSH.Starter.Migrations.PostgreSQL \
+  --startup-project src/Playground/FSH.Starter.Api \
   --context {DbContextName}
 ```
 
@@ -40,8 +40,8 @@ dotnet ef database update \
 
 ```bash
 dotnet ef migrations list \
-  --project src/Playground/Migrations.PostgreSQL \
-  --startup-project src/Playground/FSH.Api \
+  --project src/Playground/FSH.Starter.Migrations.PostgreSQL \
+  --startup-project src/Playground/FSH.Starter.Api \
   --context {DbContextName}
 ```
 
@@ -49,8 +49,8 @@ dotnet ef migrations list \
 
 ```bash
 dotnet ef migrations remove \
-  --project src/Playground/Migrations.PostgreSQL \
-  --startup-project src/Playground/FSH.Api \
+  --project src/Playground/FSH.Starter.Migrations.PostgreSQL \
+  --startup-project src/Playground/FSH.Starter.Api \
   --context {DbContextName}
 ```
 
@@ -58,8 +58,8 @@ dotnet ef migrations remove \
 
 ```bash
 dotnet ef migrations script \
-  --project src/Playground/Migrations.PostgreSQL \
-  --startup-project src/Playground/FSH.Api \
+  --project src/Playground/FSH.Starter.Migrations.PostgreSQL \
+  --startup-project src/Playground/FSH.Starter.Api \
   --context {DbContextName} \
   --output migrations.sql
 ```
@@ -101,7 +101,7 @@ Use descriptive names:
 Specify context explicitly with `--context {Name}DbContext`
 
 ### "Build failed"
-Run `dotnet build src/FSH.Framework.slnx` first
+Run `dotnet build src/FSH.Starter.slnx` first
 
 ### "Pending migrations"
 Apply pending migrations or remove them if not needed
@@ -114,12 +114,12 @@ Check `__EFMigrationsHistory` table in database
 1. Create entity in `Domain/` folder
 2. Create configuration (`IEntityTypeConfiguration<T>`)
 3. Add `DbSet<T>` to DbContext
-4. Build: `dotnet build src/FSH.Framework.slnx`
+4. Build: `dotnet build src/FSH.Starter.slnx`
 5. Add migration:
    ```bash
    dotnet ef migrations add Add{Entity} \
-     --project src/Playground/Migrations.PostgreSQL \
-     --startup-project src/Playground/FSH.Api \
+     --project src/Playground/FSH.Starter.Migrations.PostgreSQL \
+     --startup-project src/Playground/FSH.Starter.Api \
      --context {Module}DbContext
    ```
 6. Review migration file

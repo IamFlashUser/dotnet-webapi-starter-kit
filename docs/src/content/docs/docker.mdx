@@ -24,7 +24,7 @@ The starter kit includes a multi-stage Dockerfile and a docker-compose configura
 
 The `docker-compose.yml` defines four services that make up the full development stack:
 
-- **api** - The FSH.Api application, built from the Dockerfile
+- **api** - The FSH.Starter.Api application, built from the Dockerfile
 - **postgres** - PostgreSQL 17 with a persistent volume for data
 - **redis** - Redis 7 Alpine for distributed caching
 - **otel-collector** - OpenTelemetry Collector for traces, metrics, and logs
@@ -34,7 +34,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: src/Playground/FSH.Api/Dockerfile
+      dockerfile: src/Playground/FSH.Starter.Api/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
@@ -110,7 +110,7 @@ Key environment variables to configure in your compose file or `.env`:
 To build the Docker image manually:
 
 ```bash
-docker build -f src/Playground/FSH.Api/Dockerfile -t fsh-api .
+docker build -f src/Playground/FSH.Starter.Api/Dockerfile -t fsh-api .
 ```
 
 Run the image standalone:

@@ -10,13 +10,13 @@ The fullstackhero .NET Starter Kit is organized as a **modular monolith**. The c
 
 ## Solution Overview
 
-The solution file `FSH.Framework.slnx` uses the modern XML-based `.slnx` format introduced in .NET 9. It contains **29 projects** organized into five logical groups:
+The solution file `FSH.Starter.slnx` uses the modern XML-based `.slnx` format introduced in .NET 9. It contains **29 projects** organized into five logical groups:
 
 | Group | Projects | Purpose |
 |-------|----------|---------|
 | **BuildingBlocks** | 11 | Shared framework libraries consumed by all modules |
 | **Modules** | 8 | Bounded context modules (runtime + contracts pairs) |
-| **Playground** | 3 | Sample host applications (API, Blazor, Aspire) |
+| **Playground** | 2 | Sample host applications (API, Aspire) |
 | **Tests** | 5 | Unit tests, integration tests, and architecture tests |
 | **Tools** | 2 | CLI tooling and EF Core migrations |
 
@@ -39,7 +39,6 @@ The `.slnx` format is a cleaner, XML-based replacement for the legacy `.sln` for
       { name: 'Mailing/', type: 'folder', desc: 'Email abstraction layer' },
       { name: 'Storage/', type: 'folder', desc: 'File storage abstraction' },
       { name: 'Shared/', type: 'folder', desc: 'Constants, DTOs, cross-cutting contracts' },
-      { name: 'Blazor.UI/', type: 'folder', desc: 'MudBlazor component library' }
     ]},
     { name: 'Modules/', type: 'folder', desc: 'Bounded context modules', children: [
       { name: 'Identity/', type: 'folder', desc: 'Authentication, users, roles, sessions', children: [
@@ -60,9 +59,8 @@ The `.slnx` format is a cleaner, XML-based replacement for the legacy `.sln` for
       ]}
     ]},
     { name: 'Playground/', type: 'folder', desc: 'Sample host applications', children: [
-      { name: 'FSH.Api/', type: 'folder', desc: 'Reference ASP.NET Core API host' },
-      { name: 'Playground.Blazor/', type: 'folder', desc: 'Reference MudBlazor admin UI' },
-      { name: 'FSH.Playground.AppHost/', type: 'folder', desc: '.NET Aspire orchestrator' }
+      { name: 'FSH.Starter.Api/', type: 'folder', desc: 'Reference ASP.NET Core API host' },
+      { name: 'FSH.Starter.AppHost/', type: 'folder', desc: '.NET Aspire orchestrator' }
     ]},
     { name: 'Tests/', type: 'folder', desc: 'Test projects', children: [
       { name: 'Architecture.Tests/', type: 'folder', desc: 'Structural guardrails via NetArchTest' },
@@ -73,9 +71,9 @@ The `.slnx` format is a cleaner, XML-based replacement for the legacy `.sln` for
     ]},
     { name: 'Tools/', type: 'folder', desc: 'Developer tooling', children: [
       { name: 'CLI/', type: 'folder', desc: 'FSH command-line tool' },
-      { name: 'Migrations.PostgreSQL/', type: 'folder', desc: 'EF Core database migrations' }
+      { name: 'FSH.Starter.Migrations.PostgreSQL/', type: 'folder', desc: 'EF Core database migrations' }
     ]},
-    { name: 'FSH.Framework.slnx', desc: 'Solution file (.slnx format)' },
+    { name: 'FSH.Starter.slnx', desc: 'Solution file (.slnx format)' },
     { name: 'Directory.Build.props', desc: 'Shared MSBuild properties' },
     { name: 'Directory.Packages.props', desc: 'Central NuGet package versions' },
     { name: '.editorconfig', desc: 'Coding style rules' }
@@ -171,7 +169,7 @@ The projects follow a strict dependency hierarchy that flows in one direction - 
       { name: 'Web', type: 'folder', desc: 'Host infrastructure, middleware, module system', children: [
         { name: 'Module Contracts', type: 'folder', desc: 'Public API surface for each module', children: [
           { name: 'Module Runtimes', type: 'folder', desc: 'Internal implementation per module', children: [
-            { name: 'Playground (host apps)', type: 'folder', desc: 'API, Blazor, Aspire - compose modules into runnable hosts' }
+            { name: 'Playground (host apps)', type: 'folder', desc: 'API, Aspire - compose modules into runnable hosts' }
           ]}
         ]}
       ]}
@@ -199,7 +197,7 @@ The `src/` directory contains several configuration files that govern how the en
 | `Directory.Build.props` | Shared MSBuild properties applied to every project - target framework (`net10.0`), nullable reference types, implicit usings, analyzers, and common metadata. |
 | `Directory.Packages.props` | Central package management. Every NuGet package version is declared here in a single place, so individual `.csproj` files reference packages without specifying versions. |
 | `.editorconfig` | Coding style rules enforced by the IDE and analyzers - indentation, namespace style, naming conventions, and severity levels. |
-| `FSH.Framework.slnx` | The solution file that ties all 29 projects together into the logical groups shown above. |
+| `FSH.Starter.slnx` | The solution file that ties all 29 projects together into the logical groups shown above. |
 
 <Aside type="warning" title="BuildingBlocks Are Protected">
 The `BuildingBlocks/` directory contains shared framework libraries consumed by every module in the solution. Changes here have a **wide blast radius** and can break multiple modules simultaneously. Do not modify BuildingBlocks without explicit approval and thorough testing across all dependent modules.

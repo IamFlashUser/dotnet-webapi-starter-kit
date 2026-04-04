@@ -81,16 +81,9 @@ container_image_tag = "v0.1.0-rc1"
 api_desired_count    = 2
 api_use_fargate_spot = true
 
-blazor_desired_count    = 2
-blazor_use_fargate_spot = true
-
 api_enable_autoscaling       = true
 api_autoscaling_min_capacity = 2
 api_autoscaling_max_capacity = 6
-
-blazor_enable_autoscaling       = true
-blazor_autoscaling_min_capacity = 2
-blazor_autoscaling_max_capacity = 6
 
 enable_container_insights = true
 

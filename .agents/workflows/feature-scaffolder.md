@@ -101,7 +101,7 @@ public static class {Action}{Entity}Endpoint
 
 After generation, run:
 ```bash
-dotnet build src/FSH.Framework.slnx
+dotnet build src/FSH.Starter.slnx
 ```
 
 Must show 0 warnings.

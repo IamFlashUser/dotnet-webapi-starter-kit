@@ -37,7 +37,7 @@ The codebase is organized into three layers, each with a clear responsibility:
 ┌─────────────────────────────────────────────────────────────┐
 │                        Playground                           │
 │          (Host applications that compose modules)           │
-│       FSH.Api  ·  Playground.Blazor  ·  AppHost             │
+│       FSH.Starter.Api  ·  AppHost                                    │
 ├─────────────────────────────────────────────────────────────┤
 │                         Modules                             │
 │            (Independent bounded contexts)                   │
@@ -53,7 +53,7 @@ The codebase is organized into three layers, each with a clear responsibility:
 
 **Modules** are the bounded contexts where your business logic lives. Each module owns its domain entities, data access, feature handlers, and API endpoints. Modules are isolated from each other and communicate only through Contracts.
 
-**Playground** contains the host applications that wire everything together. The API project composes all modules into a running HTTP service, the Blazor project provides an admin dashboard, and the AppHost project orchestrates the full stack with .NET Aspire.
+**Playground** contains the host applications that wire everything together. The API project composes all modules into a running HTTP service, and the AppHost project orchestrates the full stack with .NET Aspire.
 
 <FileTree items={[
   { name: 'src/', type: 'folder', children: [
@@ -68,7 +68,6 @@ The codebase is organized into three layers, each with a clear responsibility:
       { name: 'Jobs/', type: 'folder', desc: 'Hangfire background job infrastructure' },
       { name: 'Mailing/', type: 'folder', desc: 'Email abstraction layer' },
       { name: 'Storage/', type: 'folder', desc: 'File storage abstraction' },
-      { name: 'Blazor.UI/', type: 'folder', desc: 'MudBlazor component library' }
     ]},
     { name: 'Modules/', type: 'folder', desc: 'Bounded context modules', children: [
       { name: 'Identity/', type: 'folder', desc: 'Users, roles, sessions, JWT auth' },
@@ -77,9 +76,8 @@ The codebase is organized into three layers, each with a clear responsibility:
       { name: 'Webhooks/', type: 'folder', desc: 'Outbound webhook subscriptions and delivery' }
     ]},
     { name: 'Playground/', type: 'folder', desc: 'Host applications', children: [
-      { name: 'FSH.Api/', type: 'folder', desc: 'Reference ASP.NET Core API host' },
-      { name: 'Playground.Blazor/', type: 'folder', desc: 'MudBlazor admin dashboard' },
-      { name: 'FSH.Playground.AppHost/', type: 'folder', desc: '.NET Aspire orchestrator' }
+      { name: 'FSH.Starter.Api/', type: 'folder', desc: 'Reference ASP.NET Core API host' },
+      { name: 'FSH.Starter.AppHost/', type: 'folder', desc: '.NET Aspire orchestrator' }
     ]},
     { name: 'Tests/', type: 'folder', desc: 'Unit, integration, and architecture tests' }
   ]}

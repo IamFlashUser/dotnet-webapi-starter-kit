@@ -57,9 +57,8 @@ public class BuildingBlocksIndependenceTests
                 .InAssembly(assembly)
                 .ShouldNot()
                 .HaveDependencyOnAny(
-                    "FSH.Playground",
-                    "FSH.Api",
-                    "Playground.Blazor")
+                    "FSH.Starter",
+                    "FSH.Starter.Api")
                 .GetResult();
 
             var failingTypes = result.FailingTypeNames ?? [];

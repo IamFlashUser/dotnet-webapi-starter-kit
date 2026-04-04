@@ -25,7 +25,7 @@ All tests must pass.
 ### 3. Verify Build Has 0 Warnings
 
 ```bash
-dotnet build src/FSH.Framework.slnx 2>&1 | grep -E "warning|error"
+dotnet build src/FSH.Starter.slnx 2>&1 | grep -E "warning|error"
 ```
 
 Must show no warnings or errors.
@@ -108,7 +108,7 @@ Every endpoint must have explicit authorization.
 
 ```bash
 # Full verification
-dotnet build src/FSH.Framework.slnx && dotnet test src/FSH.Framework.slnx
+dotnet build src/FSH.Starter.slnx && dotnet test src/FSH.Starter.slnx
 
 # Architecture tests only
 dotnet test src/Tests/Architecture.Tests

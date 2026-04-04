@@ -55,6 +55,3 @@ container_image_tag = "1d2c9f9d3b85bb86229f1bc1b9cd8196054f2166"
 
 api_desired_count    = 1
 api_use_fargate_spot = true
-
-blazor_desired_count    = 1
-blazor_use_fargate_spot = true

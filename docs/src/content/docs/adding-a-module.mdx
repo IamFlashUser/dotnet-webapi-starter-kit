@@ -32,7 +32,7 @@ dotnet new classlib -n Modules.Catalog.Contracts -o src/Modules/Catalog/Modules.
 Add both projects to the solution:
 
 ```bash
-dotnet sln src/FSH.Framework.slnx add \
+dotnet sln src/FSH.Starter.slnx add \
   src/Modules/Catalog/Modules.Catalog/Modules.Catalog.csproj \
   src/Modules/Catalog/Modules.Catalog.Contracts/Modules.Catalog.Contracts.csproj
 ```
@@ -194,7 +194,7 @@ For module-specific tests, create `Tests/Catalog.Tests/`:
 
 ```bash
 dotnet new xunit -n Catalog.Tests -o src/Tests/Catalog.Tests
-dotnet sln src/FSH.Framework.slnx add src/Tests/Catalog.Tests/Catalog.Tests.csproj
+dotnet sln src/FSH.Starter.slnx add src/Tests/Catalog.Tests/Catalog.Tests.csproj
 ```
 
 Add references to the test project:

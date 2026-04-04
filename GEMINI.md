@@ -5,9 +5,9 @@
 ## Quick Start
 
 ```bash
-dotnet build src/FSH.Framework.slnx              # Build (0 warnings required)
-dotnet test src/FSH.Framework.slnx               # Run tests
-dotnet run --project src/Playground/FSH.Playground.AppHost  # Run with Aspire
+dotnet build src/FSH.Starter.slnx              # Build (0 warnings required)
+dotnet test src/FSH.Starter.slnx               # Run tests
+dotnet run --project src/Playground/FSH.Starter.AppHost  # Run with Aspire
 ```
 
 ## Project Layout
@@ -123,8 +123,8 @@ Details: See `.agents/rules/architecture.md`
 ## Before Committing
 
 ```bash
-dotnet build src/FSH.Framework.slnx  # Must pass with 0 warnings
-dotnet test src/FSH.Framework.slnx   # All tests must pass
+dotnet build src/FSH.Starter.slnx  # Must pass with 0 warnings
+dotnet test src/FSH.Starter.slnx   # All tests must pass
 ```
 
 ## Documentation

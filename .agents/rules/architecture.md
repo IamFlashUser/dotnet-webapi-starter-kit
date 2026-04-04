@@ -142,7 +142,7 @@ Features/v1/CreateProduct/
 | Storage | File storage (AWS S3, local) |
 | Web | API conventions, filters, middleware |
 | Eventing | Domain events, message bus |
-| Blazor.UI | UI components (optional) |
+
 | Shared | DTOs, constants |
 | Eventing.Abstractions | Event contracts |
 

@@ -12,12 +12,11 @@ import Steps from '../../components/Steps.astro';
 
 ## AppHost Configuration
 
-The `FSH.Playground.AppHost` project orchestrates the entire development environment. The `AppHost.cs` file defines:
+The `FSH.Starter.AppHost` project orchestrates the entire development environment. The `AppHost.cs` file defines:
 
 - **PostgreSQL** container with a persistent volume (`fsh-postgres-data`) and a database named `fsh`
 - **Redis** container with a persistent volume (`fsh-redis-data`)
-- **FSH.Api** with environment variables for OTLP, database, and Redis connections
-- **Playground.Blazor** UI wired to the API
+- **FSH.Starter.Api** with environment variables for OTLP, database, and Redis connections
 
 ```csharp
 var postgres = builder.AddPostgres("postgres")
@@ -32,9 +31,6 @@ var api = builder.AddProject<Projects.FSH_Api>("api")
     .WithReference(redis)
     .WaitFor(postgres)
     .WaitFor(redis);
-
-builder.AddProject<Projects.Playground_Blazor>("blazor")
-    .WithReference(api);
 ```
 
 ## Running
@@ -47,7 +43,7 @@ builder.AddProject<Projects.Playground_Blazor>("blazor")
 
   2. **Run the AppHost** from the repository root:
      ```bash
-     dotnet run --project src/Playground/FSH.Playground.AppHost
+     dotnet run --project src/Playground/FSH.Starter.AppHost
      ```
 
   3. **Open the Aspire dashboard** at the URL shown in the terminal output. This is typically `https://localhost:17225` or a similar port.

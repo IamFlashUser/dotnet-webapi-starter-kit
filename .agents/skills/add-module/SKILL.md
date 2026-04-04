@@ -146,13 +146,13 @@ builder.Services.AddMediator(o =>
 ## Step 6: Add to Solution
 
 ```bash
-dotnet sln src/FSH.Framework.slnx add src/Modules/{Name}/Modules.{Name}/Modules.{Name}.csproj
-dotnet sln src/FSH.Framework.slnx add src/Modules/{Name}/Modules.{Name}.Contracts/Modules.{Name}.Contracts.csproj
+dotnet sln src/FSH.Starter.slnx add src/Modules/{Name}/Modules.{Name}/Modules.{Name}.csproj
+dotnet sln src/FSH.Starter.slnx add src/Modules/{Name}/Modules.{Name}.Contracts/Modules.{Name}.Contracts.csproj
 ```
 
 ## Step 7: Reference from API
 
-In `src/Playground/FSH.Api/FSH.Api.csproj`:
+In `src/Playground/FSH.Starter.Api/FSH.Starter.Api.csproj`:
 ```xml
 <ProjectReference Include="..\..\Modules\{Name}\Modules.{Name}\Modules.{Name}.csproj" />
 ```
@@ -160,8 +160,8 @@ In `src/Playground/FSH.Api/FSH.Api.csproj`:
 ## Step 8: Verify
 
 ```bash
-dotnet build src/FSH.Framework.slnx  # Must be 0 warnings
-dotnet test src/FSH.Framework.slnx
+dotnet build src/FSH.Starter.slnx  # Must be 0 warnings
+dotnet test src/FSH.Starter.slnx
 ```
 
 ## Checklist
@@ -172,5 +172,5 @@ dotnet test src/FSH.Framework.slnx
 - [ ] DbContext created with proper schema
 - [ ] Registered in Program.cs moduleAssemblies
 - [ ] Added to solution file
-- [ ] Referenced from FSH.Api
+- [ ] Referenced from FSH.Starter.Api
 - [ ] Build passes with 0 warnings

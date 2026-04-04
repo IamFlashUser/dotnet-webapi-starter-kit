@@ -125,7 +125,7 @@ dotnet new classlib -n FSH.Modules.Catalog -o src/Modules/Catalog/Modules.Catalo
 ### 2. Add to Solution
 
 ```bash
-dotnet sln src/FSH.Framework.slnx add \
+dotnet sln src/FSH.Starter.slnx add \
     src/Modules/Catalog/Modules.Catalog.Contracts/Modules.Catalog.Contracts.csproj \
     src/Modules/Catalog/Modules.Catalog/Modules.Catalog.csproj
 ```
@@ -252,7 +252,7 @@ public static class Extensions
 ### 8. Wire Up in Program.cs
 
 ```csharp
-// In FSH.Api/Program.cs
+// In FSH.Starter.Api/Program.cs
 builder.Services.AddCatalogModule();
 
 // ...

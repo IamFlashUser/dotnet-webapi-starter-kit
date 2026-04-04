@@ -58,7 +58,7 @@ Enterprise audit trails capturing four event types: entity changes (CRUD with be
 7. **Mailing** - IMailService with SMTP (MailKit) and SendGrid providers
 8. **Storage** - IStorageService with local filesystem and AWS S3 providers
 9. **Shared** - Permission constants, claim helpers, multitenancy constants, pagination DTOs
-10. **Blazor.UI** - MudBlazor component library with tenant-aware theming
+10. **Shared** - Permission constants, claim helpers, multitenancy constants, pagination DTOs
 
 ## Getting Started
 

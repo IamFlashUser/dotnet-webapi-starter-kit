@@ -271,7 +271,7 @@ public class Country : BaseEntity  // ❌ No IMustHaveTenant
 ```bash
 # From solution root
 dotnet ef migrations add InitialCatalog \
-    --project src/Playground/Migrations.PostgreSQL \
+    --project src/Playground/FSH.Starter.Migrations.PostgreSQL \
     --context CatalogDbContext \
     --output-dir Migrations/Catalog
 ```
@@ -279,10 +279,10 @@ dotnet ef migrations add InitialCatalog \
 ### Applying Migrations
 
 ```bash
-# Automatic on startup (FSH.Api)
+# Automatic on startup (FSH.Starter.Api)
 # Or manually:
 dotnet ef database update \
-    --project src/Playground/Migrations.PostgreSQL \
+    --project src/Playground/FSH.Starter.Migrations.PostgreSQL \
     --context CatalogDbContext
 ```
 
