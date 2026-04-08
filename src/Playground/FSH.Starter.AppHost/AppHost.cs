@@ -19,7 +19,7 @@ var redisConnectionString = ReferenceExpression.Create(
     $"{redisPlainTcp.Property(EndpointProperty.HostAndPort)},password={redis.Resource.PasswordParameter!}");
 
 // API Service
-builder.AddProject<Projects.FSH_Starter_Api>("fsh-api")
+var api = builder.AddProject<Projects.FSH_Starter_Api>("fsh-api")
     .WithReference(postgres)
     .WithReference(redis)
     .WaitFor(postgres)
@@ -31,5 +31,13 @@ builder.AddProject<Projects.FSH_Starter_Api>("fsh-api")
     .WithEnvironment("CachingOptions__Redis", redisConnectionString)
     .WithEnvironment("CachingOptions__EnableSsl", "false");
 
+// Admin App (Next.js)
+builder.AddJavaScriptApp("fsh-admin", "../../clients/admin", "dev")
+    .WithNpm()
+    .WithReference(api)
+    .WaitFor(api)
+    .WithHttpEndpoint(port: 3000, env: "PORT")
+    .WithExternalHttpEndpoints()
+    .WithEnvironment("FSH_API_URL", api.GetEndpoint("http"));
 
 await builder.Build().RunAsync();

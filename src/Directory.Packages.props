@@ -9,9 +9,10 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup Label="Aspire">
-    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.1.3" />
-    <PackageVersion Include="Aspire.Hosting.Redis" Version="13.1.3" />
-    <PackageVersion Include="coverlet.collector" Version="8.0.1">
+    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.2.1" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.2.1" />
+    <PackageVersion Include="Aspire.Hosting.Redis" Version="13.2.1" />
+<PackageVersion Include="coverlet.collector" Version="8.0.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
